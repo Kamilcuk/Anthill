@@ -32,7 +32,7 @@ public:
     World();
     ~World();
     vector<int> getAnts();
-    boost::python::list getAntsPythonList();
+    //boost::python::list getAntsPythonList();
 
     void setDimensions(int,int);
     void setSimulationFramerate(float);
