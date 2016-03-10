@@ -1,6 +1,12 @@
 #include "anthill.hpp"
 
-Anthill::Anthill()
+Anthill::Anthill(Point pos) :
+	Entity(pos)
+{
+
+}
+
+void Anthill::step()
 {
 
 }

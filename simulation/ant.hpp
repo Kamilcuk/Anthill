@@ -16,7 +16,7 @@ class Ant : public Entity {
 	/** reference to the whole world! */
 	World& world_;
 
-	/** lifted by ant, or null */
+	/** something lifted by ant, or null */
 	Entity *lifted_;
 
 	const int speed_ = 1;
@@ -24,7 +24,7 @@ class Ant : public Entity {
 public:
 	Ant(World& world, Point pos);
 
-	void lift(Entity& l);
+	void lift(Entity *l);
 	Entity *unLift();
 	Entity *getLifted() const;
 

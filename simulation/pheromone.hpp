@@ -21,6 +21,7 @@ class Pheromone : public Entity
 public:
 	Pheromone(World& world, Pheromone::Type type, Point pos);
 	void step();
+	int getStrength() const;
 };
 
 #endif // PHEROMONE_H

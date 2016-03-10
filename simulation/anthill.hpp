@@ -1,11 +1,14 @@
 #ifndef ANTHILL_H
 #define ANTHILL_H
 
+#include "entity.hpp"
 
-class Anthill
+
+class Anthill : public Entity
 {
 public:
-	Anthill();
+	Anthill(Point pos);
+	void step();
 };
 
 #endif // ANTHILL_H

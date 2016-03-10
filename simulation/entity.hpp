@@ -9,10 +9,18 @@
  * All that lives shall be here!
  */
 class Entity : public Updatable {
+	/** position of this entity */
 	Point pos_;
+
+	/** something can carry this entity*/
+	Entity *carrier_;
 public:
 	Entity(Point pos);
-	Point getPos() const;
+	Point &getPos();
+
+	void addCarrier(Entity *e);
+	void removeCarrier();
+	Entity *getCarrier() const;
 };
 
 #endif // LIVING_H

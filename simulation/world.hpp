@@ -48,8 +48,8 @@ public:
 	/** executed for every simulation step */
 	void simulationStep();
 
-	void addLiving(Entity* l);
-	void removeLiving(Entity* l);
+	void addLiving(Entity* e);
+	void removeLiving(Entity* e);
 
 
 	std::vector<Ant*> getAnts();

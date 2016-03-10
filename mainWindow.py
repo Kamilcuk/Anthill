@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         # world/simulation parameters - hardcoded - test
         self.worldWidth=300
         self.worldHeight=200
-        self.simulationFramerate=10
+        self.simulationFramerate=1
 
         w=self.worldWidth
         h=self.worldHeight

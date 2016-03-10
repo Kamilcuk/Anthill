@@ -6,7 +6,10 @@
  */
 
 #include "world.hpp"
-#include <iostream>;
+#include "anthill.hpp"
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
 using std::vector;
 
 World::World(){
@@ -24,14 +27,23 @@ void World::setSimulationFramerate(float){
 }
 void World::startSimulation()
 {
+	/* initialize random seed: */
+	srand (time(NULL));
+
 	Ant *a1 = new Ant(*this, Point(1,1));
 	entities_.push_back(a1);
 
 	Ant *a2 = new Ant(*this, Point(10,10));
 	entities_.push_back(a2);
 
-	//Food *f1 = new Food(Point(3,3));
-	//entities_.push_back(f1);
+	Food *f1 = new Food(Point(3,3));
+	entities_.push_back(f1);
+
+	Food *f2 = new Food(Point(7,7));
+	entities_.push_back(f2);
+
+	Anthill *ah1 = new Anthill(Point(5,5));
+	entities_.push_back(ah1);
 }
 
 void World::stopSimulation()
@@ -54,7 +66,7 @@ std::vector<Ant *> World::getAnts()
 {
 	std::vector<Ant*> ants;
 	for(Entity *s : entities_) {
-		Ant *a = static_cast<Ant*>(s);
+		Ant *a = dynamic_cast<Ant*>(s);
 		if( a ) {
 			ants.push_back(a);
 		}
@@ -66,7 +78,7 @@ std::vector<Food *> World::getFoods()
 {
 	std::vector<Food*> foods;
 	for(Entity *s : entities_) {
-		Food *a = static_cast<Food*>(s);
+		Food *a = dynamic_cast<Food*>(s);
 		if( a ) {
 			foods.push_back(a);
 		}
@@ -78,21 +90,21 @@ std::vector<Entity *> World::getClosestEntities(Point mypos, int visibility)
 {
 	std::vector<Entity*> ret;
 	for(Entity *s : entities_) {
-		if ( abs(mypos.posX()-s->getPos().posX()) < visibility &&
-				abs(mypos.posY()-s->getPos().posY()) < visibility ) {
+		if ( abs(mypos.posX()-s->getPos().posX()) <= visibility &&
+				abs(mypos.posY()-s->getPos().posY()) <= visibility ) {
 			ret.push_back(s);
 		}
 	}
 	return ret;
 }
 
-void World::addLiving(Entity*s)
+void World::addLiving(Entity *e)
 {
-	if ( s )
-		entities_.push_back(s);
+	if ( e )
+		entities_.push_back(e);
 }
 
-void World::removeLiving(Entity *l)
+void World::removeLiving(Entity *e)
 {
-	/* not implemented yet! */
+
 }
