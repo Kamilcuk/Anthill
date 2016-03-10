@@ -8,9 +8,12 @@
 #ifndef SRC_FOOD_HPP_
 #define SRC_FOOD_HPP_
 
-#include "Liftable.hpp"
+#include "living.hpp"
 
-class Food : public Liftable {
+class Food : public Living {
+public:
+	Food(Position pos);
+	void step();
 };
 
 #endif /* SRC_FOOD_HPP_ */

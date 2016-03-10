@@ -5,5 +5,16 @@
  *      Author: kamil
  */
 
-#include "Food.hpp"
+#include "food.hpp"
 
+
+Food::Food(Position pos) :
+	Living(pos)
+{
+
+}
+
+void Food::step()
+{
+
+}

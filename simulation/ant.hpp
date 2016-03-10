@@ -8,20 +8,27 @@
 #ifndef ANT_H_
 #define ANT_H_
 
-#include "Liftable.hpp"
+#include "living.hpp"
+#include "world.hpp"
 
-class Ant {
+class World;
+class Ant : public Living {
+	/** reference to the whole world! */
+	World& world_;
+
 	/** lifted by ant, or null */
-	Liftable *liftable_;
+	Living *lifted_;
 
-	int speed_;
+	const int speed_ = 1;
+	const int visibility_ = 3;
 public:
-	Ant();
-	~Ant();
+	Ant(World& world, Position pos);
 
-	void lift(Liftable& liftable);
-	Liftable *unLift();
-	Liftable *getLiftable() const;
+	void lift(Living& l);
+	Living *unLift();
+	Living *getLifted() const;
+
+	void step();
 };
 
 #endif /* ANT_H_ */
