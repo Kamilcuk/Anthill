@@ -13,9 +13,13 @@ using std::vector;
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
-#include "Ant.hpp"
+#include "ant.hpp"
+#include "entity.hpp"
+#include "food.hpp"
 #include "pythonExport.hpp"
+#include "updatable.h"
 
+class Ant;
 class World{
 
     // world properties
@@ -23,22 +27,34 @@ class World{
     float framerate;
 
     // objects in world
-    vector<int> ants;
-
+    vector<Ant> ants;
+    
+    /** all living matter */
+    std::vector<Entity*> entities_;
 
     void mainLoop();
 
 public:
     World();
     ~World();
-    vector<int> getAnts();
-    //boost::python::list getAntsPythonList();
 
     void setDimensions(int,int);
     void setSimulationFramerate(float);
 
     void startSimulation();
     void stopSimulation();
+    
+    /** executed for every simulation step */
+    void simulationStep();
+
+    void addEntity(Entity* e);
+    void removeEntity(Entity* e);
+
+
+    std::vector<Ant*> getAnts();
+    std::vector<Food*> getFoods();
+    std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
+
 };
 
 #endif /* WORLD_H_ */

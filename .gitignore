@@ -1,3 +1,7 @@
+*.os
+*.pyc
+*.dblite
+
 # Compiled Object files
 *.slo
 *.lo

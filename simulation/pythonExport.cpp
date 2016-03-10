@@ -5,8 +5,8 @@
  *      Author: ms
  */
 
-#include "World.hpp"
-#include "Ant.hpp"
+#include "world.hpp"
+#include "ant.hpp"
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
@@ -21,13 +21,16 @@ BOOST_PYTHON_MODULE(anthill){
         .def("setSimulationFramerate",&World::setSimulationFramerate)
         .def("startSimulation",&World::startSimulation)
         .def("stopSimulation",&World::stopSimulation)
+	.def("simulationStep",&World::simulationStep)
     ;
 
-    class_<vector<int> >("vector_int")
-        .def(vector_indexing_suite<vector<int> >() );
+    class_<vector<Ant*> >("vector_ants")
+        .def(vector_indexing_suite<vector<Ant*> >() );
 
 
-    class_<Ant>("Ant",init<>())
+    //class_<Ant>("Ant",init<>())
+    //class_<Ant,Ant*>("Ant",no_init)
         //.def("getX",&Ant::getX)
-    ;
+    //;
+    // sorki! kamil
 }
