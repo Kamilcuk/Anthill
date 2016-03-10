@@ -22,7 +22,7 @@ void Pheromone::step()
 
 	/** is this ok? */
 	if ( strength_ <= 0 ) {
-		//world_.remove costam jeszcze nie wiem;
+		world_.removeEntity(this);
 		return;
 	}
 }

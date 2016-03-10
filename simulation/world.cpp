@@ -42,7 +42,7 @@ void World::startSimulation()
 	Food *f2 = new Food(Point(7,7));
 	entities_.push_back(f2);
 
-	Anthill *ah1 = new Anthill(Point(5,5));
+	Anthill *ah1 = new Anthill(*this, Point(5,5));
 	entities_.push_back(ah1);
 }
 
@@ -56,6 +56,7 @@ void World::stopSimulation()
 
 void World::simulationStep()
 {
+	std::cout<<"--------------------------------------------"<<std::endl;
 	for(Entity *s : entities_) {
 		(*s).step();
 	}
@@ -98,13 +99,20 @@ std::vector<Entity *> World::getClosestEntities(Point mypos, int visibility)
 	return ret;
 }
 
-void World::addLiving(Entity *e)
+void World::addEntity(Entity *e)
 {
 	if ( e )
 		entities_.push_back(e);
 }
 
-void World::removeLiving(Entity *e)
+void World::removeEntity(Entity *e)
 {
-
+	std::vector<Entity*>::iterator it;
+	for(it = entities_.begin(); it != this->entities_.end(); ++it) {
+		if ( *it == e ) {
+			entities_.erase(it);
+			delete *it;
+			return;
+		}
+	}
 }

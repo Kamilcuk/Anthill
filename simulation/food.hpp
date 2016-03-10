@@ -13,6 +13,7 @@
 class Food : public Entity {
 public:
 	Food(Point pos);
+
 	void step();
 };
 
