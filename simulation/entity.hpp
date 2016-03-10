@@ -21,7 +21,8 @@ class Entity : public Updatable {
 public:
 	Entity(Point pos);
 	virtual ~Entity();
-	Point &getPos();
+	Point& getPos();
+        Point getLoc(){ return getPos(); } // TEST
 
 	void addCarrier(Entity *e);
 	Entity *removeCarrier();

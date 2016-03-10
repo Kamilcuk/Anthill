@@ -9,6 +9,7 @@
 #include "entity.hpp"
 #include "point.hpp"
 #include "ant.hpp"
+#include "food.hpp"
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
@@ -19,6 +20,7 @@ BOOST_PYTHON_MODULE(anthill){
     class_<World>("World",init<>())
         //.def("getAnts",&World::getAntsPythonList)
         .def("getAnts",&World::getAnts)
+        .def("getFoods",&World::getFoods)
         .def("getEntities",&World::getEntities)
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
@@ -32,14 +34,22 @@ BOOST_PYTHON_MODULE(anthill){
 
     class_<vector<Ant*> >("vector_ants")
         .def(vector_indexing_suite<vector<Ant*> >() );
+    class_<vector<Food*> >("vector_food")
+        .def(vector_indexing_suite<vector<Food*> >() );
 
     //class_<Entity*,bases<Updatable> >("Entity",no_init)
     //;
 
     //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
+    //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
     class_<Ant,Ant*>("Ant",no_init)
+        //.def("getLoc",get_by_value(&Ant::getPos))
         .def("getLoc",&Ant::getLoc)
+        //.def("getLoc",&Ant::getLoc)
         //.def("getPos",&Ant::step)
+    ;
+    class_<Food,Food*>("Food",no_init)
+        .def("getLoc",&Food::getLoc)
     ;
 
     //class_<Point>("Point",init<optional<int,int> >())

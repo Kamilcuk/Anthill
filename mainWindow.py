@@ -70,12 +70,21 @@ class MainWindow(QMainWindow):
         # draw ants
         # ants not working as iterable
         ants=self.world.getAnts()
-        for ant in range(len(self.world.getAnts())):
+        for ant in range(len(ants)):
             x=ants[ant].getLoc().posX()
             y=ants[ant].getLoc().posY()
             antPen=QPen(QBrush(QColor()),0)
             antBrush=QBrush(QColor(100,100,50,255))
             scene.addRect(x-3,y-3,6,6,pen=antPen,brush=antBrush)
+        # draw foods
+        # like ants
+        foods=self.world.getFoods()
+        for food in range(len(foods)):
+            x=foods[food].getLoc().posX()
+            y=foods[food].getLoc().posY()
+            foodPen=QPen(QBrush(QColor()),0)
+            foodBrush=QBrush(QColor(200,200,200,255))
+            scene.addRect(x-3,y-3,6,6,pen=foodPen,brush=foodBrush)
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:

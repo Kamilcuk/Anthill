@@ -24,7 +24,6 @@ public:
 
 
 	void step();
-        Point getLoc(){ return getPos(); } // TEST
 };
 
 #endif /* ANT_H_ */

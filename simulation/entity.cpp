@@ -1,6 +1,6 @@
 #include "entity.hpp"
 
-Point &Entity::getPos()
+Point& Entity::getPos()
 {
 	return pos_;
 }
