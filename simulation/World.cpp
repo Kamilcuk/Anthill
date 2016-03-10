@@ -1,7 +1,21 @@
-#include "World.hpp"
+/*
+ * World.cpp
+ *
+ *  Created on: 9 mar 2016
+ *      Author: ms
+ */
 
-//shared_ptr<std::vector<shared_ptr<Ant> > > getAnts(){
-//}
+#include "World.hpp"
+using std::vector;
+
+World::World(){
+}
+World::~World(){
+}
+
+boost::python::list World::getAntsPythonList(){
+    return std_vector_to_py_list(ants);
+}
 
 void World::setDimensions(int,int){
 }
