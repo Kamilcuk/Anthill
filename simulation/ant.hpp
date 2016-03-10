@@ -16,17 +16,12 @@ class Ant : public Entity {
 	/** reference to the whole world! */
 	World& world_;
 
-	/** something lifted by ant, or null */
-	Entity *lifted_;
 
 	const int speed_ = 1;
 	const int visibility_ = 3;
 public:
 	Ant(World& world, Point pos);
 
-	void lift(Entity *l);
-	Entity *unLift();
-	Entity *getLifted() const;
 
 	void step();
 };

@@ -14,13 +14,22 @@ class Entity : public Updatable {
 
 	/** something can carry this entity*/
 	Entity *carrier_;
+
+	/** this entity can lift something */
+	Entity *lifted_;
+
 public:
 	Entity(Point pos);
+	virtual ~Entity();
 	Point &getPos();
 
 	void addCarrier(Entity *e);
-	void removeCarrier();
+	Entity *removeCarrier();
 	Entity *getCarrier() const;
+
+	void lift(Entity *l);
+	Entity *unLift();
+	Entity *getLifted() const;
 };
 
 #endif // LIVING_H

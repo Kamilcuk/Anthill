@@ -12,29 +12,11 @@
 #include "pheromone.hpp"
 
 
-
 Ant::Ant(World& world, Point pos) :
 	Entity(pos),
-	world_(world),
-	lifted_(nullptr) {
+	world_(world)
+{
 
-}
-
-void Ant::lift(Entity *l) {
-	lifted_ = l;
-}
-
-Entity *Ant::unLift() {
-	if ( lifted_ != nullptr ) {
-		Entity *temp = lifted_;
-		lifted_ = nullptr;
-		return temp;
-	}
-	return nullptr;
-}
-
-Entity *Ant::getLifted() const {
-	return lifted_;
 }
 
 #define dupaprint(str,e) std::cout<<str" type: "<<typeid(*e).name()<<" "<<e<<"pos: "; e->getPos().printPosition();
