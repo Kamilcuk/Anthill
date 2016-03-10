@@ -1,11 +1,11 @@
 #ifndef PHEROMONE_H
 #define PHEROMONE_H
 
-#include "position.hpp"
-#include "living.hpp"
+#include "point.hpp"
+#include "entity.hpp"
 #include "world.hpp"
 
-class Pheromone : public Living
+class Pheromone : public Entity
 {
 	enum Type {
 		toFood,
@@ -19,7 +19,7 @@ class Pheromone : public Living
 
 
 public:
-	Pheromone(World& world, Pheromone::Type type, Position pos);
+	Pheromone(World& world, Pheromone::Type type, Point pos);
 	void step();
 };
 

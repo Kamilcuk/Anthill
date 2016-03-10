@@ -8,8 +8,8 @@
 #include "food.hpp"
 
 
-Food::Food(Position pos) :
-	Living(pos)
+Food::Food(Point pos) :
+	Entity(pos)
 {
 
 }

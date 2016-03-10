@@ -1,16 +1,18 @@
 #ifndef LIVING_H
 #define LIVING_H
 
-#include "position.hpp"
+#include "point.hpp"
+#include "updatable.h"
 
 /**
  * @brief The Living class
  * All that lives shall be here!
  */
-class Living : public Position{
+class Entity : public Updatable {
+	Point pos_;
 public:
-	Living(Position pos);
-	virtual void step() = 0;
+	Entity(Point pos);
+	Point getPos() const;
 };
 
 #endif // LIVING_H

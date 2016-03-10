@@ -11,27 +11,27 @@
 
 
 
-Ant::Ant(World& world, Position pos) :
-	Living(pos),
+Ant::Ant(World& world, Point pos) :
+	Entity(pos),
 	world_(world),
 	lifted_(nullptr) {
 
 }
 
-void Ant::lift(Living& l) {
+void Ant::lift(Entity& l) {
 	lifted_ = &l;
 }
 
-Living *Ant::unLift() {
+Entity *Ant::unLift() {
 	if ( lifted_ != nullptr ) {
-		Living *temp = lifted_;
+		Entity *temp = lifted_;
 		lifted_ = nullptr;
 		return temp;
 	}
 	return nullptr;
 }
 
-Living *Ant::getLifted() const {
+Entity *Ant::getLifted() const {
 	return lifted_;
 }
 
@@ -41,13 +41,13 @@ void Ant::step() {
 	/** how to get to Pheromones */
 	/** how to increment pos to chase them? */
 	/** so many questions */
-	Position goThere(-1,-1);
-	Position add(-1,-1);
+	Point goThere(-1,-1);
+	Point add(-1,-1);
 	int pheromoneStrengh = -1;
 
-	std::cout << "pos_: "; printPosition();
+	std::cout << "pos_: "; this->getPos().printPosition();
 
-	std::vector<Living *> closest = world_.getClosestLivings(this->getPosition(), this->visibility_);
+	std::vector<Updatable *> closest = world_.getClosestLivings(this->getPos(), this->visibility_);
 
 	/* go to food in visibility range */
 	/** close to food? go for it! pick it! */

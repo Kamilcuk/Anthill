@@ -14,9 +14,10 @@ using std::vector;
 using boost::shared_ptr;
 
 #include "ant.hpp"
-#include "living.hpp"
+#include "entity.hpp"
 #include "food.hpp"
 #include "pythonExport.hpp"
+#include "updatable.h"
 
 class Ant;
 class World{
@@ -29,7 +30,7 @@ class World{
     vector<Ant> ants;
     
 	/** all living matter */
-	std::vector<Living*> livings_;
+	std::vector<Updatable*> updatables_;
 
 
     void mainLoop();
@@ -48,13 +49,13 @@ public:
 	/** executed for every simulation step */
 	void simulationStep();
 
-	void addLiving(Living* l);
-	void removeLiving(Living* l);
+	void addLiving(Updatable* l);
+	void removeLiving(Updatable* l);
 
 
 	std::vector<Ant*> getAnts();
 	std::vector<Food*> getFoods();
-	std::vector<Living *> getClosestLivings(Position mypos, int visibility);
+	std::vector<Updatable *> getClosestLivings(Point mypos, int visibility);
 
 };
 

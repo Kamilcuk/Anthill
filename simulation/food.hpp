@@ -8,11 +8,11 @@
 #ifndef SRC_FOOD_HPP_
 #define SRC_FOOD_HPP_
 
-#include "living.hpp"
+#include "entity.hpp"
 
-class Food : public Living {
+class Food : public Entity {
 public:
-	Food(Position pos);
+	Food(Point pos);
 	void step();
 };
 

@@ -1,8 +1,8 @@
 #include "pheromone.hpp"
 
-Pheromone::Pheromone(World& world, Pheromone::Type type, Position pos) :
+Pheromone::Pheromone(World& world, Pheromone::Type type, Point pos) :
 	world_(world),
-	Living(pos),
+	Entity(pos),
 	type_(type),
 	strength_(10)
 {

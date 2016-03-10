@@ -23,27 +23,27 @@ void World::setSimulationFramerate(float){
 }
 void World::startSimulation()
 {
-	Ant *a1 = new Ant(*this, Position(1,1));
-	livings_.push_back(a1);
+	Ant *a1 = new Ant(*this, Point(1,1));
+	updatables_.push_back(a1);
 
 	//Ant *a2 = new Ant(*this, Position(10,10));
 	//simulables_.push_back(a2);
 
-	Food *f1 = new Food(Position(3,3));
-	livings_.push_back(f1);
+	Food *f1 = new Food(Point(3,3));
+	updatables_.push_back(f1);
 }
 
 void World::stopSimulation()
 {
-	for(Living *s : livings_) {
+	for(Updatable *s : updatables_) {
 		delete s;
 	}
-	livings_.clear();
+	updatables_.clear();
 }
 
 void World::simulationStep()
 {
-	for(Living *s : livings_) {
+	for(Updatable *s : updatables_) {
 		(*s).step();
 	}
 }
@@ -52,7 +52,7 @@ void World::simulationStep()
 std::vector<Ant *> World::getAnts()
 {
 	std::vector<Ant*> ants;
-	for(Living *s : livings_) {
+	for(Updatable *s : updatables_) {
 		Ant *a = static_cast<Ant*>(s);
 		if( a ) {
 			ants.push_back(a);
@@ -64,7 +64,7 @@ std::vector<Ant *> World::getAnts()
 std::vector<Food *> World::getFoods()
 {
 	std::vector<Food*> foods;
-	for(Living *s : livings_) {
+	for(Updatable *s : updatables_) {
 		Food *a = static_cast<Food*>(s);
 		if( a ) {
 			foods.push_back(a);
@@ -73,24 +73,24 @@ std::vector<Food *> World::getFoods()
 	return foods;
 }
 
-std::vector<Living *> World::getClosestLivings(Position mypos, int visibility)
+std::vector<Updatable *> World::getClosestLivings(Point mypos, int visibility)
 {
-	std::vector<Living*> ret;
-	for(Living *s : livings_) {
-		if ( abs(mypos.posX()-s->posX()) < visibility &&
-				abs(mypos.posY()-s->posY()) < visibility ) {
+	std::vector<Updatable*> ret;
+	for(Updatable *s : updatables_) {
+		/*if ( abs(mypos.posX()-s->getPos().posX()) < visibility &&
+				abs(mypos.posY()-s->getPos().posY()) < visibility ) {
 			ret.push_back(s);
-		}
+		}*/
 	}
 }
 
-void World::addLiving(Living*s)
+void World::addLiving(Updatable*s)
 {
 	if ( s )
-		livings_.push_back(s);
+		updatables_.push_back(s);
 }
 
-void World::removeLiving(Living *l)
+void World::removeLiving(Updatable *l)
 {
 	/* not implemented yet! */
 }
