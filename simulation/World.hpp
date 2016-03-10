@@ -23,7 +23,7 @@ class World{
     float framerate;
 
     // objects in world
-    vector<Ant> ants;
+    vector<int> ants;
 
 
     void mainLoop();
@@ -31,6 +31,7 @@ class World{
 public:
     World();
     ~World();
+    vector<int> getAnts();
     boost::python::list getAntsPythonList();
 
     void setDimensions(int,int);

@@ -13,6 +13,10 @@ World::World(){
 World::~World(){
 }
 
+vector<int> World::getAntsPythonList(){
+    return std_vector_to_py_list(ants);
+}
+
 boost::python::list World::getAntsPythonList(){
     return std_vector_to_py_list(ants);
 }

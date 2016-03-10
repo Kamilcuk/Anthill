@@ -64,12 +64,12 @@ class MainWindow(QMainWindow):
         scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
 
         # draw ants
-        #for ant in self.world.getAnts():
-        #    x=ant.getX()
-        #    y=ant.getY()
-        #    antPen=QPen(QBrush(QColor()),0)
-        #    antBrush=QBrush(QColor(100,100,50,255))
-        #    scene.addRect(x-3,y-3,6,6,pen=antPen,brush=antBrush)
+        for ant in self.world.getAnts():
+            x=ant.getX()
+            y=ant.getY()
+            antPen=QPen(QBrush(QColor()),0)
+            antBrush=QBrush(QColor(100,100,50,255))
+            scene.addRect(x-3,y-3,6,6,pen=antPen,brush=antBrush)
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:
