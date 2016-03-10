@@ -47,7 +47,11 @@ void Ant::step() {
 
 	std::cout << "pos_: "; this->getPos().printPosition();
 
-	std::vector<Updatable *> closest = world_.getClosestLivings(this->getPos(), this->visibility_);
+	std::vector<Entity *> closest = world_.getClosestEntities(this->getPos(), this->visibility_);
+	for(Entity *e : closest) {
+		std::cout << "^ dupa: " << e << " ";
+		e->getPos().printPosition();
+	}
 
 	/* go to food in visibility range */
 	/** close to food? go for it! pick it! */
@@ -76,6 +80,6 @@ void Ant::step() {
 	}*/
 	//this->move(addX, addY);
 
-	std::cout << addX << " " << addY << std::endl;
+	std::cout << "^ mrowka: " << this << "addX:" << addX << "addY: " << addY << std::endl;
 	std::cout << std::endl;
 }

@@ -30,8 +30,7 @@ class World{
     vector<Ant> ants;
     
 	/** all living matter */
-	std::vector<Updatable*> updatables_;
-
+	std::vector<Entity*> entities_;
 
     void mainLoop();
 
@@ -49,13 +48,13 @@ public:
 	/** executed for every simulation step */
 	void simulationStep();
 
-	void addLiving(Updatable* l);
-	void removeLiving(Updatable* l);
+	void addLiving(Entity* l);
+	void removeLiving(Entity* l);
 
 
 	std::vector<Ant*> getAnts();
 	std::vector<Food*> getFoods();
-	std::vector<Updatable *> getClosestLivings(Point mypos, int visibility);
+	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
 
 };
 

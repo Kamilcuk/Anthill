@@ -6,6 +6,7 @@
  */
 
 #include "world.hpp"
+#include <iostream>;
 using std::vector;
 
 World::World(){
@@ -24,26 +25,26 @@ void World::setSimulationFramerate(float){
 void World::startSimulation()
 {
 	Ant *a1 = new Ant(*this, Point(1,1));
-	updatables_.push_back(a1);
+	entities_.push_back(a1);
 
-	//Ant *a2 = new Ant(*this, Position(10,10));
-	//simulables_.push_back(a2);
+	Ant *a2 = new Ant(*this, Point(10,10));
+	entities_.push_back(a2);
 
-	Food *f1 = new Food(Point(3,3));
-	updatables_.push_back(f1);
+	//Food *f1 = new Food(Point(3,3));
+	//entities_.push_back(f1);
 }
 
 void World::stopSimulation()
 {
-	for(Updatable *s : updatables_) {
+	for(Entity *s : entities_) {
 		delete s;
 	}
-	updatables_.clear();
+	entities_.clear();
 }
 
 void World::simulationStep()
 {
-	for(Updatable *s : updatables_) {
+	for(Entity *s : entities_) {
 		(*s).step();
 	}
 }
@@ -52,7 +53,7 @@ void World::simulationStep()
 std::vector<Ant *> World::getAnts()
 {
 	std::vector<Ant*> ants;
-	for(Updatable *s : updatables_) {
+	for(Entity *s : entities_) {
 		Ant *a = static_cast<Ant*>(s);
 		if( a ) {
 			ants.push_back(a);
@@ -64,7 +65,7 @@ std::vector<Ant *> World::getAnts()
 std::vector<Food *> World::getFoods()
 {
 	std::vector<Food*> foods;
-	for(Updatable *s : updatables_) {
+	for(Entity *s : entities_) {
 		Food *a = static_cast<Food*>(s);
 		if( a ) {
 			foods.push_back(a);
@@ -73,24 +74,25 @@ std::vector<Food *> World::getFoods()
 	return foods;
 }
 
-std::vector<Updatable *> World::getClosestLivings(Point mypos, int visibility)
+std::vector<Entity *> World::getClosestEntities(Point mypos, int visibility)
 {
-	std::vector<Updatable*> ret;
-	for(Updatable *s : updatables_) {
-		/*if ( abs(mypos.posX()-s->getPos().posX()) < visibility &&
+	std::vector<Entity*> ret;
+	for(Entity *s : entities_) {
+		if ( abs(mypos.posX()-s->getPos().posX()) < visibility &&
 				abs(mypos.posY()-s->getPos().posY()) < visibility ) {
 			ret.push_back(s);
-		}*/
+		}
 	}
+	return ret;
 }
 
-void World::addLiving(Updatable*s)
+void World::addLiving(Entity*s)
 {
 	if ( s )
-		updatables_.push_back(s);
+		entities_.push_back(s);
 }
 
-void World::removeLiving(Updatable *l)
+void World::removeLiving(Entity *l)
 {
 	/* not implemented yet! */
 }
