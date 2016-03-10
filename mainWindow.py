@@ -62,6 +62,9 @@ class MainWindow(QMainWindow):
         bgBrush=QBrush(QColor(50,120,50,255))
         bgPen=QPen(QBrush(QColor()),0)
         scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
+        
+        # symulacja tak? Kamil 
+        self.world.simulationStep();
 
         # draw ants
         #for ant in self.world.getAnts():

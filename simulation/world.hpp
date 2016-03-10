@@ -13,9 +13,12 @@ using std::vector;
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
-#include "Ant.hpp"
+#include "ant.hpp"
+#include "living.hpp"
+#include "food.hpp"
 #include "pythonExport.hpp"
 
+class Ant;
 class World{
 
     // world properties
@@ -24,6 +27,9 @@ class World{
 
     // objects in world
     vector<Ant> ants;
+    
+	/** all living matter */
+	std::vector<Living*> livings_;
 
 
     void mainLoop();
@@ -38,6 +44,18 @@ public:
 
     void startSimulation();
     void stopSimulation();
+    
+	/** executed for every simulation step */
+	void simulationStep();
+
+	void addLiving(Living* l);
+	void removeLiving(Living* l);
+
+
+	std::vector<Ant*> getAnts();
+	std::vector<Food*> getFoods();
+	std::vector<Living *> getClosestLivings(Position mypos, int visibility);
+
 };
 
 #endif /* WORLD_H_ */

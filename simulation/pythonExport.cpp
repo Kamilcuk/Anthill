@@ -5,8 +5,8 @@
  *      Author: ms
  */
 
-#include "World.hpp"
-#include "Ant.hpp"
+#include "world.hpp"
+#include "ant.hpp"
 #include <boost/python.hpp>
 
 using boost::shared_ptr;
@@ -19,9 +19,11 @@ BOOST_PYTHON_MODULE(anthill){
         .def("setSimulationFramerate",&World::setSimulationFramerate)
         .def("startSimulation",&World::startSimulation)
         .def("stopSimulation",&World::stopSimulation)
+		.def("simulationStep",&World::simulationStep)
     ;
 
-    class_<Ant>("Ant",init<>())
+    //class_<Ant>("Ant",init<>())
         //.def("getX",&Ant::getX)
-    ;
+    //;
+    // sorki! kamil
 }
