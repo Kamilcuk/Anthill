@@ -6,4 +6,4 @@ from PyQt5.QtWidgets import QApplication
 app=QApplication([])
 mainWindow=MainWindow()
 mainWindow.show()
-app.exec()
+app.exec_()
