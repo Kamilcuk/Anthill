@@ -27,7 +27,7 @@ class World{
     float framerate;
 
     // objects in world
-    vector<Ant> ants;
+    //vector<Ant> ants;
     
     /** all living matter */
     std::vector<Entity*> entities_;
@@ -51,6 +51,7 @@ public:
     void removeEntity(Entity* e);
 
 
+    std::vector<Entity*> getEntities(){ return entities_; }
     std::vector<Ant*> getAnts();
     std::vector<Food*> getFoods();
     std::vector<Entity *> getClosestEntities(Point mypos, int visibility);

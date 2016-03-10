@@ -6,6 +6,8 @@
  */
 
 #include "world.hpp"
+#include "entity.hpp"
+#include "point.hpp"
 #include "ant.hpp"
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -17,6 +19,7 @@ BOOST_PYTHON_MODULE(anthill){
     class_<World>("World",init<>())
         //.def("getAnts",&World::getAntsPythonList)
         .def("getAnts",&World::getAnts)
+        .def("getEntities",&World::getEntities)
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
         .def("startSimulation",&World::startSimulation)
@@ -24,13 +27,32 @@ BOOST_PYTHON_MODULE(anthill){
 	.def("simulationStep",&World::simulationStep)
     ;
 
+    //class_<vector<Entity*> >("vector_entities")
+    //    .def(vector_indexing_suite<vector<Entity*> >() );
+
     class_<vector<Ant*> >("vector_ants")
         .def(vector_indexing_suite<vector<Ant*> >() );
 
-
-    //class_<Ant>("Ant",init<>())
-    //class_<Ant,Ant*>("Ant",no_init)
-        //.def("getX",&Ant::getX)
+    //class_<Entity*,bases<Updatable> >("Entity",no_init)
     //;
+
+    //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
+    class_<Ant,Ant*>("Ant",no_init)
+        .def("getLoc",&Ant::getLoc)
+        //.def("getPos",&Ant::step)
+    ;
+
+    //class_<Point>("Point",init<optional<int,int> >())
+    class_<Point,Point*>("Point",init<int,int>())
+        .def("posX",&Point::posX)
+        .def("posY",&Point::posY)
+    ;
+
+    //class_<Ant,bases<Entity> >("Ant",no_init)
+    //    .def("stop",&Tone::Note::stop)
+    //    .def("pull",&Tone::Note::pull)
+    //;
+
+
     // sorki! kamil
 }

@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         # world/simulation parameters - hardcoded - test
         self.worldWidth=300
         self.worldHeight=200
-        self.simulationFramerate=1
+        self.simulationFramerate=10
 
         w=self.worldWidth
         h=self.worldHeight
@@ -68,12 +68,14 @@ class MainWindow(QMainWindow):
         self.world.simulationStep()
 
         # draw ants
-        #for ant in self.world.getAnts():
-        #    x=ant.getX()
-        #    y=ant.getY()
-        #    antPen=QPen(QBrush(QColor()),0)
-        #    antBrush=QBrush(QColor(100,100,50,255))
-        #    scene.addRect(x-3,y-3,6,6,pen=antPen,brush=antBrush)
+        # ants not working as iterable
+        ants=self.world.getAnts()
+        for ant in range(len(self.world.getAnts())):
+            x=ants[ant].getLoc().posX()
+            y=ants[ant].getLoc().posY()
+            antPen=QPen(QBrush(QColor()),0)
+            antBrush=QBrush(QColor(100,100,50,255))
+            scene.addRect(x-3,y-3,6,6,pen=antPen,brush=antBrush)
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:
