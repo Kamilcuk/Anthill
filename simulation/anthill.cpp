@@ -1,7 +1,8 @@
 #include "anthill.hpp"
+#include "world.hpp"
 
 Anthill::Anthill(World& world,Point pos) :
-	Entity(pos),
+	Entity(world, pos),
 	world_(world)
 {
 

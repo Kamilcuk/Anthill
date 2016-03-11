@@ -1,6 +1,7 @@
 #include "pheromoneMap.hpp"
 
-PheromoneMap::PheromoneMap(unsigned p_size_x, unsigned p_size_y) :
+PheromoneMap::PheromoneMap(World& world, unsigned p_size_x, unsigned p_size_y) :
+	Updatable(world),
 	decay_coeff_(0)
 {
 	map_ = std::vector<std::vector<float>>

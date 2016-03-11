@@ -13,24 +13,24 @@ using std::vector;
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
-#include "ant.hpp"
 #include "entity.hpp"
-#include "food.hpp"
 #include "pythonExport.hpp"
-#include "updatable.h"
+#include "updatable.hpp"
+#include "ant.hpp"
+#include "food.hpp"
 
 class Ant;
-class World{
+class Updatable;
+class Food;
+class Entity;
+class World {
 
     // world properties
     int width,height;
     float framerate;
-
-    // objects in world
-    //vector<Ant> ants;
     
     /** all living matter */
-    std::vector<Entity*> entities_;
+	std::vector<Updatable *> updatables_;
 
     void mainLoop();
 
@@ -47,15 +47,13 @@ public:
     /** executed for every simulation step */
     void simulationStep();
 
-    void addEntity(Entity* e);
-    void removeEntity(Entity* e);
+	void addUpdatable(Updatable* e);
+	void removeUpdatable(Updatable* e);
 
-
-    std::vector<Entity*> getEntities(){ return entities_; }
     std::vector<Ant*> getAnts();
     std::vector<Food*> getFoods();
-    std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
-
+	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
+	std::vector<Updatable *> getUpdatables() const;
 };
 
 #endif /* WORLD_H_ */

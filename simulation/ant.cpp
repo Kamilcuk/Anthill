@@ -13,7 +13,7 @@
 
 
 Ant::Ant(World& world, Point pos) :
-	Entity(pos),
+	Entity(world, pos),
 	world_(world)
 {
 

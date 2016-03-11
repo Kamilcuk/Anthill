@@ -1,11 +1,15 @@
 #ifndef UPDATABLE_H
 #define UPDATABLE_H
 
+//#include "world.hpp"
 
-class Updatable
-{
+class World;
+class Updatable {
+	World& world_;
+
 public:
-	Updatable();
+	Updatable(World& world);
+	virtual ~Updatable();
 	virtual void step() = 0;
 };
 

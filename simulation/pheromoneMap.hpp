@@ -5,10 +5,10 @@
 #include <stdexcept>
 #include <math.h>
 
-#include "updatable.h"
+#include "updatable.hpp"
 #include "point.hpp"
 
-
+class World;
 class PheromoneMap : public Updatable
 {
 	using Grid2D = std::vector<std::vector<float>>;
@@ -24,7 +24,7 @@ class PheromoneMap : public Updatable
 	void addStrength(unsigned p_x, unsigned p_y, float p_strength);
 
 public:
-	PheromoneMap(unsigned p_size_x, unsigned p_size_y);
+	PheromoneMap(World& world, unsigned p_size_x, unsigned p_size_y);
 	~PheromoneMap();
 
 	void step();

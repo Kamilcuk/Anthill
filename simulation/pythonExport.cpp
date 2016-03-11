@@ -21,12 +21,12 @@ BOOST_PYTHON_MODULE(anthill){
         //.def("getAnts",&World::getAntsPythonList)
         .def("getAnts",&World::getAnts)
         .def("getFoods",&World::getFoods)
-        .def("getEntities",&World::getEntities)
+		.def("getUpdatables",&World::getUpdatables)
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
         .def("startSimulation",&World::startSimulation)
         .def("stopSimulation",&World::stopSimulation)
-	.def("simulationStep",&World::simulationStep)
+		.def("simulationStep",&World::simulationStep)
     ;
 
     //class_<vector<Entity*> >("vector_entities")

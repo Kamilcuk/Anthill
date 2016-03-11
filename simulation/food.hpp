@@ -10,9 +10,10 @@
 
 #include "entity.hpp"
 
+class Entity;
 class Food : public Entity {
 public:
-	Food(Point pos);
+	Food(World &world, Point pos);
 
 	void step();
 };

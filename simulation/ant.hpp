@@ -16,9 +16,8 @@ class Ant : public Entity {
 	/** reference to the whole world! */
 	World& world_;
 
-
 	const int speed_ = 1;
-	const int visibility_ = 3;
+	const int visibility_ = 5;
 public:
 	Ant(World& world, Point pos);
 

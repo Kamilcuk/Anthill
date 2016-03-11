@@ -12,6 +12,11 @@
 #include <ctime>
 using std::vector;
 
+std::vector<Updatable *> World::getUpdatables() const
+{
+	return updatables_;
+}
+
 World::World(){
 }
 World::~World(){
@@ -29,35 +34,25 @@ void World::startSimulation()
 {
 	/* initialize random seed: */
 	srand (time(NULL));
-
-	Ant *a1 = new Ant(*this, Point(1,1));
-	entities_.push_back(a1);
-
-	Ant *a2 = new Ant(*this, Point(10,10));
-	entities_.push_back(a2);
-
-	Food *f1 = new Food(Point(3,3));
-	entities_.push_back(f1);
-
-	Food *f2 = new Food(Point(7,7));
-	entities_.push_back(f2);
-
-	Anthill *ah1 = new Anthill(*this, Point(5,5));
-	entities_.push_back(ah1);
+	new Ant(*this, Point(1,1));
+	new Ant(*this, Point(10,10));
+	new Food(*this, Point(3,3));
+	new Food(*this, Point(7,7));
+	new Anthill(*this, Point(5,5));
 }
 
 void World::stopSimulation()
 {
-	for(Entity *s : entities_) {
+	for(Updatable *s : updatables_) {
 		delete s;
 	}
-	entities_.clear();
+	updatables_.clear();
 }
 
 void World::simulationStep()
 {
 	std::cout<<"--------------------------------------------"<<std::endl;
-	for(Entity *s : entities_) {
+	for(Updatable *s : updatables_) {
 		(*s).step();
 	}
 }
@@ -66,7 +61,7 @@ void World::simulationStep()
 std::vector<Ant *> World::getAnts()
 {
 	std::vector<Ant*> ants;
-	for(Entity *s : entities_) {
+	for(Updatable *s : updatables_) {
 		Ant *a = dynamic_cast<Ant*>(s);
 		if( a ) {
 			ants.push_back(a);
@@ -78,7 +73,7 @@ std::vector<Ant *> World::getAnts()
 std::vector<Food *> World::getFoods()
 {
 	std::vector<Food*> foods;
-	for(Entity *s : entities_) {
+	for(Updatable *s : updatables_) {
 		Food *a = dynamic_cast<Food*>(s);
 		if( a ) {
 			foods.push_back(a);
@@ -90,27 +85,30 @@ std::vector<Food *> World::getFoods()
 std::vector<Entity *> World::getClosestEntities(Point mypos, int visibility)
 {
 	std::vector<Entity*> ret;
-	for(Entity *s : entities_) {
-		if ( abs(mypos.posX()-s->getPos().posX()) <= visibility &&
-				abs(mypos.posY()-s->getPos().posY()) <= visibility ) {
-			ret.push_back(s);
+	for(Updatable *u : updatables_) {
+		Entity *e = dynamic_cast<Entity*>(u);
+		if ( !e )
+			continue;
+		if ( abs(mypos.posX()-e->getPos().posX()) <= visibility &&
+				abs(mypos.posY()-e->getPos().posY()) <= visibility ) {
+			ret.push_back(e);
 		}
 	}
 	return ret;
 }
 
-void World::addEntity(Entity *e)
+void World::addUpdatable(Updatable *e)
 {
 	if ( e )
-		entities_.push_back(e);
+		updatables_.push_back(e);
 }
 
-void World::removeEntity(Entity *e)
+void World::removeUpdatable(Updatable *e)
 {
-	std::vector<Entity*>::iterator it;
-	for(it = entities_.begin(); it != this->entities_.end(); ++it) {
+	std::vector<Updatable*>::iterator it;
+	for(it = updatables_.begin(); it != this->updatables_.end(); ++it) {
 		if ( *it == e ) {
-			entities_.erase(it);
+			updatables_.erase(it);
 			delete *it;
 			return;
 		}

@@ -2,7 +2,7 @@
 #define LIVING_H
 
 #include "point.hpp"
-#include "updatable.h"
+#include "updatable.hpp"
 
 /**
  * @brief The Living class
@@ -19,7 +19,7 @@ class Entity : public Updatable {
 	Entity *lifted_;
 
 public:
-	Entity(Point pos);
+	Entity(World &world, Point pos);
 	virtual ~Entity();
 	Point& getPos();
         Point getLoc(){ return getPos(); } // TEST

@@ -5,7 +5,8 @@ Point& Entity::getPos()
 	return pos_;
 }
 
-Entity::Entity(Point pos) :
+Entity::Entity(World& world, Point pos) :
+	Updatable(world),
 	pos_(pos),
 	carrier_(nullptr),
 	lifted_(nullptr)
