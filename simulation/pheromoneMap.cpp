@@ -71,8 +71,8 @@ Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 	Point ret(-1,-1);
 	for(int i=-radius;i<radius;++i) {
 		for(int j=-radius;j<radius;++j) {
-			unsigned int x = middle.posX()+i;
-			unsigned int y = middle.posY()+i;
+			const unsigned int x = middle.posX()+i;
+			const unsigned int y = middle.posY()+i;
 			if ( x >= 0 && y >= 0 && x < map_.size() && y < map_.size() ) {
 				float strength = getStrengthAtPosition(Point(x, y));
 				if ( strength > strongest ) {

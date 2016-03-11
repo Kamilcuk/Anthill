@@ -16,6 +16,7 @@ public:
 	Point move(int addX, int addY);
 	void printPosition();
 	Point getPosition() const;
+	bool operator<(const Point& rhs) const { return (posX() < rhs.posX()) || (posY() < rhs.posY()); } // for std::set
 };
 
 #endif // POSITION_H

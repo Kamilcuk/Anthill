@@ -15,9 +15,11 @@ using boost::shared_ptr;
 
 #include "entity.hpp"
 #include "pythonExport.hpp"
+#include "shapeGenerator.hpp"
 #include "updatable.hpp"
 #include "ant.hpp"
 #include "food.hpp"
+#include "obstacle.hpp"
 #include "pheromoneMap.hpp"
 #include "anthill.hpp"
 

@@ -56,14 +56,19 @@ void World::startSimulation()
 	new Ant(*this, Point(20,20));
 	new Ant(*this, Point(50,50));
 	new Ant(*this, Point(30,20));
-	new Food(*this, Point(22,22));
-	new Food(*this, Point(27,26));
-	for(int i=18;i<20;i++) {
-		for(int j=18;j<20;j++) {
-			new Food(*this, Point(i,j));
-		}
-	}
+
 	new Anthill(*this, Point(35,35));
+
+	ShapeGenerator shape_gen;
+	
+	for(auto point : shape_gen.GenerateCircle(Point(15, 15), 3))
+	{
+		new Food(*this, point);
+	}
+	for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
+	{
+		new Food(*this, point);
+	}
 }
 
 void World::stopSimulation()
@@ -85,6 +90,7 @@ void World::simulationStep()
 	for(Updatable *s : updatables2_) {
 		(*s).step();
 	}
+	/*
 	if ( !(rand()%30) ) {
 		int startI = 2+rand()%10;
 		int startJ = 2+rand()%10;
@@ -97,6 +103,7 @@ void World::simulationStep()
 			}
 		}
 	}
+	*/ // removed randomness for now to test stuff - kosiak
 }
 
 
