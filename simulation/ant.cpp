@@ -19,6 +19,11 @@ Ant::Ant(World& world, Point pos) :
 
 }
 
+Ant::~Ant()
+{
+
+}
+
 #define dupaprint(str,e) std::cout<<str" type: "<<typeid(*e).name()<<" "<<e<<"pos: "; e->getPos().printPosition();
 
 void Ant::step() {
@@ -95,7 +100,7 @@ void Ant::step() {
 		addY = ( t == 0 ? 0 : t < 0 ? +1 : -1 ) * speed_;
 
 		if ( addX != 0 && addY != 0 ) {
-			getWorld().getPheromoneMap().createBlob(this->getPos(), 10, 10);
+			getWorld().getPheromoneMap()->createBlob(this->getPos(), 10, 10);
 		}
 		this->setPos( this->getPos().move(addX, addY) );
 		std::cout << "^ idz do: addX: " << addX << " addY: " << addY << std::endl;

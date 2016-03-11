@@ -4,6 +4,8 @@
 
 class World;
 class Updatable {
+	/** static? there's only one world!
+	 * we could set that in World constructor? */
 	World& world_;
 public:
 	Updatable(World& world);

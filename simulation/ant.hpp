@@ -20,7 +20,7 @@ class Ant : public Entity {
 	const int visibility_ = 50;
 public:
 	Ant(World& world, Point pos);
-
+	~Ant();
 
 	void step();
 };

@@ -34,11 +34,6 @@ class World {
     /** all living matter */
 	std::vector<Updatable*> updatables_;
 
-	/** pheromneMap*/
-	PheromoneMap pheromoneMap_;
-
-    void mainLoop();
-
 public:
     World();
     ~World();
@@ -55,9 +50,8 @@ public:
 	void addUpdatable(Updatable* e);
 	void removeUpdatable(Updatable* e);
 
-
 	std::vector<Anthill *> getAnthills();
-	PheromoneMap& getPheromoneMap();
+	PheromoneMap *getPheromoneMap();
     std::vector<Ant*> getAnts();
     std::vector<Food*> getFoods();
 	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);

@@ -12,6 +12,7 @@ class Anthill : public Entity
 	std::vector<Food *> food_;
 public:
 	Anthill(World& world, Point pos);
+	~Anthill();
 	void step();
 
 	void lift(Food *l);

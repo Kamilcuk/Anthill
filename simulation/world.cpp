@@ -17,12 +17,18 @@ std::vector<Updatable *> World::getUpdatables() const
 	return updatables_;
 }
 
-World::World() :
-	pheromoneMap_(*this, 300, 200)
+World::World()
 {
 	setDimensions(300, 200);
+
+	/* initialize random seed: */
+	srand (time(NULL));
+
 }
-World::~World(){
+
+World::~World()
+{
+	this->stopSimulation();
 }
 
 //boost::python::list World::getAntsPythonList(){
@@ -38,8 +44,10 @@ void World::setSimulationFramerate(float){
 }
 void World::startSimulation()
 {
-	/* initialize random seed: */
-	srand (time(NULL));
+	/* they add itself*/
+	/* remember one pheromone map per world! */
+	new PheromoneMap(*this, width, height);
+
 	new Ant(*this, Point(1,1));
 	new Ant(*this, Point(100,100));
 	new Food(*this, Point(30,30));
@@ -49,7 +57,10 @@ void World::startSimulation()
 
 void World::stopSimulation()
 {
-	for(Updatable *s : updatables_) {
+	// as Updatable removes itself from the list
+	// we need a copy of the list to operate on
+	std::vector<Updatable *> updatables2_ = updatables_;
+	for(Updatable *s : updatables2_) {
 		delete s;
 	}
 	updatables_.clear();
@@ -61,7 +72,6 @@ void World::simulationStep()
 	for(Updatable *s : updatables_) {
 		(*s).step();
 	}
-	pheromoneMap_.step();
 }
 
 
@@ -106,20 +116,19 @@ std::vector<Entity *> World::getClosestEntities(Point mypos, int visibility)
 
 void World::addUpdatable(Updatable *e)
 {
-	if ( e )
+	if ( e && std::find(updatables_.begin(), updatables_.end(), e) == updatables_.end() )
 		updatables_.push_back(e);
 }
 
 void World::removeUpdatable(Updatable *e)
 {
 	std::vector<Updatable*>::iterator it;
-	for(it = updatables_.begin(); it != this->updatables_.end(); ++it) {
-		if ( *it == e ) {
-			updatables_.erase(it);
-			delete *it;
-			return;
-		}
+	it = std::find(updatables_.begin(), updatables_.end(), e);
+	if ( it == updatables_.end() ) {
+		// no such elemnt
+		return;
 	}
+	updatables_.erase(it);
 }
 
 std::vector<Anthill*> World::getAnthills()
@@ -135,7 +144,15 @@ std::vector<Anthill*> World::getAnthills()
 	return tmp;
 }
 
-PheromoneMap &World::getPheromoneMap()
+PheromoneMap *World::getPheromoneMap()
 {
-	return pheromoneMap_;
+	/* to pownnien być szablon!!! */
+	std::vector<PheromoneMap*> tmp;
+	for(Updatable *s : updatables_) {
+		PheromoneMap *a = dynamic_cast<PheromoneMap*>(s);
+		if( a ) {
+			return a;
+		}
+	}
+	return nullptr;
 }

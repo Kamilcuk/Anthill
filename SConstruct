@@ -1,9 +1,9 @@
 #!/bin/python3
 # Sconstruct file, Kamil Cukrowski
 env = Environment();
-env.Append(CCFLAGS = ' -Wall -Werror --std=c++11 -O2 -g -fPIC ');
+env.Append(CCFLAGS = ' -Wall --std=c++11 -O2 -g -fPIC ');
 
-SetOption('num_jobs', 1)
+SetOption('num_jobs', 3)
 
 # add boost support
 env.Append(CCFLAGS = '-Iboost');
