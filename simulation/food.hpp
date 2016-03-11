@@ -12,10 +12,13 @@
 
 class Entity;
 class Food : public Entity {
+	bool used;
 public:
 	Food(World &world, Point pos);
 
 	void step();
+	bool getUsed() const;
+	void setUsed(bool value);
 };
 
 #endif /* SRC_FOOD_HPP_ */
