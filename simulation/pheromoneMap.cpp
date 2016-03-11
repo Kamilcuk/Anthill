@@ -56,6 +56,10 @@ const PheromoneMap::Grid2D& PheromoneMap::getMap()
 {
 	return map_;
 }
+PheromoneMap::Grid2D PheromoneMap::getMapCopy()
+{
+	return map_;
+}
 
 float PheromoneMap::getStrengthAtPosition(const Point& p_pos)
 {

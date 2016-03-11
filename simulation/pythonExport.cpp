@@ -22,12 +22,15 @@ BOOST_PYTHON_MODULE(anthill){
         .def("getAnts",&World::getAnts)
         .def("getFoods",&World::getFoods)
 		.def("getAnthills",&World::getAnthills)
+		.def("getPheromoneMaps",&World::getPheromoneMaps)
 		.def("getUpdatables",&World::getUpdatables)
+
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
         .def("startSimulation",&World::startSimulation)
         .def("stopSimulation",&World::stopSimulation)
 		.def("simulationStep",&World::simulationStep)
+
     ;
 
     //class_<vector<Entity*> >("vector_entities")
@@ -35,12 +38,17 @@ BOOST_PYTHON_MODULE(anthill){
 
     class_<vector<Ant*> >("vector_ants")
         .def(vector_indexing_suite<vector<Ant*> >() );
-	class_<vector<Anthill*> >("vector_ants")
-		.def(vector_indexing_suite<vector<Anthill*> >() );
     class_<vector<Food*> >("vector_food")
         .def(vector_indexing_suite<vector<Food*> >() );
     class_<vector<Anthill*> >("vector_anthills")
         .def(vector_indexing_suite<vector<Anthill*> >() );
+	class_<vector<PheromoneMap*> >("vector_pmaps")
+		.def(vector_indexing_suite<vector<PheromoneMap*> >() );
+
+    class_<vector<float> >("vector_float")
+        .def(vector_indexing_suite<vector<float> >() );
+    class_<vector<vector<float> > >("vector_vector_float")
+        .def(vector_indexing_suite<vector< vector<float> > >() );
 
     //class_<Entity*,bases<Updatable> >("Entity",no_init)
     //;
@@ -58,6 +66,9 @@ BOOST_PYTHON_MODULE(anthill){
     ;
     class_<Anthill,Anthill*>("Anthill",no_init)
 		.def("getLoc",&Anthill::getPos)
+    ;
+    class_<PheromoneMap,PheromoneMap*>("PheromoneMap",no_init)
+		.def("getMapCopy",&PheromoneMap::getMapCopy)
     ;
 
     //class_<Point>("Point",init<optional<int,int> >())

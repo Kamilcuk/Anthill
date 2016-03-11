@@ -50,6 +50,7 @@ public:
 		float p_initial_strength);
 
 	const Grid2D& getMap();
+	Grid2D getMapCopy();
 	float getStrengthAtPosition(const Point& p_pos);
 	Point getStrongestAtArea(const Point& middle, const float radius);
 	PheromoneMap::Type getType() const;
