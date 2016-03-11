@@ -19,6 +19,7 @@ using boost::shared_ptr;
 #include "ant.hpp"
 #include "food.hpp"
 #include "pheromoneMap.hpp"
+#include "anthill.hpp"
 
 class Ant;
 class Updatable;
@@ -55,6 +56,7 @@ public:
 	void removeUpdatable(Updatable* e);
 
 
+	std::vector<Anthill *> getAnthills();
 	PheromoneMap& getPheromoneMap();
     std::vector<Ant*> getAnts();
     std::vector<Food*> getFoods();

@@ -122,6 +122,19 @@ void World::removeUpdatable(Updatable *e)
 	}
 }
 
+std::vector<Anthill*> World::getAnthills()
+{
+	/* to pownnien być szablon!!! */
+	std::vector<Anthill*> tmp;
+	for(Updatable *s : updatables_) {
+		Anthill *a = dynamic_cast<Anthill*>(s);
+		if( a ) {
+			tmp.push_back(a);
+		}
+	}
+	return tmp;
+}
+
 PheromoneMap &World::getPheromoneMap()
 {
 	return pheromoneMap_;

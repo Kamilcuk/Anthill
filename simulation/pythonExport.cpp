@@ -21,6 +21,7 @@ BOOST_PYTHON_MODULE(anthill){
         //.def("getAnts",&World::getAntsPythonList)
         .def("getAnts",&World::getAnts)
         .def("getFoods",&World::getFoods)
+		.def("getAnthills",&World::getAnthills)
 		.def("getUpdatables",&World::getUpdatables)
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
@@ -34,6 +35,8 @@ BOOST_PYTHON_MODULE(anthill){
 
     class_<vector<Ant*> >("vector_ants")
         .def(vector_indexing_suite<vector<Ant*> >() );
+	class_<vector<Anthill*> >("vector_ants")
+		.def(vector_indexing_suite<vector<Anthill*> >() );
     class_<vector<Food*> >("vector_food")
         .def(vector_indexing_suite<vector<Food*> >() );
 
