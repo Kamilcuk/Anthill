@@ -32,6 +32,8 @@ public:
 	void lift(Entity *l);
 	Entity *unLift();
 	Entity *getLifted() const;
+
+	float getDistance(Entity *e);
 };
 
 #endif // LIVING_H

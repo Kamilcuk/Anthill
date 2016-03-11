@@ -1,4 +1,5 @@
 #include "entity.hpp"
+#include <cmath>
 
 
 Entity::Entity(World& world, Point pos) :
@@ -71,4 +72,12 @@ Entity *Entity::unLift() {
 
 Entity *Entity::getLifted() const {
 	return lifted_;
+}
+
+float Entity::getDistance(Entity *e)
+{
+	return std::sqrt(
+				std::pow(this->getPos().posX()-e->getPos().posX(), 2) +
+				std::pow(this->getPos().posY()-e->getPos().posY(), 2)
+				);
 }
