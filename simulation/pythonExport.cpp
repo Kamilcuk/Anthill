@@ -39,6 +39,8 @@ BOOST_PYTHON_MODULE(anthill){
 		.def(vector_indexing_suite<vector<Anthill*> >() );
     class_<vector<Food*> >("vector_food")
         .def(vector_indexing_suite<vector<Food*> >() );
+    class_<vector<Anthill*> >("vector_anthills")
+        .def(vector_indexing_suite<vector<Anthill*> >() );
 
     //class_<Entity*,bases<Updatable> >("Entity",no_init)
     //;
@@ -53,6 +55,9 @@ BOOST_PYTHON_MODULE(anthill){
     ;
     class_<Food,Food*>("Food",no_init)
 		.def("getLoc",&Food::getPos)
+    ;
+    class_<Anthill,Anthill*>("Anthill",no_init)
+		.def("getLoc",&Anthill::getPos)
     ;
 
     //class_<Point>("Point",init<optional<int,int> >())
