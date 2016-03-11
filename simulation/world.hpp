@@ -51,7 +51,7 @@ public:
 	void removeUpdatable(Updatable* e);
 
 	std::vector<Anthill *> getAnthills();
-	PheromoneMap *getPheromoneMap();
+	std::vector<PheromoneMap*> getPheromoneMaps();
     std::vector<Ant*> getAnts();
     std::vector<Food*> getFoods();
 	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);

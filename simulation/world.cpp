@@ -23,7 +23,6 @@ World::World()
 
 	/* initialize random seed: */
 	srand (time(NULL));
-
 }
 
 World::~World()
@@ -44,15 +43,27 @@ void World::setSimulationFramerate(float){
 }
 void World::startSimulation()
 {
+	/* initialize random seed: */
+	srand (time(NULL));
+
 	/* they add itself*/
 	/* remember one pheromone map per world! */
-	new PheromoneMap(*this, width, height);
+	new PheromoneMap(*this, PheromoneMap::Type::ToFood, width, height);
+	new PheromoneMap(*this, PheromoneMap::Type::FromFood, width, height);
 
-	new Ant(*this, Point(1,1));
-	new Ant(*this, Point(100,100));
-	new Food(*this, Point(30,30));
-	new Food(*this, Point(70,70));
-	new Anthill(*this, Point(50,50));
+	new Ant(*this, Point(30,30));
+	new Ant(*this, Point(25,25));
+	new Ant(*this, Point(20,20));
+	new Ant(*this, Point(50,50));
+	new Ant(*this, Point(30,20));
+	new Food(*this, Point(22,22));
+	new Food(*this, Point(27,26));
+	for(int i=18;i<20;i++) {
+		for(int j=18;j<20;j++) {
+			new Food(*this, Point(i,j));
+		}
+	}
+	new Anthill(*this, Point(35,35));
 }
 
 void World::stopSimulation()
@@ -66,11 +77,25 @@ void World::stopSimulation()
 	updatables_.clear();
 }
 
+/* well, i know */
 void World::simulationStep()
 {
 	std::cout<<"--------------------------------------------"<<std::endl;
-	for(Updatable *s : updatables_) {
+	std::vector<Updatable *> updatables2_ = updatables_;
+	for(Updatable *s : updatables2_) {
 		(*s).step();
+	}
+	if ( !(rand()%30) ) {
+		int startI = 2+rand()%10;
+		int startJ = 2+rand()%10;
+		int addI = startI+2+rand()%5;
+		int addJ = startJ+2+rand()%5;
+
+		for(int i=startI;i<addI;i++) {
+			for(int j=startJ;j<addJ;j++) {
+				new Food(*this, Point(i,j));
+			}
+		}
 	}
 }
 
@@ -143,16 +168,15 @@ std::vector<Anthill*> World::getAnthills()
 	}
 	return tmp;
 }
-
-PheromoneMap *World::getPheromoneMap()
+std::vector<PheromoneMap*> World::getPheromoneMaps()
 {
 	/* to pownnien być szablon!!! */
 	std::vector<PheromoneMap*> tmp;
 	for(Updatable *s : updatables_) {
 		PheromoneMap *a = dynamic_cast<PheromoneMap*>(s);
 		if( a ) {
-			return a;
+			tmp.push_back(a);
 		}
 	}
-	return nullptr;
+	return tmp;
 }
