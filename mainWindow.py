@@ -49,8 +49,27 @@ class MainWindow(QMainWindow):
         self.world.setDimensions(w,h)
         self.world.setSimulationFramerate(self.simulationFramerate)
 
+        self.maxPheromone=1
+
     def __exit__(self):
         self.refreshTimer.stop()
+
+    def drawPheromoneMap(self,map):
+        t=map.getMapCopy()
+        t=list(t)
+        s=self.pixelSize
+        scene=self.ui.graphicsView.scene()
+        pbrush=QBrush(QColor(50,120,100,255))
+        ppen=QPen(QBrush(QColor()),0)
+        for x,a in enumerate(t):
+            if(x>self.worldWidth):
+                break
+            for y,b in enumerate(a):
+                if(y>self.worldHeight):
+                    break
+                self.maxPheromone=max(self.maxPheromone,b)
+                pbrush=QBrush(QColor(50,120,100,abs(255*b/self.maxPheromone)))
+                scene.addRect(x*s,y*s,s,s,pen=ppen,brush=pbrush)
 
 
     @pyqtSlot()
@@ -72,6 +91,12 @@ class MainWindow(QMainWindow):
 
         s=self.pixelSize
 
+        # draw pheromone map
+        pMaps=self.world.getPheromoneMaps()
+        pMaps=[pMaps[p] for p in range(len(pMaps))]
+        for m in pMaps:
+            self.drawPheromoneMap(m)
+
         # draw ants
         # ants not working as iterable
         ants=self.world.getAnts()
@@ -88,7 +113,7 @@ class MainWindow(QMainWindow):
             x=foods[food].getLoc().posX()
             y=foods[food].getLoc().posY()
             foodpen=QPen(QBrush(QColor()),0)
-            foodbrush=QBrush(QColor(200,200,200,255))
+            foodbrush=QBrush(QColor(200,200,200,150))
             #scene.addrect(x-3,y-3,6,6,pen=foodpen,brush=foodbrush)
             scene.addRect(x*s,y*s,s,s,pen=foodpen,brush=foodbrush)
         # draw anthills
