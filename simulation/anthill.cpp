@@ -2,8 +2,7 @@
 #include "world.hpp"
 
 Anthill::Anthill(World& world,Point pos) :
-	Entity(world, pos),
-	world_(world)
+	Entity(world, pos)
 {
 
 }
@@ -11,7 +10,7 @@ Anthill::Anthill(World& world,Point pos) :
 void Anthill::step()
 {
 	/** really? visitator... must be force with me! */
-	std::vector<Entity *> standingon = world_.getClosestEntities(this->getPos(), 0);
+	std::vector<Entity *> standingon = this->getWorld().getClosestEntities(this->getPos(), 0);
 	for(Entity *e : standingon) {
 		Food *f = dynamic_cast<Food*>(e);
 		if ( f && !f->getCarrier() ) {

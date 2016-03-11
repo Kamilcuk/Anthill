@@ -4,12 +4,10 @@
 #include <vector>
 #include "entity.hpp"
 #include "food.hpp"
-#include "world.hpp"
 
+class World;
 class Anthill : public Entity
 {
-	World& world_;
-
 	/** all the food we have! hahahaha */
 	std::vector<Food *> food_;
 public:

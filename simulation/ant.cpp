@@ -95,7 +95,7 @@ void Ant::step() {
 		addY = ( t == 0 ? 0 : t < 0 ? +1 : -1 ) * speed_;
 
 		if ( addX != 0 && addY != 0 ) {
-			//world_.addSimulable(new Pheromone(Position(this->getPos().posX(), this->getPos().posY())));
+			getWorld().getPheromoneMap().createBlob(this->getPos(), 10, 10);
 		}
 		this->setPos( this->getPos().move(addX, addY) );
 		std::cout << "^ idz do: addX: " << addX << " addY: " << addY << std::endl;

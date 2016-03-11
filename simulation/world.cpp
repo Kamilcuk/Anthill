@@ -17,7 +17,10 @@ std::vector<Updatable *> World::getUpdatables() const
 	return updatables_;
 }
 
-World::World(){
+World::World() :
+	pheromoneMap_(*this, 300, 200)
+{
+	setDimensions(300, 200);
 }
 World::~World(){
 }
@@ -26,7 +29,10 @@ World::~World(){
 //    return std_vector_to_py_list(ants);
 //}
 
-void World::setDimensions(int,int){
+void World::setDimensions(int X, int Y)
+{
+	width = X;
+	height = Y;
 }
 void World::setSimulationFramerate(float){
 }
@@ -35,10 +41,10 @@ void World::startSimulation()
 	/* initialize random seed: */
 	srand (time(NULL));
 	new Ant(*this, Point(1,1));
-	new Ant(*this, Point(10,10));
-	new Food(*this, Point(3,3));
-	new Food(*this, Point(7,7));
-	new Anthill(*this, Point(5,5));
+	new Ant(*this, Point(100,100));
+	new Food(*this, Point(30,30));
+	new Food(*this, Point(70,70));
+	new Anthill(*this, Point(50,50));
 }
 
 void World::stopSimulation()
@@ -55,6 +61,7 @@ void World::simulationStep()
 	for(Updatable *s : updatables_) {
 		(*s).step();
 	}
+	pheromoneMap_.step();
 }
 
 
@@ -113,4 +120,9 @@ void World::removeUpdatable(Updatable *e)
 			return;
 		}
 	}
+}
+
+PheromoneMap &World::getPheromoneMap()
+{
+	return pheromoneMap_;
 }

@@ -11,3 +11,8 @@ Updatable::~Updatable()
 {
 	world_.removeUpdatable(this);
 }
+
+World &Updatable::getWorld()
+{
+	return world_;
+}

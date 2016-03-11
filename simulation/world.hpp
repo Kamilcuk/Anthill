@@ -18,6 +18,7 @@ using boost::shared_ptr;
 #include "updatable.hpp"
 #include "ant.hpp"
 #include "food.hpp"
+#include "pheromoneMap.hpp"
 
 class Ant;
 class Updatable;
@@ -32,13 +33,16 @@ class World {
     /** all living matter */
 	std::vector<Updatable*> updatables_;
 
+	/** pheromneMap*/
+	PheromoneMap pheromoneMap_;
+
     void mainLoop();
 
 public:
     World();
     ~World();
 
-    void setDimensions(int,int);
+	void setDimensions(int X, int Y);
     void setSimulationFramerate(float);
 
     void startSimulation();
@@ -50,6 +54,8 @@ public:
 	void addUpdatable(Updatable* e);
 	void removeUpdatable(Updatable* e);
 
+
+	PheromoneMap& getPheromoneMap();
     std::vector<Ant*> getAnts();
     std::vector<Food*> getFoods();
 	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
