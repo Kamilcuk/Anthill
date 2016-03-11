@@ -1,8 +1,9 @@
 #include "pheromoneMap.hpp"
 
-PheromoneMap::PheromoneMap(World& world, unsigned p_size_x, unsigned p_size_y) :
+PheromoneMap::PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y) :
 	Updatable(world),
-	decay_coeff_(0)
+	type_(type),
+	decay_coeff_(0.05)
 {
 	map_ = std::vector<std::vector<float>>
 		(p_size_x, std::vector<float>(p_size_y, 0.0));
@@ -14,6 +15,11 @@ PheromoneMap::~PheromoneMap()
 
 }
 
+
+PheromoneMap::Type PheromoneMap::getType() const
+{
+	return type_;
+}
 
 float PheromoneMap::decay(float p_current_strength)
 {
@@ -56,6 +62,27 @@ float PheromoneMap::getStrengthAtPosition(const Point& p_pos)
 	if((unsigned)p_pos.posX() > map_.size() || (unsigned)p_pos.posY() > map_[0].size())
 		throw std::runtime_error("Specified position exceeds pheromone map.");
 	return map_[(unsigned)p_pos.posX()][(unsigned)p_pos.posY()];
+}
+
+Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
+{
+	/** for now its a quadrant */
+	float strongest = -1;
+	Point ret(-1,-1);
+	for(int i=-radius;i<radius;++i) {
+		for(int j=-radius;j<radius;++j) {
+			unsigned int x = middle.posX()+i;
+			unsigned int y = middle.posY()+i;
+			if ( x >= 0 && y >= 0 && x < map_.size() && y < map_.size() ) {
+				float strength = getStrengthAtPosition(Point(x, y));
+				if ( strength > strongest ) {
+					ret = Point(x,y);
+					strongest = strength;
+				}
+			}
+		}
+	}
+	return ret;
 }
 
 

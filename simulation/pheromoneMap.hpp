@@ -11,8 +11,16 @@
 class World;
 class PheromoneMap : public Updatable
 {
+public:
+	enum Type {
+		ToFood,
+		FromFood
+	};
+private:
 	using Grid2D = std::vector<std::vector<float>>;
 	Grid2D map_;
+
+	PheromoneMap::Type type_;
 
 	// trying to achieve (1-e^-(t/To))
 	float decay_coeff_;
@@ -24,7 +32,9 @@ class PheromoneMap : public Updatable
 	void addStrength(unsigned p_x, unsigned p_y, float p_strength);
 
 public:
-	PheromoneMap(World& world, unsigned p_size_x, unsigned p_size_y);
+
+
+	PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y);
 	~PheromoneMap();
 
 	void step();
@@ -41,6 +51,8 @@ public:
 
 	const Grid2D& getMap();
 	float getStrengthAtPosition(const Point& p_pos);
+	Point getStrongestAtArea(const Point& middle, const float radius);
+	PheromoneMap::Type getType() const;
 };
 
 #endif // PHEROMONE_MAP_H
