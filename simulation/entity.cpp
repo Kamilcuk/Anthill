@@ -1,9 +1,5 @@
 #include "entity.hpp"
 
-Point Entity::getPos()
-{
-	return pos_;
-}
 
 Entity::Entity(World& world, Point pos) :
 	Updatable(world),
@@ -18,6 +14,16 @@ Entity::~Entity()
 {
 
 }
+
+Point Entity::getPos()
+{
+	/* when we are carried, then out pos is equal to the thing that lifts us */
+	if ( this->getCarrier() ) {
+		this->pos_ = this->getCarrier()->getPos();
+	}
+	return this->pos_;
+}
+
 
 void Entity::setPos(Point pos)
 {
