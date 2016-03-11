@@ -17,7 +17,7 @@ class Ant : public Entity {
 	World& world_;
 
 	const int speed_ = 1;
-	const int visibility_ = 50;
+	const int visibility_ = 15;
 public:
 	Ant(World& world, Point pos);
 	~Ant();
