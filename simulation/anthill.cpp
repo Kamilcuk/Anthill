@@ -22,6 +22,14 @@ void Anthill::step()
 			this->lift(f);
 		}
 	}
+
+	if ( food_.size() > 10 ) {
+		for(auto *f : food_) {
+			f->setUsed(true);
+		}
+		new Ant(this->getWorld(), this->getPos().move(1,1));
+		food_.clear();
+	}
 }
 
 void Anthill::lift(Food *f)
