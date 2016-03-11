@@ -32,12 +32,15 @@ class MainWindow(QMainWindow):
         #self.showMaximized()
 
         # world/simulation parameters - hardcoded - test
-        self.worldWidth=300
-        self.worldHeight=200
+        self.pixelSize=10
+
+        self.worldWidth=50
+        self.worldHeight=50
+
         self.simulationFramerate=10
 
-        w=self.worldWidth
-        h=self.worldHeight
+        w=self.worldWidth * self.pixelSize
+        h=self.worldHeight * self.pixelSize
 
         self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
 
@@ -56,8 +59,8 @@ class MainWindow(QMainWindow):
         scene.clear()
         #self.graphicsItems={}
 
-        w=self.worldWidth
-        h=self.worldHeight
+        w=self.worldWidth * self.pixelSize
+        h=self.worldHeight * self.pixelSize
 
         bgBrush=QBrush(QColor(50,120,50,255))
         bgPen=QPen(QBrush(QColor()),0)
@@ -67,6 +70,8 @@ class MainWindow(QMainWindow):
         # na razie może być, później się zrobi wątek w c++. ms
         self.world.simulationStep()
 
+        s=self.pixelSize
+
         # draw ants
         # ants not working as iterable
         ants=self.world.getAnts()
@@ -75,7 +80,7 @@ class MainWindow(QMainWindow):
             y=ants[ant].getLoc().posY()
             antPen=QPen(QBrush(QColor()),0)
             antBrush=QBrush(QColor(100,100,50,255))
-            scene.addRect(x-3,y-3,6,6,pen=antPen,brush=antBrush)
+            scene.addEllipse(x*s,y*s,s,s,pen=antPen,brush=antBrush)
         # draw foods
         # like ants
         foods=self.world.getFoods()
@@ -84,7 +89,8 @@ class MainWindow(QMainWindow):
             y=foods[food].getLoc().posY()
             foodPen=QPen(QBrush(QColor()),0)
             foodBrush=QBrush(QColor(200,200,200,255))
-            scene.addRect(x-3,y-3,6,6,pen=foodPen,brush=foodBrush)
+            #scene.addRect(x-3,y-3,6,6,pen=foodPen,brush=foodBrush)
+            scene.addRect(x*s,y*s,s,s,pen=foodPen,brush=foodBrush)
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:
@@ -104,3 +110,9 @@ class MainWindow(QMainWindow):
             self.refreshTimer=None
 
             self.world.stopSimulation()
+
+    def on_actionExit_triggered(self):
+        self.close()
+
+    def on_actionAbout_triggered(self):
+        print("Anthill simulator version 0. ")
