@@ -3,7 +3,7 @@
 env = Environment();
 env.Append(CCFLAGS = ' -Wall -Werror --std=c++11 -O2 -g -fPIC ');
 
-SetOption('num_jobs', 5)
+SetOption('num_jobs', 1)
 
 # add boost support
 env.Append(CCFLAGS = '-Iboost');
