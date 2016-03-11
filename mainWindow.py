@@ -87,10 +87,19 @@ class MainWindow(QMainWindow):
         for food in range(len(foods)):
             x=foods[food].getLoc().posX()
             y=foods[food].getLoc().posY()
-            foodPen=QPen(QBrush(QColor()),0)
-            foodBrush=QBrush(QColor(200,200,200,255))
-            #scene.addRect(x-3,y-3,6,6,pen=foodPen,brush=foodBrush)
-            scene.addRect(x*s,y*s,s,s,pen=foodPen,brush=foodBrush)
+            foodpen=QPen(QBrush(QColor()),0)
+            foodbrush=QBrush(QColor(200,200,200,255))
+            #scene.addrect(x-3,y-3,6,6,pen=foodpen,brush=foodbrush)
+            scene.addRect(x*s,y*s,s,s,pen=foodpen,brush=foodbrush)
+        # draw anthills
+        anthills=self.world.getAnthills()
+        anthills=[anthills[a] for a in range(len(anthills))]
+        for anthill in anthills:
+            x=anthill.getLoc().posX()
+            y=anthill.getLoc().posX()
+            anthillPen=QPen(QBrush(QColor()),0)
+            anthillBrush=QBrush(QColor(200,20,20,255))
+            scene.addEllipse(x*s,y*s,s,s,pen=anthillPen,brush=anthillBrush)
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:
