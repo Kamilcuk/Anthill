@@ -30,7 +30,7 @@ class World {
     float framerate;
     
     /** all living matter */
-	std::vector<Updatable *> updatables_;
+	std::vector<Updatable*> updatables_;
 
     void mainLoop();
 

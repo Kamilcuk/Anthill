@@ -21,9 +21,10 @@ void Point::setPosY(int posY)
 	posY_ = posY;
 }
 
-void Point::move(int addX, int addY) {
+Point Point::move(int addX, int addY) {
 	posX_ += addX;
 	posY_ += addY;
+	return *this;
 }
 
 void Point::printPosition()

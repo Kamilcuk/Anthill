@@ -13,7 +13,7 @@ public:
 	void setPosX(int posX);
 	int posY() const;
 	void setPosY(int posY);
-	void move(int addX, int addY);
+	Point move(int addX, int addY);
 	void printPosition();
 	Point getPosition() const;
 };

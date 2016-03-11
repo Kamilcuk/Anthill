@@ -44,12 +44,12 @@ BOOST_PYTHON_MODULE(anthill){
     //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
     class_<Ant,Ant*>("Ant",no_init)
         //.def("getLoc",get_by_value(&Ant::getPos))
-        .def("getLoc",&Ant::getLoc)
+		.def("getLoc",&Ant::getPos)
         //.def("getLoc",&Ant::getLoc)
         //.def("getPos",&Ant::step)
     ;
     class_<Food,Food*>("Food",no_init)
-        .def("getLoc",&Food::getLoc)
+		.def("getLoc",&Food::getPos)
     ;
 
     //class_<Point>("Point",init<optional<int,int> >())

@@ -1,6 +1,6 @@
 #include "entity.hpp"
 
-Point& Entity::getPos()
+Point Entity::getPos()
 {
 	return pos_;
 }
@@ -17,6 +17,11 @@ Entity::Entity(World& world, Point pos) :
 Entity::~Entity()
 {
 
+}
+
+void Entity::setPos(Point pos)
+{
+	this->pos_ = pos;
 }
 
 void Entity::addCarrier(Entity *e)

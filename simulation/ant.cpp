@@ -97,7 +97,7 @@ void Ant::step() {
 		if ( addX != 0 && addY != 0 ) {
 			//world_.addSimulable(new Pheromone(Position(this->getPos().posX(), this->getPos().posY())));
 		}
-		this->getPos().move(addX, addY);
+		this->setPos( this->getPos().move(addX, addY) );
 		std::cout << "^ idz do: addX: " << addX << " addY: " << addY << std::endl;
 	}
 
