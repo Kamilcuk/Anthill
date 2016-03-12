@@ -22,6 +22,7 @@ BOOST_PYTHON_MODULE(anthill){
         .def("getAnts",&World::getAnts)
         .def("getFoods",&World::getFoods)
 		.def("getAnthills",&World::getAnthills)
+		.def("getObstacles",&World::getObstacles)
 		.def("getPheromoneMaps",&World::getPheromoneMaps)
 		.def("getUpdatables",&World::getUpdatables)
 
@@ -42,6 +43,8 @@ BOOST_PYTHON_MODULE(anthill){
         .def(vector_indexing_suite<vector<Food*> >() );
     class_<vector<Anthill*> >("vector_anthills")
         .def(vector_indexing_suite<vector<Anthill*> >() );
+    class_<vector<Obstacle*> >("vector_obstacles")
+        .def(vector_indexing_suite<vector<Obstacle*> >() );
 	class_<vector<PheromoneMap*> >("vector_pmaps")
 		.def(vector_indexing_suite<vector<PheromoneMap*> >() );
 
@@ -56,10 +59,7 @@ BOOST_PYTHON_MODULE(anthill){
     //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
     //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
     class_<Ant,Ant*>("Ant",no_init)
-        //.def("getLoc",get_by_value(&Ant::getPos))
 		.def("getLoc",&Ant::getPos)
-        //.def("getLoc",&Ant::getLoc)
-        //.def("getPos",&Ant::step)
     ;
     class_<Food,Food*>("Food",no_init)
 		.def("getLoc",&Food::getPos)
@@ -67,6 +67,10 @@ BOOST_PYTHON_MODULE(anthill){
     class_<Anthill,Anthill*>("Anthill",no_init)
 		.def("getLoc",&Anthill::getPos)
     ;
+    class_<Obstacle,Obstacle*>("Obstacle",no_init)
+		.def("getLoc",&Obstacle::getPos)
+    ;
+
     class_<PheromoneMap,PheromoneMap*>("PheromoneMap",no_init)
 		.def("getMapCopy",&PheromoneMap::getMapCopy)
     ;

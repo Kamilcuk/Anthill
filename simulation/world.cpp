@@ -208,6 +208,8 @@ std::vector<PheromoneMap*> World::getPheromoneMaps()
 std::vector<Obstacle*> World::getObstacles()
 {
 	std::vector<Obstacle*> ret;
-	for(auto o : obstacles_) ret.emplace_back(&o);
+
+    for(int i=0; i<obstacles_.size(); ++i)
+        ret.push_back(&obstacles_[i]);
 	return ret;
 }

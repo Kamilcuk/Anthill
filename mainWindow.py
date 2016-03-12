@@ -122,6 +122,12 @@ class MainWindow(QMainWindow):
             self.drawPheromoneMap(m,baseRGB=(
                     255*(i%2), 20, 200*((i+1)%2)))
 
+        # draw obstacles
+        obstacles=self.world.getObstacles()
+        obstaclePen=QPen(QBrush(QColor()),0)
+        obstacleBrush=QBrush(QColor(50,50,50,255))
+        self.drawEntities(obstacles,obstaclePen,obstacleBrush)
+
         # draw foods
         foods=self.world.getFoods()
         foodPen=QPen(QBrush(QColor()),0)
