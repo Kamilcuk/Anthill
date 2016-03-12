@@ -33,15 +33,14 @@ class MainWindow(QMainWindow):
         #self.showMaximized()
 
         # world/simulation parameters - hardcoded - test
-        self.pixelSize=10
-
         self.worldWidth=50
         self.worldHeight=50
-
         self.simulationFramerate=10
 
+        self.pixelSize=10
         w=self.worldWidth * self.pixelSize
         h=self.worldHeight * self.pixelSize
+
 
         self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
 
@@ -74,6 +73,8 @@ class MainWindow(QMainWindow):
                 self.maxPheromone=max(self.maxPheromone,b)
                 if(alpha<0.001):
                     continue
+                if(alpha>255):
+                    continue
 
                 pbrush=QBrush(QColor(*baseRGB, alpha))
                 ppen=QPen(QBrush(QColor(*baseRGB2, alpha)),0)
@@ -96,6 +97,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def refresh(self):
+
         scene=self.ui.graphicsView.scene()
         scene.clear()
         #self.graphicsItems={}
@@ -157,6 +159,12 @@ class MainWindow(QMainWindow):
             self.refreshTimer=None
 
             self.world.stopSimulation()
+
+    def on_framerateBox_valueChanged(self):
+        self.simulationFramerate=self.ui.framerateBox.value()
+        if(self.refreshTimer):
+            self.refreshTimer.stop()
+            self.refreshTimer.start(1000/self.simulationFramerate)
 
     def on_actionExit_triggered(self):
         self.close()
