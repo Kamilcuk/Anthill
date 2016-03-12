@@ -34,7 +34,7 @@ private:
 public:
 
 
-	PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y);
+	PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y, float decay_coeff);
 	~PheromoneMap();
 
 	void step();

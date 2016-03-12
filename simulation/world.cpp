@@ -48,8 +48,8 @@ void World::startSimulation()
 
 	/* they add itself*/
 	/* remember one pheromone map per world! */
-	new PheromoneMap(*this, PheromoneMap::Type::ToFood, width, height);
-	new PheromoneMap(*this, PheromoneMap::Type::FromFood, width, height);
+	new PheromoneMap(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
+	new PheromoneMap(*this, PheromoneMap::Type::FromFood, width, height, 0.01);
 
 	new Ant(*this, Point(30,30));
 	new Ant(*this, Point(25,25));

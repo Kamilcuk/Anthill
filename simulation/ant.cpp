@@ -150,11 +150,11 @@ void Ant::step() {
 		if ( addX != 0 && addY != 0 ) {
 			if ( anthillThere && this->getLifted() ) {
 				std::cout << "pheroFromFood" << std::endl;
-				pheroFromFood->createBlob(this->getPos(), 20, 100);
+				pheroFromFood->createBlob(this->getPos(), 2, 100);
 			}
 			if ( foodThere && !this->getLifted() ) {
 				std::cout << "phero to food" << std::endl;
-				pheroToFood->createBlob(this->getPos(), 20, 100);
+				pheroToFood->createBlob(this->getPos(), 2, 100);
 			}
 		}
 

@@ -1,9 +1,10 @@
 #include "pheromoneMap.hpp"
 
-PheromoneMap::PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y) :
+PheromoneMap::PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y,
+	float decay_coeff) :
 	Updatable(world),
 	type_(type),
-	decay_coeff_(0.05)
+	decay_coeff_(decay_coeff)
 {
 	map_ = std::vector<std::vector<float>>
 		(p_size_x, std::vector<float>(p_size_y, 0.0));
@@ -40,7 +41,7 @@ void PheromoneMap::addStrengthClipping(unsigned p_x, unsigned p_y,
 
 void PheromoneMap::addStrength(unsigned p_x, unsigned p_y, float p_strength)
 {
-	map_[p_x][p_y] = p_strength;
+	map_[p_x][p_y] += p_strength;
 }
 
 
@@ -100,8 +101,11 @@ void PheromoneMap::createBlob(const Point& p_pos, const float p_radius,
 			// strength falls off linearly with distance from center
 			const float dist_from_center = sqrt((p_pos.posX() - x) * (p_pos.posX() - x) + 
 					(p_pos.posY() - y) * (p_pos.posY() - y));
-			const float local_strength = p_initial_strength * (1 - dist_from_center / p_radius);
-			
-			addStrengthClipping(x, y, local_strength);
+
+			if(dist_from_center <= p_radius)
+			{
+				const float local_strength = p_initial_strength * (1 - dist_from_center / p_radius);
+				addStrengthClipping(x, y, local_strength);
+			}
 		}
 }
