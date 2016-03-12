@@ -76,8 +76,8 @@ class MainWindow(QMainWindow):
                 if(alpha>255):
                     continue
 
-                pbrush=QBrush(QColor(*baseRGB, alpha))
-                ppen=QPen(QBrush(QColor(*baseRGB2, alpha)),0)
+                pbrush=QBrush(QColor(baseRGB[0],baseRGB[1],baseRGB[2], alpha))
+                ppen=QPen(QBrush(QColor(baseRGB2[0],baseRGB2[1],baseRGB2[2], alpha)),0)
                 scene.addRect(x*s,y*s,s,s,pen=ppen,brush=pbrush)
 
     def drawEntities(self,ents,qpen,qbrush,ellipse=False):
