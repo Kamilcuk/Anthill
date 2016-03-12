@@ -17,7 +17,7 @@ std::set<Point> ShapeGenerator::GenerateLine(const Point& start, const Point& en
 
 	std::set<Point> points_on_line;
 
-	while((int)x != end.posX() && (int)y != end.posY())
+	while(! ((int)x == end.posX() && (int)y == end.posY())) // repeat until end point reached
 	{
 		std::set<Point> points_in_circle = GenerateCircle(Point(x, y), (unsigned)((float)thickness / 2.0));
 		

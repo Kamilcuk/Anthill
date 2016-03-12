@@ -36,6 +36,8 @@ class World {
     /** all living matter */
 	std::vector<Updatable*> updatables_;
 
+    std::vector<Obstacle> obstacles_;
+
 public:
     World();
     ~World();
@@ -58,6 +60,8 @@ public:
     std::vector<Food*> getFoods();
 	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
 	std::vector<Updatable *> getUpdatables() const;
+
+    std::vector<Obstacle*> getObstacles();
 };
 
 #endif /* WORLD_H_ */
