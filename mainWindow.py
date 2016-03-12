@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 
 from PyQt5.QtGui import QPen
@@ -22,10 +23,10 @@ class MainWindow(QMainWindow):
 
         self.refreshTimer=None
 
-        #self.ui.graphics.setOptimizationFlags(
-        #    QGraphicsView.DontAdjustForAntialiasing
-        #    | QGraphicsView.DontClipPainter
-        #    | QGraphicsView.DontSavePainterState)
+        self.ui.graphicsView.setOptimizationFlags(
+            QGraphicsView.DontAdjustForAntialiasing
+            | QGraphicsView.DontClipPainter
+            | QGraphicsView.DontSavePainterState)
         #self.ui.graphics.setTransformationAnchor(self.ui.graphics.NoAnchor)
         #self.ui.graphics.setResizeAnchor(self.ui.graphics.NoAnchor)
         #self.on_tab_currentChanged(self.ui.tab.currentIndex())
@@ -54,22 +55,43 @@ class MainWindow(QMainWindow):
     def __exit__(self):
         self.refreshTimer.stop()
 
-    def drawPheromoneMap(self,map):
-        t=map.getMapCopy()
-        t=list(t)
+    def drawPheromoneMap(self,map,
+            baseRGB=(50,30,100),
+            baseRGB2=(10,10,10) ):
+        data=map.getMapCopy()
+        data=list(data)
+
         s=self.pixelSize
         scene=self.ui.graphicsView.scene()
-        pbrush=QBrush(QColor(50,120,100,255))
-        ppen=QPen(QBrush(QColor()),0)
-        for x,a in enumerate(t):
+
+        for x,a in enumerate(data):
             if(x>self.worldWidth):
                 break
             for y,b in enumerate(a):
                 if(y>self.worldHeight):
                     break
+                alpha=255*b/self.maxPheromone
                 self.maxPheromone=max(self.maxPheromone,b)
-                pbrush=QBrush(QColor(50,120,100,abs(255*b/self.maxPheromone)))
+                if(alpha<0.001):
+                    continue
+
+                pbrush=QBrush(QColor(*baseRGB, alpha))
+                ppen=QPen(QBrush(QColor(*baseRGB2, alpha)),0)
                 scene.addRect(x*s,y*s,s,s,pen=ppen,brush=pbrush)
+
+    def drawEntities(self,ents,qpen,qbrush,ellipse=False):
+        ents=[ents[a] for a in range(len(ents))]
+
+        s=self.pixelSize
+        scene=self.ui.graphicsView.scene()
+
+        for ent in ents:
+            x=ent.getLoc().posX()
+            y=ent.getLoc().posY()
+            if(ellipse):
+                scene.addEllipse(x*s,y*s,s,s,pen=qpen,brush=qbrush)
+            else:
+                scene.addRect(x*s,y*s,s,s,pen=qpen,brush=qbrush)
 
 
     @pyqtSlot()
@@ -94,37 +116,28 @@ class MainWindow(QMainWindow):
         # draw pheromone map
         pMaps=self.world.getPheromoneMaps()
         pMaps=[pMaps[p] for p in range(len(pMaps))]
-        for m in pMaps:
-            self.drawPheromoneMap(m)
+        for i,m in enumerate(pMaps):
+            self.drawPheromoneMap(m,baseRGB=(
+                    255*(i%2), 20, 200*((i+1)%2)))
+
+        # draw foods
+        foods=self.world.getFoods()
+        foodPen=QPen(QBrush(QColor()),0)
+        foodBrush=QBrush(QColor(200,200,200,150))
+        self.drawEntities(foods,foodPen,foodBrush)
 
         # draw ants
-        # ants not working as iterable
         ants=self.world.getAnts()
-        for ant in range(len(ants)):
-            x=ants[ant].getLoc().posX()
-            y=ants[ant].getLoc().posY()
-            antPen=QPen(QBrush(QColor()),0)
-            antBrush=QBrush(QColor(100,100,50,255))
-            scene.addEllipse(x*s,y*s,s,s,pen=antPen,brush=antBrush)
-        # draw foods
-        # like ants
-        foods=self.world.getFoods()
-        for food in range(len(foods)):
-            x=foods[food].getLoc().posX()
-            y=foods[food].getLoc().posY()
-            foodpen=QPen(QBrush(QColor()),0)
-            foodbrush=QBrush(QColor(200,200,200,150))
-            #scene.addrect(x-3,y-3,6,6,pen=foodpen,brush=foodbrush)
-            scene.addRect(x*s,y*s,s,s,pen=foodpen,brush=foodbrush)
+        antPen=QPen(QBrush(QColor()),0)
+        antBrush=QBrush(QColor(100,100,50,200))
+        self.drawEntities(ants,antPen,antBrush,True)
+
+
         # draw anthills
         anthills=self.world.getAnthills()
-        anthills=[anthills[a] for a in range(len(anthills))]
-        for anthill in anthills:
-            x=anthill.getLoc().posX()
-            y=anthill.getLoc().posX()
-            anthillPen=QPen(QBrush(QColor()),0)
-            anthillBrush=QBrush(QColor(200,20,20,255))
-            scene.addEllipse(x*s,y*s,s,s,pen=anthillPen,brush=anthillBrush)
+        anthillPen=QPen(QBrush(QColor()),0)
+        anthillBrush=QBrush(QColor(200,20,20,150))
+        self.drawEntities(anthills,anthillPen,anthillBrush)
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:
