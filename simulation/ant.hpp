@@ -10,9 +10,10 @@
 
 #include "entity.hpp"
 #include "world.hpp"
+#include "creature.hpp"
 
 class World;
-class Ant : public Entity {
+class Ant : public Creature {
 	/** reference to the whole world! */
 	World& world_;
 

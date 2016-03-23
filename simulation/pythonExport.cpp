@@ -18,7 +18,6 @@ BOOST_PYTHON_MODULE(anthill){
     using namespace boost::python;
 
     class_<World>("World",init<>())
-        //.def("getAnts",&World::getAntsPythonList)
         .def("getAnts",&World::getAnts)
         .def("getFoods",&World::getFoods)
 		.def("getAnthills",&World::getAnthills)
@@ -33,9 +32,6 @@ BOOST_PYTHON_MODULE(anthill){
 		.def("simulationStep",&World::simulationStep)
 
     ;
-
-    //class_<vector<Entity*> >("vector_entities")
-    //    .def(vector_indexing_suite<vector<Entity*> >() );
 
     class_<vector<Ant*> >("vector_ants")
         .def(vector_indexing_suite<vector<Ant*> >() );
@@ -53,11 +49,7 @@ BOOST_PYTHON_MODULE(anthill){
     class_<vector<vector<float> > >("vector_vector_float")
         .def(vector_indexing_suite<vector< vector<float> > >() );
 
-    //class_<Entity*,bases<Updatable> >("Entity",no_init)
-    //;
 
-    //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
-    //class_<Ant,Ant*,bases<Entity> >("Ant",no_init)
     class_<Ant,Ant*>("Ant",no_init)
 		.def("getLoc",&Ant::getPos)
     ;
@@ -75,17 +67,9 @@ BOOST_PYTHON_MODULE(anthill){
 		.def("getMapCopy",&PheromoneMap::getMapCopy)
     ;
 
-    //class_<Point>("Point",init<optional<int,int> >())
     class_<Point,Point*>("Point",init<int,int>())
         .def("posX",&Point::posX)
         .def("posY",&Point::posY)
     ;
 
-    //class_<Ant,bases<Entity> >("Ant",no_init)
-    //    .def("stop",&Tone::Note::stop)
-    //    .def("pull",&Tone::Note::pull)
-    //;
-
-
-    // sorki! kamil
 }
