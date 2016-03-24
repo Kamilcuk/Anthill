@@ -48,21 +48,12 @@ void World::startSimulation()
 
 	/* they add itself*/
 	/* remember one pheromone map per world! */
-	PheromoneMap* to_food = new PheromoneMap(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
-	new PheromoneMap(*this, PheromoneMap::Type::FromFood, width, height, 0.01);
+	//PheromoneMap* to_food = new PheromoneMap(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
+	//new PheromoneMap(*this, PheromoneMap::Type::FromFood, width, height, 0.01);
 
 
 
 	ShapeGenerator shape_gen;
-
-	// draw some pheromones
-	for(auto point : shape_gen.GenerateLine(Point(30, 7), Point(30, 25), 4))
-		to_food->createBlob(point, 2, 100);
-	for(auto point : shape_gen.GenerateCircle(Point(25, 7), 3))
-		to_food->createBlob(point, 2, 100);
-	for(auto point : shape_gen.GenerateCircle(Point(35, 7), 3))
-		to_food->createBlob(point, 2, 100);
-
 
 	new Ant(*this, Point(30,30));
 	new Ant(*this, Point(25,25));
@@ -70,22 +61,22 @@ void World::startSimulation()
 	new Ant(*this, Point(50,50));
 	new Ant(*this, Point(30,20));
 
-	new Anthill(*this, Point(35,35));
+	//new Anthill(*this, Point(35,35));
 
-	
+	//
 	for(auto point : shape_gen.GenerateCircle(Point(15, 15), 3))
 	{
 		new Food(*this, point);
 	}
-	for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
-	{
-		new Food(*this, point);
-	}
+	//for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
+	//{
+	//	new Food(*this, point);
+	//}
 
-	for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
-	{
-		obstacles_.emplace_back(Obstacle(*this, point));
-	}
+	//for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
+	//{
+	//	obstacles_.emplace_back(Obstacle(*this, point));
+	//}
 }
 
 void World::stopSimulation()

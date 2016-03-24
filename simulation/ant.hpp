@@ -15,7 +15,7 @@
 class World;
 class Ant : public Creature {
 	/** reference to the whole world! */
-	World& world_;
+	//World& world_;  it is in Updatable
 
 	const int speed_ = 1;
 	const int visibility_ = 15;

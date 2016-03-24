@@ -19,6 +19,8 @@ public:
 	void step();
 	bool getUsed() const;
 	void setUsed(bool value);
+
+    int getSmell(){return 100;}
 };
 
 #endif /* SRC_FOOD_HPP_ */

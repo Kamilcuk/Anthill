@@ -17,6 +17,7 @@ public:
 	void printPosition();
 	Point getPosition() const;
 	bool operator<(const Point& rhs) const { return (posX() < rhs.posX()) || (posY() < rhs.posY()); } // for std::set
+	bool operator!=(const Point& rhs) const { return (posX() != rhs.posX()) || (posY() != rhs.posY()); } 
 };
 
 #endif // POSITION_H

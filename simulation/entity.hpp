@@ -34,6 +34,13 @@ public:
 	Entity *getLifted() const;
 
 	float getDistance(Entity *e);
+
+    /** physical informations **/
+    virtual int getSmell(){ return 0;}
+    virtual int getColorR(){return 0;}
+    virtual int getColorG(){return 0;}
+    virtual int getColorB(){return 0;}
+    virtual int getColorA(){return 255;}
 };
 
 #endif // LIVING_H
