@@ -10,19 +10,19 @@
 
 #include "entity.hpp"
 #include "world.hpp"
+#include "controller.h"
+#include "antcontroller.h"
 
-class World;
 class Ant : public Entity {
-	/** reference to the whole world! */
-	World& world_;
+    Controller *controller_;
 
-	const int speed_ = 1;
-	const int visibility_ = 15;
+    const int speed_ = 1;
 public:
-	Ant(World& world, Point pos);
+    Ant(World& world, Point pos, Controller *controller = new AntController());
 	~Ant();
 
 	void step();
+    int getSpeed() const;
 };
 
 #endif /* ANT_H_ */
