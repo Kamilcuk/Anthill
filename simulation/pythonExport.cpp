@@ -10,6 +10,8 @@
 #include "point.hpp"
 #include "ant.hpp"
 #include "food.hpp"
+#include "anthill.hpp"
+#include "pheromoneMap.hpp"
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
@@ -19,12 +21,12 @@ BOOST_PYTHON_MODULE(anthill){
 
     class_<World>("World",init<>())
         //.def("getAnts",&World::getAntsPythonList)
-        .def("getAnts",&World::getAnts)
-        .def("getFoods",&World::getFoods)
-		.def("getAnthills",&World::getAnthills)
-		.def("getObstacles",&World::getObstacles)
-		.def("getPheromoneMaps",&World::getPheromoneMaps)
-		.def("getUpdatables",&World::getUpdatables)
+        .def("getAnts",&World::getPntDerivedUpdatable<Ant>)
+        .def("getFoods",&World::getPntDerivedUpdatable<Food>)
+        .def("getAnthills",&World::getPntDerivedUpdatable<Anthill>)
+        .def("getObstacles",&World::getObstacles)
+        .def("getPheromoneMaps",&World::getPntDerivedUpdatable<PheromoneMap>)
+        .def("getUpdatables",&World::getPntUpdatables)
 
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
@@ -65,7 +67,7 @@ BOOST_PYTHON_MODULE(anthill){
 		.def("getLoc",&Food::getPos)
     ;
     class_<Anthill,Anthill*>("Anthill",no_init)
-		.def("getLoc",&Anthill::getPos)
+        .def("getLoc",&Anthill::getPos)
     ;
     class_<Obstacle,Obstacle*>("Obstacle",no_init)
 		.def("getLoc",&Obstacle::getPos)

@@ -5,6 +5,7 @@
  *      Author: ms
  */
 
+/*
 #include <boost/python.hpp>
 namespace py = boost::python;
 
@@ -16,3 +17,4 @@ py::list std_vector_to_py_list(const std::vector<T>& v)
     py::list l(iter);
     return l;
 }
+*/

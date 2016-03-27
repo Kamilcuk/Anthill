@@ -1,17 +1,20 @@
 #ifndef UPDATABLE_H
 #define UPDATABLE_H
 
-
+#include <memory>
 class World;
-class Updatable {
-	/** static? there's only one world!
-	 * we could set that in World constructor? */
-	World& world_;
+
+class Updatable : public std::enable_shared_from_this<Updatable> {
+    World& world_;
+    bool alive = true;
 public:
-	Updatable(World& world);
-	virtual ~Updatable();
-	World& getWorld();
+    Updatable(World &world);
+    virtual ~Updatable();
 	virtual void step() = 0;
+    World &getWorld();
+
+    void remove();
+    bool isAlive() const;
 };
 
 #endif // UPDATABLE_H
