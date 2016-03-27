@@ -10,12 +10,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-using std::vector;
+#include "pheromoneMap.hpp"
+#include "ant.hpp"
+#include "entity.hpp"
+#include "food.hpp"
+#include <algorithm>
 
-std::vector<Updatable *> World::getUpdatables() const
-{
-	return updatables_;
-}
+using std::vector;
 
 World::World()
 {
@@ -48,159 +49,141 @@ void World::startSimulation()
 
 	/* they add itself*/
 	/* remember one pheromone map per world! */
-	//PheromoneMap* to_food = new PheromoneMap(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
-	//new PheromoneMap(*this, PheromoneMap::Type::FromFood, width, height, 0.01);
+    std::shared_ptr<PheromoneMap> to_food = std::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
+    addUpdatable(to_food);
+    addUpdatable(std::make_shared<PheromoneMap>(*this, PheromoneMap::Type::FromFood, width, height, 0.01));
 
 
 
 	ShapeGenerator shape_gen;
 
-	new Ant(*this, Point(30,30));
-	new Ant(*this, Point(25,25));
-	new Ant(*this, Point(20,20));
-	new Ant(*this, Point(50,50));
-	new Ant(*this, Point(30,20));
 
-	//new Anthill(*this, Point(35,35));
+    addUpdatable(std::make_shared<Ant>(*this, Point(30,30)));
+    addUpdatable(std::make_shared<Ant>(*this, Point(25,25)));
+    addUpdatable(std::make_shared<Ant>(*this, Point(20,20)));
+    addUpdatable(std::make_shared<Ant>(*this, Point(50,50)));
+    addUpdatable(std::make_shared<Ant>(*this, Point(30,20)));
 
-	//
+    addUpdatable(std::make_shared<Anthill>(*this, Point(35,35)));
+
+	
 	for(auto point : shape_gen.GenerateCircle(Point(15, 15), 3))
 	{
-		new Food(*this, point);
+        addUpdatable(std::make_shared<Food>(*this, point));
 	}
-	//for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
-	//{
-	//	new Food(*this, point);
-	//}
+	for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
+	{
+        addUpdatable(std::make_shared<Food>(*this, point));
+	}
 
-	//for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
-	//{
-	//	obstacles_.emplace_back(Obstacle(*this, point));
-	//}
+	for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
+	{
+		obstacles_.emplace_back(Obstacle(*this, point));
+	}
 }
 
 void World::stopSimulation()
 {
-	// as Updatable removes itself from the list
-	// we need a copy of the list to operate on
-	std::vector<Updatable *> updatables2_ = updatables_;
-	for(Updatable *s : updatables2_) {
-		delete s;
-	}
 	updatables_.clear();
 }
 
 /* well, i know */
 void World::simulationStep()
 {
-	std::cout<<"--------------------------------------------"<<std::endl;
-	std::vector<Updatable *> updatables2_ = updatables_;
-	for(Updatable *s : updatables2_) {
-		(*s).step();
-	}
-	/*
-	if ( !(rand()%30) ) {
-		int startI = 2+rand()%10;
-		int startJ = 2+rand()%10;
-		int addI = startI+2+rand()%5;
-		int addJ = startJ+2+rand()%5;
-
-		for(int i=startI;i<addI;i++) {
-			for(int j=startJ;j<addJ;j++) {
-				new Food(*this, Point(i,j));
-			}
-		}
-	}
-	*/ // removed randomness for now to test stuff - kosiak
+    std::cout<<"--------------------------------------------"<<std::endl;
+    for(auto& u : updatables_) {
+        u->step();
+    }
+    //for(auto& u : updatables_) {
+    for(auto u = updatables_.begin(); u<updatables_.end(); ++u) {
+        if ( !(*u)->isAlive() )
+            removeUpdatable(*u);
+    }
 }
 
-
-std::vector<Ant *> World::getAnts()
+void World::addUpdatable(std::shared_ptr<Updatable> e)
 {
-	std::vector<Ant*> ants;
-	for(Updatable *s : updatables_) {
-		Ant *a = dynamic_cast<Ant*>(s);
-		if( a ) {
-			ants.push_back(a);
-		}
-	}
-	return ants;
+    auto it = std::find_if(updatables_.begin(), updatables_.end(),
+                           [&](std::shared_ptr<Updatable> const &u){return u == e;});
+    if ( it == updatables_.end() ) {
+        // no such elemnt
+        updatables_.push_back(e);
+    }
 }
 
-std::vector<Food *> World::getFoods()
+void World::removeUpdatable(std::shared_ptr<Updatable> e)
 {
-	std::vector<Food*> foods;
-	for(Updatable *s : updatables_) {
-		Food *a = dynamic_cast<Food*>(s);
-		if( a ) {
-			foods.push_back(a);
-		}
-	}
-	return foods;
-}
-
-std::vector<Entity *> World::getClosestEntities(Point mypos, int visibility)
-{
-	std::vector<Entity*> ret;
-	for(Updatable *u : updatables_) {
-		Entity *e = dynamic_cast<Entity*>(u);
-		if ( !e )
-			continue;
-		if ( abs(mypos.posX()-e->getPos().posX()) <= visibility &&
-				abs(mypos.posY()-e->getPos().posY()) <= visibility ) {
-			ret.push_back(e);
-		}
-	}
-	return ret;
-}
-
-void World::addUpdatable(Updatable *e)
-{
-	if ( e && std::find(updatables_.begin(), updatables_.end(), e) == updatables_.end() )
-		updatables_.push_back(e);
-}
-
-void World::removeUpdatable(Updatable *e)
-{
-	std::vector<Updatable*>::iterator it;
-	it = std::find(updatables_.begin(), updatables_.end(), e);
+    auto it = std::find_if(updatables_.begin(), updatables_.end(),
+                           [&](std::shared_ptr<Updatable> const &u){return u == e;});
 	if ( it == updatables_.end() ) {
-		// no such elemnt
+        // no such elemnt
 		return;
 	}
 	updatables_.erase(it);
 }
 
-std::vector<Anthill*> World::getAnthills()
-{
-	/* to pownnien być szablon!!! */
-	std::vector<Anthill*> tmp;
-	for(Updatable *s : updatables_) {
-		Anthill *a = dynamic_cast<Anthill*>(s);
-		if( a ) {
-			tmp.push_back(a);
-		}
-	}
-	return tmp;
-}
-std::vector<PheromoneMap*> World::getPheromoneMaps()
-{
-	/* to pownnien być szablon!!! */
-	std::vector<PheromoneMap*> tmp;
-	for(Updatable *s : updatables_) {
-		PheromoneMap *a = dynamic_cast<PheromoneMap*>(s);
-		if( a ) {
-			tmp.push_back(a);
-		}
-	}
-	return tmp;
-}
 
 std::vector<Obstacle*> World::getObstacles()
 {
 	std::vector<Obstacle*> ret;
 
-    for(int i=0; i<obstacles_.size(); ++i)
+    for(unsigned int i=0; i<obstacles_.size(); ++i)
         ret.push_back(&obstacles_[i]);
-	return ret;
+    return ret;
 }
+
+std::vector<std::shared_ptr<Updatable>> World::getUpdatables() const
+{
+    return updatables_;
+}
+
+std::vector<Updatable*> World::getPntUpdatables()
+{
+    std::vector<Updatable*> ret;
+    //std::transform(updatables_.begin(), updatables_.end, ret.begin(), [](std::shared_ptr<Updatable> &u){return u.get();});
+    for(auto& u : this->getUpdatables() ) {
+        ret.push_back(u.get());
+    }
+    return ret;
+}
+
+template<typename Derived>
+std::vector<std::shared_ptr<Derived>> World::getDerivedUpdatable()
+{
+    std::vector<std::shared_ptr<Derived>> ret;
+    for( auto p : updatables_ ) {
+        std::shared_ptr<Derived> d = std::dynamic_pointer_cast<Derived>(p);
+        if ( d ) {
+            ret.push_back(d);
+        }
+    }
+    return ret;
+}
+
+
+template<typename Derived>
+std::vector<Derived *> World::getPntDerivedUpdatable()
+{
+    std::vector<Derived *> ret;
+    std::vector<std::shared_ptr<Derived>> in = getDerivedUpdatable<Derived>();
+    ret.reserve(in.size());
+    std::transform(in.begin(), in.end(), std::back_inserter(ret), [&](std::shared_ptr<Derived> &p){return p.get();});
+    return ret;
+}
+
+#include "anthill.hpp"
+#include "ant.hpp"
+#include "pheromoneMap.hpp"
+#include "food.hpp"
+#include "entity.hpp"
+template std::vector<Entity*> World::getPntDerivedUpdatable<Entity>();
+template std::vector<Ant*> World::getPntDerivedUpdatable<Ant>();
+template std::vector<Anthill*> World::getPntDerivedUpdatable<Anthill>();
+template std::vector<PheromoneMap*> World::getPntDerivedUpdatable<PheromoneMap>();
+template std::vector<Food*> World::getPntDerivedUpdatable<Food>();
+
+template std::vector<std::shared_ptr<Entity>> World::getDerivedUpdatable<Entity>();
+template std::vector<std::shared_ptr<Ant>> World::getDerivedUpdatable<Ant>();
+template std::vector<std::shared_ptr<Anthill>> World::getDerivedUpdatable();
+template std::vector<std::shared_ptr<PheromoneMap>> World::getDerivedUpdatable<PheromoneMap>();
+template std::vector<std::shared_ptr<Food>> World::getDerivedUpdatable<Food>();

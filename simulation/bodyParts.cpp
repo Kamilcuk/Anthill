@@ -32,5 +32,6 @@ void AntMandibles::step(){
 }
 
 std::vector<Entity*> AntSensor::getEntities(){
-    return world_.getClosestEntities(owner_->getPos(),5);
+    // TODO - now don't see anything
+    return std::vector<Entity*>();
 }

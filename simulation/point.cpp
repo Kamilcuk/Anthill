@@ -1,5 +1,6 @@
 #include "point.hpp"
 #include <iostream>
+#include <cmath>
 
 int Point::posX() const
 {
@@ -34,7 +35,16 @@ void Point::printPosition()
 
 Point Point::getPosition() const
 {
-	return Point(*this);
+    return Point(*this);
+}
+
+float Point::getDistance(Point p) const
+{
+        return std::sqrt(
+                std::pow(this->posX() - p.posX(), 2) +
+                std::pow(this->posY() - p.posY(), 2)
+                );
+
 }
 
 Point::Point(int posX, int posY) :

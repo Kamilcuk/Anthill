@@ -10,23 +10,22 @@
 
 #include <vector>
 using std::vector;
-#include <boost/shared_ptr.hpp>
-using boost::shared_ptr;
 
-#include "entity.hpp"
 #include "pythonExport.hpp"
 #include "shapeGenerator.hpp"
-#include "updatable.hpp"
-#include "ant.hpp"
-#include "food.hpp"
 #include "obstacle.hpp"
-#include "pheromoneMap.hpp"
-#include "anthill.hpp"
 
 class Ant;
 class Updatable;
 class Food;
 class Entity;
+class PheromoneMap;
+class Anthill;
+
+/**
+ * @brief The World class
+ * World -> object factory
+ */
 class World {
 
     // world properties
@@ -34,7 +33,7 @@ class World {
     float framerate;
     
     /** all living matter */
-	std::vector<Updatable*> updatables_;
+    std::vector<std::shared_ptr<Updatable>> updatables_;
 
     std::vector<Obstacle> obstacles_;
 
@@ -51,17 +50,33 @@ public:
     /** executed for every simulation step */
     void simulationStep();
 
-	void addUpdatable(Updatable* e);
-	void removeUpdatable(Updatable* e);
+    void addUpdatable(std::shared_ptr<Updatable> e);
+    void removeUpdatable(std::shared_ptr<Updatable> e);
 
-	std::vector<Anthill *> getAnthills();
-	std::vector<PheromoneMap*> getPheromoneMaps();
-    std::vector<Ant*> getAnts();
-    std::vector<Food*> getFoods();
-	std::vector<Entity *> getClosestEntities(Point mypos, int visibility);
-	std::vector<Updatable *> getUpdatables() const;
+    std::vector<std::shared_ptr<Updatable>> getUpdatables() const;
+    std::vector<Updatable *> getPntUpdatables();
+    std::vector<Obstacle *> getObstacles();
 
-    std::vector<Obstacle*> getObstacles();
+public:
+    template<typename Derived>
+        std::vector<std::shared_ptr<Derived>> getDerivedUpdatable();
+
+    template<typename Derived>
+       std::vector<Derived*> getPntDerivedUpdatable();
 };
+
+/** extern instantations -> declared in world.cpp*/
+extern template std::vector<Entity*> World::getPntDerivedUpdatable<Entity>();
+extern template std::vector<Ant*> World::getPntDerivedUpdatable<Ant>();
+extern template std::vector<Anthill*> World::getPntDerivedUpdatable<Anthill>();
+extern template std::vector<PheromoneMap*> World::getPntDerivedUpdatable<PheromoneMap>();
+extern template std::vector<Food*> World::getPntDerivedUpdatable<Food>();
+
+extern template std::vector<std::shared_ptr<Entity>> World::getDerivedUpdatable<Entity>();
+extern template std::vector<std::shared_ptr<Ant>> World::getDerivedUpdatable<Ant>();
+extern template std::vector<std::shared_ptr<Anthill>> World::getDerivedUpdatable();
+extern template std::vector<std::shared_ptr<PheromoneMap>> World::getDerivedUpdatable<PheromoneMap>();
+extern template std::vector<std::shared_ptr<Food>> World::getDerivedUpdatable<Food>();
+
 
 #endif /* WORLD_H_ */

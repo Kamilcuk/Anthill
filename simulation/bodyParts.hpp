@@ -17,8 +17,7 @@ protected:
     Creature* owner_;
 public:
     BodyPart(World& w,Creature* c):
-        Updatable(w),owner_(c){
-            std::cout<<"BodyPart\n";}
+        Updatable(w),owner_(c){}
     virtual void step(){};
 };
 

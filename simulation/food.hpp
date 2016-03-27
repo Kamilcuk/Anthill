@@ -10,7 +10,6 @@
 
 #include "entity.hpp"
 
-class Entity;
 class Food : public Entity {
 	bool used;
 public:

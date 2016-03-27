@@ -2,8 +2,9 @@
 # Sconstruct file, Kamil Cukrowski
 env = Environment();
 env.Append(CCFLAGS = ' -Wall --std=c++11 -O2 -g -fPIC ');
+#env.Append(CCFLAGS = ' -w -Wno-deprecated --std=c++11 ');
 
-SetOption('num_jobs', 3)
+SetOption('num_jobs', 8)
 
 # add boost support
 env.Append(CCFLAGS = '-Iboost');
@@ -24,5 +25,7 @@ else:
 sources = [ Glob('simulation/*.cpp') ];
 
 env['SHLIBPREFIX'] = ''; # anthill.so, default is libanthill.se
-anthill = env.SharedLibrary(target = 'anthill', source = sources);
-Default(anthill);
+libanthill = env.SharedLibrary(target = 'anthill', source = sources);
+Default(libanthill);
+
+anthill = env.Program(target = 'anthill_standalone', source = [ sources, 'main.cpp' ] );

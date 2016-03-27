@@ -1,41 +1,44 @@
 #include "anthill.hpp"
 #include "world.hpp"
+#include "food.hpp"
+#include "ant.hpp"
+#include "entity.hpp"
 
 Anthill::Anthill(World& world,Point pos) :
-	Entity(world, pos)
+    Entity(world, pos)
 {
-
+    //this->setVisibilityRadius(0);
 }
 
 Anthill::~Anthill()
 {
 	/* dont delete food_ vector, couse it gets deleted in world */
-	this->food_.clear();
+	//this->food_.clear();
 }
 
 void Anthill::step()
 {
-	std::vector<Entity *> standingon = this->getWorld().getClosestEntities(this->getPos(), 0);
-	for(Entity *e : standingon) {
-		Food *f = dynamic_cast<Food*>(e);
-		if ( f && !f->getCarrier() ) {
-			this->lift(f);
-		}
-	}
-
-	if ( food_.size() > 10 ) {
-		for(auto *f : food_) {
-			f->setUsed(true);
-		}
-		new Ant(this->getWorld(), this->getPos().move(1,1));
-		food_.clear();
-	}
+	//if ( food_.size() > 10 ) {
+    //    for(auto& f : food_) {
+	//		f->setUsed(true);
+	//	}
+	//	new Ant(this->getWorld(), this->getPos().move(1,1));
+	//	food_.clear();
+	//}
 }
 
-void Anthill::lift(Food *f)
+void Anthill::lift(std::shared_ptr<Food> &f)
 {
-	if(f) {
-		food_.push_back(f);
-		f->addCarrier(this);
-	}
+    //food_.push_back(std::shared_ptr<Food>(f));
+    //this->Entity::lift(f);
+}
+
+
+void Anthill::lift(std::weak_ptr<Entity> &f)
+{
+    //if ( auto f1 = f.lock() ) {
+    //    if ( auto f2 = std::dynamic_pointer_cast<Food>(f1) ) {
+    //        this->lift(f2);
+    //    }
+    //}
 }
