@@ -1,14 +1,24 @@
 #include "entity.hpp"
-#include <cmath>
+#include "world.hpp"
+#include "food.hpp"
+#include <algorithm>
+#include "anthill.hpp"
+float Entity::getVisibilityRadius() const
+{
+    return visibilityRadius_;
+}
 
+void Entity::setVisibilityRadius(float visibilityRadius)
+{
+    visibilityRadius_ = visibilityRadius;
+}
 
 Entity::Entity(World& world, Point pos) :
-	Updatable(world),
-	pos_(pos),
-	carrier_(nullptr),
-	lifted_(nullptr)
+    Updatable(world),
+    pos_(pos)
 {
-
+    this->carrier_.reset();
+    this->lifted_.reset();
 }
 
 Entity::~Entity()
@@ -16,68 +26,97 @@ Entity::~Entity()
 
 }
 
-Point Entity::getPos()
+Point Entity::getPos() const
 {
-	/* when we are carried, then out pos is equal to the thing that lifts us */
-	if ( this->getCarrier() ) {
-		this->pos_ = this->getCarrier()->getPos();
+    /* when we are carried, then out pos is equal to the thing that lifts us */
+    if ( auto carrier = this->getCarrier().lock() ) {
+        return carrier->getPos();
 	}
-	return this->pos_;
+    return this->pos_;
 }
 
 
 void Entity::setPos(Point pos)
 {
-	this->pos_ = pos;
+    this->pos_ = pos;
 }
 
-void Entity::addCarrier(Entity *e)
+void Entity::addCarrier(std::weak_ptr<Entity> e)
 {
-	if ( !carrier_ ) {
-		this->getPos() = e->getPos();
-		carrier_ = e;
-	}
+    if ( isCarried() ) {
+        return;
+    }
+    carrier_ = e;
 }
 
-Entity *Entity::removeCarrier()
+void Entity::removeCarrier()
 {
-	if ( carrier_ == nullptr ) {
-		return nullptr;
-	}
-	this->getPos() = Point(carrier_->getPos());
-
-	Entity *temp = carrier_;
-	carrier_ = nullptr;
-	return temp;
+    if ( !isCarried() ) {
+        return;
+    }
+    auto carrier = this->getCarrier().lock();
+    if ( carrier ) {
+        this->setPos( carrier->getPos() );
+        this->getCarrier().reset();
+    }
 }
 
-Entity *Entity::getCarrier() const
+std::weak_ptr<Entity> Entity::getCarrier() const
 {
-	return carrier_;
+    return carrier_;
+}
+
+bool Entity::isCarried() const
+{
+    return !carrier_.expired();
 }
 
 
-void Entity::lift(Entity *l) {
+void Entity::lift(std::weak_ptr<Entity> l) {
+    if ( isLifting() ) {
+        return;
+    }
 	lifted_ = l;
+    auto lifted = lifted_.lock();
+    lifted->addCarrier(std::dynamic_pointer_cast<Entity>(dynamic_cast<Updatable*>(this)->shared_from_this()));
 }
 
-Entity *Entity::unLift() {
-	if ( lifted_ != nullptr ) {
-		Entity *temp = lifted_;
-		lifted_ = nullptr;
-		return temp;
-	}
-	return nullptr;
+void Entity::unLift() {
+    if ( !isLifting() ) {
+        return;
+    }
+    if ( auto lifted = lifted_.lock() ) {
+        lifted->removeCarrier();
+        lifted_.reset();
+    }
 }
 
-Entity *Entity::getLifted() const {
-	return lifted_;
+std::weak_ptr<Entity> Entity::getLifted() const {
+    return lifted_;
 }
 
-float Entity::getDistance(Entity *e)
+bool Entity::isLifting() const
 {
-	return std::sqrt(
-				std::pow(this->getPos().posX()-e->getPos().posX(), 2) +
-				std::pow(this->getPos().posY()-e->getPos().posY(), 2)
-				);
+    return !lifted_.expired();
 }
+
+float Entity::getDistance(Entity * const e)
+{
+    return this->getPos().getDistance(e->getPos());
+}
+
+template<typename Derived>
+std::map<std::shared_ptr<Derived>, float> Entity::getVisibleWithDistances()
+{
+    std::map<std::shared_ptr<Derived>, float> ret;
+    std::vector<std::shared_ptr<Derived>> entities = this->getWorld().getDerivedUpdatable<Derived>();
+    for(auto& e : entities) {
+        float dist = this->getDistance(e.get()); //this->getPos().getDistance(e.get()->getPos());
+        if ( dist < this->getVisibilityRadius() ) {
+            ret[e] = dist;
+        }
+    }
+    return ret;
+}
+template std::map<std::shared_ptr<Food>, float> Entity::getVisibleWithDistances<Food>();
+template std::map<std::shared_ptr<Anthill>, float> Entity::getVisibleWithDistances<Anthill>();

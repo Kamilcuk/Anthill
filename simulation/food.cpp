@@ -28,5 +28,5 @@ Food::Food(World& world, Point pos) :
 void Food::step()
 {
 	if ( getUsed() == true )
-		delete this;
+        this->remove();
 }
