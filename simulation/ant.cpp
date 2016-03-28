@@ -14,7 +14,6 @@
 Ant::Ant(World& world, Point pos) :
 	Creature(world, pos)
 {
-    std::cout<<"Ant constructor"<<std::endl;
     addLeg();
     addAntMandibles();
     addAntSensor();
@@ -23,6 +22,9 @@ Ant::Ant(World& world, Point pos) :
 Ant::~Ant()
 {
 }
+
+using std::shared_ptr;
+using std::weak_ptr;
 
 void Ant::step() {
     // test AI - all the below(like below) will be in Controller (similar context)
@@ -33,12 +35,18 @@ void Ant::step() {
     auto legs=getLegs();
 
 
-    if(sensors.empty())
+    if(sensors.empty()){
         std::cout<<"Nie mam sensorow\n";
-    if(mands.empty())
+        return;
+    }
+    if(mands.empty()){
         std::cout<<"Nie mam rzujek\n";
-    if(legs.empty())
+        return;
+    }
+    if(legs.empty()){
         std::cout<<"Nie mam nog\n";
+        return;
+    }
 
     AntSensor& sensor=*sensors[0];
     AntMandibles& ma=*mands[0];
@@ -47,8 +55,8 @@ void Ant::step() {
     auto entities=sensor.getEntities();
     for(auto e : entities){
         // smell of food (enum ?)
-        if((e->getSmell()==100) && !ma.isHolding()){
-            if(e->getPos() != getPos())
+        if((e.getSmell()==100) && !ma.isHolding()){
+            if(e.getPos() != getPos())
                 continue;
             ma.grab(e);
             break;

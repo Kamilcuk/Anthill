@@ -19,6 +19,7 @@ public:
     float getDistance(Point p) const;
 	bool operator<(const Point& rhs) const { return (posX() < rhs.posX()) || (posY() < rhs.posY()); } // for std::set
 	bool operator!=(const Point& rhs) const { return (posX() != rhs.posX()) || (posY() != rhs.posY()); } 
+	bool operator==(const Point& rhs) const { return !(*this != rhs); }
 };
 
 #endif // POSITION_H

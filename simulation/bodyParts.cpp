@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+// Leg
 void Leg::goToPos(const Point& p){
     Point curPos=owner_->getPos();
     int x=curPos.posX();
@@ -15,23 +16,44 @@ void Leg::goToPos(const Point& p){
     owner_->setPos(Point(x,y));
 }
 
-bool AntMandibles::grab(Entity* e){
-    if(owner_->getPos()!=e->getPos())
+// AntSensor
+Point AntSensor::Observation::getPos(){ 
+    return ent_.lock()->getPos(); 
+}
+
+int AntSensor::Observation::getSmell(){
+    return ent_.lock()->getSmell(); 
+}
+
+std::vector<AntSensor::Observation> AntSensor::getEntities(){
+    // TODO - now see everything
+    std::vector<Observation> ret;
+    for(auto a : world_.getDerivedUpdatable<Entity>()){
+        ret.push_back(Observation( a ));
+    }
+    return ret;
+}
+
+// AntMandibles
+bool AntMandibles::grab(weak_ptr<Entity> e){
+    auto ent=e.lock();
+    if(owner_->getPos()!=ent->getPos())
         return 0;
-    if(holdingObject_!=nullptr){
+    if(isHolding()){
         return 0;
     }
     holdingObject_=e;
     return 1;
 }
 
+bool AntMandibles::grab(AntSensor::Observation o){
+    grab(o.ent_);
+    return 1;
+}
+
 void AntMandibles::step(){
-    if(holdingObject_!=nullptr){
-        holdingObject_->setPos(owner_->getPos());
+    if(isHolding()){
+        holdingObject_.lock()->setPos(owner_->getPos());
     }
 }
 
-std::vector<Entity*> AntSensor::getEntities(){
-    // TODO - now don't see anything
-    return std::vector<Entity*>();
-}

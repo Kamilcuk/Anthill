@@ -6,31 +6,25 @@
 
 class Creature : public Entity{
     // vectors of body parts
-    std::vector<Leg*> legs;
-    std::vector<AntMandibles*> antMandibles;
-    std::vector<AntSensor*> antSensors;
+    std::vector<shared_ptr<Leg> > legs;
+    std::vector<shared_ptr<AntMandibles> > antMandibles;
+    std::vector<shared_ptr<AntSensor> > antSensors;
 
 protected:
-    void addLeg(){
-        legs.push_back(new Leg(world_,this));
-    }
-    void addAntMandibles(){
-        antMandibles.push_back(new AntMandibles(world_,this));
-    }
-    void addAntSensor(){
-        antSensors.push_back(new AntSensor(world_,this));
-    }
+    void addLeg();
+    void addAntMandibles();
+    void addAntSensor();
 	Creature(World& world, Point pos):
         Entity(world,pos){}
 
 public:
-    std::vector<Leg*>& getLegs(){
+    std::vector<shared_ptr<Leg> >& getLegs(){
         return legs;
     }
-    std::vector<AntMandibles*>& getAntMandibles(){
+    std::vector<shared_ptr<AntMandibles> >& getAntMandibles(){
         return antMandibles;
     }
-    std::vector<AntSensor*>& getAntSensors(){
+    std::vector<shared_ptr<AntSensor> >& getAntSensors(){
         return antSensors;
     }
 };

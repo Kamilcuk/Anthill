@@ -15,7 +15,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-using boost::shared_ptr;
+//using boost::shared_ptr;
 BOOST_PYTHON_MODULE(anthill){
     using namespace boost::python;
 

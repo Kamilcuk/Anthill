@@ -15,6 +15,7 @@
 #include "entity.hpp"
 #include "food.hpp"
 #include <algorithm>
+#include "bodyParts.hpp"
 
 using std::vector;
 
@@ -57,7 +58,6 @@ void World::startSimulation()
 
 	ShapeGenerator shape_gen;
 
-
     addUpdatable(std::make_shared<Ant>(*this, Point(30,30)));
     addUpdatable(std::make_shared<Ant>(*this, Point(25,25)));
     addUpdatable(std::make_shared<Ant>(*this, Point(20,20)));
@@ -96,8 +96,10 @@ void World::simulationStep()
     }
     //for(auto& u : updatables_) {
     for(auto u = updatables_.begin(); u<updatables_.end(); ++u) {
-        if ( !(*u)->isAlive() )
+        //std::cout<<"U\n";
+        if ( !(*u)->isAlive() ){
             removeUpdatable(*u);
+        }
     }
 }
 
