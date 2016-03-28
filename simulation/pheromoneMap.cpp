@@ -45,8 +45,10 @@ void PheromoneMap::addStrength(unsigned p_x, unsigned p_y, float p_strength)
 }
 
 
-void PheromoneMap::step()
+void PheromoneMap::step(int deltaTime)
 {
+    if(!deltaTime)
+        return;
 	for(auto& row : map_) for(auto& cell : row)
 	{
 		cell = decay(cell);

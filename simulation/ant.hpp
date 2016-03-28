@@ -23,7 +23,7 @@ public:
 	Ant(World& world, Point pos);
 	~Ant();
 
-	void step();
+	void step(int);
 };
 
 #endif /* ANT_H_ */

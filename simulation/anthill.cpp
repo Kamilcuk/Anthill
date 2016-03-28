@@ -16,7 +16,7 @@ Anthill::~Anthill()
 	//this->food_.clear();
 }
 
-void Anthill::step()
+void Anthill::step(int deltaTime)
 {
 	//if ( food_.size() > 10 ) {
     //    for(auto& f : food_) {

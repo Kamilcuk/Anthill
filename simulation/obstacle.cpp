@@ -6,7 +6,7 @@ Obstacle::Obstacle(World& world, Point pos) :
 	
 }
 
-void Obstacle::step()
+void Obstacle::step(int)
 {
 	// in future: some obstacles may move something
 	// for example water pool obstacles will dry out with time

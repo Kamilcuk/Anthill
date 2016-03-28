@@ -15,7 +15,7 @@ class Food : public Entity {
 public:
 	Food(World &world, Point pos);
 
-	void step();
+	void step(int);
 	bool getUsed() const;
 	void setUsed(bool value);
 

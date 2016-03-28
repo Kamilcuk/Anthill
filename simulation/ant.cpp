@@ -26,7 +26,9 @@ Ant::~Ant()
 using std::shared_ptr;
 using std::weak_ptr;
 
-void Ant::step() {
+void Ant::step(int deltaTime) {
+    if(!deltaTime)
+        return;
     // test AI - all the below(like below) will be in Controller (similar context)
     // in this function will be probably only: controller.step()
     

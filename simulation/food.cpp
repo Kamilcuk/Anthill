@@ -25,7 +25,7 @@ Food::Food(World& world, Point pos) :
 
 }
 
-void Food::step()
+void Food::step(int deltaTime)
 {
 	if ( getUsed() == true )
         this->remove();

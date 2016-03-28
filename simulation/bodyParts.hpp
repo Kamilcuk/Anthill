@@ -20,7 +20,7 @@ protected:
 public:
     BodyPart(World& w,Creature* c):
         Updatable(w),owner_(c){}
-    virtual void step(){};
+    virtual void step(int deltaTime){};
 };
 
 class Leg : public BodyPart{
@@ -64,7 +64,7 @@ public:
         BodyPart(w,owner){};
     bool grab(weak_ptr<Entity> e);
     bool grab(AntSensor::Observation o);
-    void step();
+    void step(int);
     bool isHolding(){ return holdingObject_.lock() != NULL; }
 };
 

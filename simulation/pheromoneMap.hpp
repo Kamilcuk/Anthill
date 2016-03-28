@@ -37,7 +37,7 @@ public:
 	PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y, float decay_coeff);
 	~PheromoneMap();
 
-	void step();
+	void step(int);
 
 	// Determines how fast the smell decays. Must be 0-1.
 	void setDecayCoeff(float p_decay_coeff);

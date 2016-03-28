@@ -8,7 +8,7 @@ class Obstacle : public Entity
 
 public:
 	Obstacle(World& world, Point pos);
-	void step();
+	void step(int);
 };
 
 #endif // OBSTACLE_H

@@ -51,7 +51,7 @@ bool AntMandibles::grab(AntSensor::Observation o){
     return 1;
 }
 
-void AntMandibles::step(){
+void AntMandibles::step(int deltaTime){
     if(isHolding()){
         holdingObject_.lock()->setPos(owner_->getPos());
     }

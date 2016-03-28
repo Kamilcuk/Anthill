@@ -15,7 +15,7 @@ class Anthill : public Entity
 public:
     Anthill(World& world, Point pos);
     ~Anthill();
-	void step();
+	void step(int);
 
     void lift(std::shared_ptr<Food> &l);
     void lift(std::weak_ptr<Entity> &f);

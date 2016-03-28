@@ -92,7 +92,10 @@ void World::simulationStep()
 {
     std::cout<<"--------------------------------------------"<<std::endl;
     for(auto& u : updatables_) {
-        u->step();
+        u->step(1);
+    }
+    for(auto& u : updatables_) {
+        u->step(0);
     }
     //for(auto& u : updatables_) {
     for(auto u = updatables_.begin(); u<updatables_.end(); ++u) {

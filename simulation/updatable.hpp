@@ -11,7 +11,7 @@ protected:
 public:
     Updatable(World &world);
     virtual ~Updatable();
-	virtual void step() = 0;
+	virtual void step(int) = 0;
     World &getWorld();
 
     void remove();
