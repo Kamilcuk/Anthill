@@ -8,5 +8,21 @@ BOOST_AUTO_TEST_CASE( position )
 {
     Point p(0,0);
     BOOST_CHECK_EQUAL( p.posX(), 0 );
-    BOOST_CHECK_EQUAL( p.posY(), 90 );
+    BOOST_CHECK_EQUAL( p.posY(), 0 );
+
+    Point q(123,456);
+    BOOST_CHECK_EQUAL( q.posX(), 123 );
+    BOOST_CHECK_EQUAL( q.posY(), 456 );
+
+    BOOST_CHECK( q!=p );
+
+    p.setPosY(q.posY());
+    BOOST_CHECK_EQUAL( p.posX(), 0 );
+    BOOST_CHECK_EQUAL( p.posY(), 456 );
+
+    p.setPosX(q.posX());
+    BOOST_CHECK_EQUAL( p.posX(), 123 );
+    BOOST_CHECK_EQUAL( p.posY(), 456 );
+
+    BOOST_CHECK( q==p );
 }

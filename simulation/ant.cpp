@@ -54,8 +54,8 @@ void Ant::step(int deltaTime) {
     AntMandibles& ma=*mands[0];
     Leg& leg=*legs[0];
 
-    auto entities=sensor.getEntities();
-    for(auto e : entities){
+    auto observations=sensor.getEntities();
+    for(auto e : observations){
         // smell of food (enum ?)
         if((e.getSmell()==100) && !ma.isHolding()){
             if(e.getPos() != getPos())
