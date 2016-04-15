@@ -28,4 +28,9 @@ env['SHLIBPREFIX'] = ''; # anthill.so, default is libanthill.se
 libanthill = env.SharedLibrary(target = 'anthill', source = sources);
 Default(libanthill);
 
-anthill = env.Program(target = 'anthill_standalone', source = [ sources, 'main.cpp' ] );
+anthill = env.Program(target = 'anthill_standalone', source = [ sources, 'main_standalone.cpp' ] );
+env2 = env;
+env2.Append(LINKFLAGS='-lboost_unit_test_framework');
+#env2.Append(CCFLAGS='--define BOOST_TEST_NO_MAIN --define BOOST_TEST_ALTERNATIVE_INIT_API')
+anthill = env2.Program(target = 'test', source = [ sources, Glob('tests/*.cpp'), 'main_tests.cpp' ] );
+
