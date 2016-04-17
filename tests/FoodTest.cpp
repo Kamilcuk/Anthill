@@ -16,11 +16,11 @@ BOOST_AUTO_TEST_CASE( testUsed )
     }
     {
         World w;
-        auto p=std::make_shared<Food>(w,Point(30,40));
+        auto p=boost::make_shared<Food>(w,Point(30,40));
         BOOST_CHECK_EQUAL(p->getUsed(), false);
         w.addUpdatable(p);
 
-        auto wp=std::weak_ptr<Food>(p);
+        auto wp=boost::weak_ptr<Food>(p);
         BOOST_CHECK_EQUAL(wp.expired(), false);
         p.reset();
         BOOST_CHECK_EQUAL(wp.expired(), false);

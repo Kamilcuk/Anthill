@@ -27,14 +27,14 @@ void Anthill::step(int deltaTime)
 	//}
 }
 
-void Anthill::lift(std::shared_ptr<Food> &f)
+void Anthill::lift(boost::shared_ptr<Food> &f)
 {
-    //food_.push_back(std::shared_ptr<Food>(f));
+    //food_.push_back(boost::shared_ptr<Food>(f));
     //this->Entity::lift(f);
 }
 
 
-void Anthill::lift(std::weak_ptr<Entity> &f)
+void Anthill::lift(boost::weak_ptr<Entity> &f)
 {
     //if ( auto f1 = f.lock() ) {
     //    if ( auto f2 = std::dynamic_pointer_cast<Food>(f1) ) {
