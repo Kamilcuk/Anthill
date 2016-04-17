@@ -9,10 +9,11 @@
 #include <iostream>
 #include <cstdlib>
 #include "anthill.hpp"
+#include "visitor.hpp"
 
 
 Ant::Ant(World& world, Point pos) :
-	Creature(world, pos)
+    Creature(world, pos)
 {
     addLeg();
     addAntMandibles();
@@ -67,4 +68,8 @@ void Ant::step(int deltaTime) {
 
     leg.goToPos(Point(rand()%30+1,rand()%30+1));
 
+}
+
+void Ant::accept(Visitor& v) const {
+    v.visit(*this);
 }

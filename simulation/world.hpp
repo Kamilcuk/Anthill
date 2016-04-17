@@ -14,6 +14,7 @@ using std::vector;
 #include "pythonExport.hpp"
 #include "shapeGenerator.hpp"
 #include "obstacle.hpp"
+#include "visitor.hpp"
 
 class Ant;
 class Updatable;
@@ -34,6 +35,8 @@ class World {
     
     /** all living matter */
     std::vector<std::shared_ptr<Updatable>> updatables_;
+    /** visitors */
+    std::vector<std::shared_ptr<Visitor>> visitors_;
 
     std::vector<Obstacle> obstacles_;
 

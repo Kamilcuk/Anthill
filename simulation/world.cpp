@@ -16,6 +16,7 @@
 #include "food.hpp"
 #include <algorithm>
 #include "bodyParts.hpp"
+#include "statistics.hpp"
 
 using std::vector;
 
@@ -47,6 +48,11 @@ void World::startSimulation()
 {
 	/* initialize random seed: */
 	srand (time(NULL));
+
+    /* statistics */
+    visitors_.push_back(std::make_shared<Statistics>(*this));
+
+
 
 	/* they add itself*/
 	/* remember one pheromone map per world! */
