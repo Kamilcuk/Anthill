@@ -31,12 +31,13 @@ public:
     virtual void step(int deltaTime){};
 };
 
-class Leg : public BodyPart{
+class AntLegs : public BodyPart{
+    Point targetPos_;
 public:
-    Leg(World& w,Creature* owner):
-        BodyPart(w,owner){}
+    AntLegs(World& w,Creature* owner);
 
     void goToPos(const Point& p);
+    void step(int);
 };
 
 class AntMandibles;
@@ -49,8 +50,8 @@ public:
         Observation(shared_ptr<Entity> e){
             ent_=weak_ptr<Entity>( e );
         }
-        Point getPos();
-        int getSmell();
+        Point getPos()const;
+        int getSmell()const;
 
         // All body parts implements whole physics.
         // AntMandibles must know more about this object
@@ -75,6 +76,18 @@ public:
     bool grab(AntSensor::Observation o);
     void step(int);
     bool isHolding(){ return holdingObject_.lock() != NULL; }
+};
+
+class AntWorkerAbdomen : public BodyPart{
+    int dropType;
+public:
+    AntWorkerAbdomen(World& w,Creature* owner):
+        BodyPart(w,owner),
+        dropType(-1) // don't drop
+    {};
+    void dropToFoodPheromones();
+    void dropFromFoodPheromones();
+    void step(int);
 };
 
 

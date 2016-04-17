@@ -59,3 +59,9 @@ Point::Point(const Point &pos)
 	posX_ = pos.posX();
 	posY_ = pos.posY();
 }
+
+Point& Point::operator=(const Point& p){
+    posX_=p.posX_;
+    posY_=p.posY_;
+    return *this;
+}

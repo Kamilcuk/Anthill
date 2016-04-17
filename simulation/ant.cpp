@@ -17,9 +17,10 @@
 Ant::Ant(World& world, Point pos) :
     Creature(world, pos)
 {
-    addLeg();
+    addAntLegs();
     addAntMandibles();
     addAntSensor();
+    addAntWorkerAbdomen();
 }
 
 Ant::~Ant()
@@ -37,8 +38,8 @@ void Ant::step(int deltaTime) {
     
     auto sensors=getAntSensors();
     auto mands=getAntMandibles();
-    auto legs=getLegs();
-
+    auto legsVec=getAntLegs();
+    auto abdomensVec=getAntWorkerAbdomens();
 
     if(sensors.empty()){
         std::cout<<"Nie mam sensorow\n";
@@ -48,27 +49,46 @@ void Ant::step(int deltaTime) {
         std::cout<<"Nie mam rzujek\n";
         return;
     }
-    if(legs.empty()){
+    if(legsVec.empty()){
         std::cout<<"Nie mam nog\n";
         return;
     }
 
     AntSensor& sensor=*sensors[0];
     AntMandibles& ma=*mands[0];
-    Leg& leg=*legs[0];
+    AntLegs& legs=*legsVec[0];
+    AntWorkerAbdomen& abd=*abdomensVec[0];
+
+    bool targetPosChanged=0;
+    Point targetPos=Point(rand()%40+1,rand()%40+1);
 
     auto observations=sensor.getEntities();
-    for(auto e : observations){
+    for(auto o : observations){
         // smell of food (enum ?)
-        if((e.getSmell()==100) && !ma.isHolding()){
-            if(e.getPos() != getPos())
+        if((o.getSmell()==100) && !ma.isHolding()){
+            if(o.getPos() != getPos()){
+                if(!targetPosChanged){
+                    targetPos=o.getPos();
+                    targetPosChanged=1;
+                }
                 continue;
-            ma.grab(e);
+            }
+            ma.grab(o);
+            std::cout<<"grabbed\n";
             break;
         }
     }
 
-    leg.goToPos(Point(rand()%30+1,rand()%30+1));
+    if(!ma.isHolding()){
+        abd.dropToFoodPheromones();
+    }else{
+        //TODO: return somewhere
+        // example - point (0,0)
+        legs.goToPos(Point(0,0));
+        return;
+    }
+
+    legs.goToPos(targetPos);
 
 }
 

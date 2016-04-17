@@ -2,7 +2,7 @@
 # Sconstruct file, Kamil Cukrowski
 
 # -- init -- #
-SetOption('num_jobs', 8)
+SetOption('num_jobs', 3)
 sources = [ Glob('simulation/*.cpp') ];
 
 # -- env -- #

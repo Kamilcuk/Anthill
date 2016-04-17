@@ -28,7 +28,7 @@ public:
     Point getPos() const;
     void setPos(Point pos);
 
-    float getDistance(Entity * const e);
+    float getDistance(Entity * const e)const;
 
     /** physical informations **/
     virtual int getSmell(){ return 0;}

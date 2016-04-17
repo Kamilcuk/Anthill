@@ -70,7 +70,7 @@ void World::startSimulation()
     addUpdatable(boost::make_shared<Anthill>(*this, Point(35,35)));
 
 	
-	for(auto point : shape_gen.GenerateCircle(Point(15, 15), 3))
+	for(auto point : shape_gen.GenerateCircle(Point(15, 30), 3))
 	{
         addUpdatable(boost::make_shared<Food>(*this, point));
 	}
@@ -79,10 +79,10 @@ void World::startSimulation()
         addUpdatable(boost::make_shared<Food>(*this, point));
 	}
 
-	for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
-	{
-        obstacles_.push_back(boost::make_shared<Obstacle>(*this, point));
-	}
+	//for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
+	//{
+	//	obstacles_.emplace_back(Obstacle(*this, point));
+	//}
 }
 
 void World::stopSimulation()
