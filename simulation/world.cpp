@@ -50,9 +50,9 @@ void World::startSimulation()
 
 
 
-	/* they add itself*/
 	/* remember one pheromone map per world! */
-    std::shared_ptr<PheromoneMap> to_food = std::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
+    std::shared_ptr<PheromoneMap> to_food = std::make_shared<PheromoneMap>(*this, 
+            PheromoneMap::Type::ToFood, width, height, 0.01);
     addUpdatable(to_food);
     addUpdatable(std::make_shared<PheromoneMap>(*this, PheromoneMap::Type::FromFood, width, height, 0.01));
 
@@ -69,7 +69,7 @@ void World::startSimulation()
     addUpdatable(std::make_shared<Anthill>(*this, Point(35,35)));
 
 	
-	for(auto point : shape_gen.GenerateCircle(Point(15, 15), 3))
+	for(auto point : shape_gen.GenerateCircle(Point(15, 30), 3))
 	{
         addUpdatable(std::make_shared<Food>(*this, point));
 	}
@@ -78,10 +78,10 @@ void World::startSimulation()
         addUpdatable(std::make_shared<Food>(*this, point));
 	}
 
-	for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
-	{
-		obstacles_.emplace_back(Obstacle(*this, point));
-	}
+	//for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
+	//{
+	//	obstacles_.emplace_back(Obstacle(*this, point));
+	//}
 }
 
 void World::stopSimulation()

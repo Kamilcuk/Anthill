@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
                 if(alpha<0.001):
                     continue
                 if(alpha>255):
-                    continue
+                    alpha=255
 
                 pbrush=QBrush(QColor(baseRGB[0],baseRGB[1],baseRGB[2], alpha))
                 ppen=QPen(QBrush(QColor(baseRGB2[0],baseRGB2[1],baseRGB2[2], alpha)),0)

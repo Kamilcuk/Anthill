@@ -28,7 +28,7 @@ void Entity::setPos(Point pos)
 }
 
 
-float Entity::getDistance(Entity * const e)
+float Entity::getDistance(Entity * const e)const
 {
     return this->getPos().getDistance(e->getPos());
 }
