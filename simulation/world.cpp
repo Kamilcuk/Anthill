@@ -33,10 +33,6 @@ World::~World()
 	this->stopSimulation();
 }
 
-//boost::python::list World::getAntsPythonList(){
-//    return std_vector_to_py_list(ants);
-//}
-
 void World::setDimensions(int X, int Y)
 {
 	width = X;
@@ -103,9 +99,7 @@ void World::simulationStep()
     for(auto& u : updatables_) {
         u->step(0);
     }
-    //for(auto& u : updatables_) {
     for(auto u = updatables_.begin(); u<updatables_.end(); ++u) {
-        //std::cout<<"U\n";
         if ( !(*u)->isAlive() ){
             removeUpdatable(*u);
         }

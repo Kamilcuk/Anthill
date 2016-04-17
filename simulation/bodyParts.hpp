@@ -1,3 +1,9 @@
+/*
+ * TODO: many files, 
+ * but there would be too many of them 
+ * if as many as classes
+ */
+
 #ifndef BODY_PARTS_H
 #define BODY_PARTS_H
 
@@ -45,10 +51,11 @@ public:
         int getSmell();
 
         // All body parts implements whole physics.
-        // AntMandibles know more about this object
+        // AntMandibles must know more about this object
         // than external user (controller) and this user
         // can order AntMandibles to grab this Observation,
         // but cannot get internal Entity pointer
+        // so,
         friend AntMandibles;
     };
     AntSensor(World& w,Creature* owner):
