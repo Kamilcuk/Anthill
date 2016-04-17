@@ -11,14 +11,14 @@ class Food;
 class Anthill : public Entity
 {
 	/** all the food we have! hahahaha */
-    std::vector<std::shared_ptr<Food>> food_;
+    std::vector<boost::shared_ptr<Food>> food_;
 public:
     Anthill(World& world, Point pos);
     ~Anthill();
 	void step(int);
 
-    void lift(std::shared_ptr<Food> &l);
-    void lift(std::weak_ptr<Entity> &f);
+    void lift(boost::shared_ptr<Food> &l);
+    void lift(boost::weak_ptr<Entity> &f);
 };
 
 #endif // ANTHILL_H

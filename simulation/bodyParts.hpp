@@ -11,9 +11,11 @@
 #include "point.hpp"
 #include <vector>
 #include <iostream>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
-using std::weak_ptr;
-using std::shared_ptr;
+using boost::weak_ptr;
+using boost::shared_ptr;
 
 //#include "creature.hpp"
 class Creature;

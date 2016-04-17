@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include "anthill.hpp"
 #include "visitor.hpp"
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 
 Ant::Ant(World& world, Point pos) :
@@ -25,8 +27,8 @@ Ant::~Ant()
 {
 }
 
-using std::shared_ptr;
-using std::weak_ptr;
+using boost::shared_ptr;
+using boost::weak_ptr;
 
 void Ant::step(int deltaTime) {
     if(!deltaTime)

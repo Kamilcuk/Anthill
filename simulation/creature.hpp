@@ -4,6 +4,8 @@
 
 #include <vector>
 
+using boost::shared_ptr;
+
 class Creature : public Entity{
     // vectors of body parts
     std::vector<shared_ptr<AntLegs> > antLegs;

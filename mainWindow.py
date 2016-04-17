@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
 
         # configure world
-        self.world=anthill.World()
+        self.world=anthill.World.getInstance();
         self.world.setDimensions(w,h)
         self.world.setSimulationFramerate(self.simulationFramerate)
 
@@ -57,6 +57,7 @@ class MainWindow(QMainWindow):
     def drawPheromoneMap(self,map,
             baseRGB=(50,30,100),
             baseRGB2=(10,10,10) ):
+
         data=map.getMapCopy()
         data=list(data)
 
@@ -110,7 +111,7 @@ class MainWindow(QMainWindow):
         scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
 
         # symulacja tak? Kamil
-        # na razie może być, później się zrobi wątek w c++. ms
+        # na razie może być, później się zrobi wątek w c++. ms
         self.world.simulationStep()
 
         s=self.pixelSize

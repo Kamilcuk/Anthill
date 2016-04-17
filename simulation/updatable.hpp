@@ -1,10 +1,10 @@
 #ifndef UPDATABLE_H
 #define UPDATABLE_H
 
-#include <memory>
+#include <boost/enable_shared_from_this.hpp>
 class World;
 
-class Updatable : public std::enable_shared_from_this<Updatable> {
+class Updatable : public boost::enable_shared_from_this<Updatable> {
 protected:
     World& world_;
     bool alive = true;
