@@ -28,7 +28,7 @@ int AntSensor::Observation::getSmell(){
 std::vector<AntSensor::Observation> AntSensor::getEntities(){
     // TODO - now see everything
     std::vector<Observation> ret;
-    for(auto a : world_.getDerivedUpdatable<Entity>()){
+    for(auto a : getWorld().getDerivedUpdatable<Entity>()){
         ret.push_back(Observation( a ));
     }
     return ret;

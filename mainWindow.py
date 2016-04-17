@@ -9,7 +9,10 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 #from PyQt5.QtCore import pyqtSignal
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 from Ui_MainWindow import Ui_MainWindow
+import ctypes
 
 import anthill
 #from timer import Timer
@@ -45,7 +48,7 @@ class MainWindow(QMainWindow):
         self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
 
         # configure world
-        self.world=anthill.World.getInstance();
+        self.world = anthill.World();
         self.world.setDimensions(w,h)
         self.world.setSimulationFramerate(self.simulationFramerate)
 
@@ -141,12 +144,18 @@ class MainWindow(QMainWindow):
         antBrush=QBrush(QColor(100,100,50,200))
         self.drawEntities(ants,antPen,antBrush,True)
 
-
         # draw anthills
         anthills=self.world.getAnthills()
         anthillPen=QPen(QBrush(QColor()),0)
         anthillBrush=QBrush(QColor(200,20,20,150))
         self.drawEntities(anthills,anthillPen,anthillBrush)
+
+        # show statistics Kamil
+        s = self.world.getStatistics()
+        s2 = s.print()
+        _translate = QtCore.QCoreApplication.translate
+        self.ui.stat_label.setText(_translate("MainWindow", s2))
+
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:

@@ -1,8 +1,8 @@
 #include "pheromoneMap.hpp"
 
 PheromoneMap::PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y,
-	float decay_coeff) :
-	Updatable(world),
+    float decay_coeff) :
+    Updatable(world),
 	type_(type),
 	decay_coeff_(decay_coeff)
 {

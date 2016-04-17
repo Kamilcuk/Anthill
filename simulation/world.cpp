@@ -20,26 +20,22 @@
 #include <algorithm>
 #include "bodyParts.hpp"
 #include "statistics.hpp"
+#include <boost/core/null_deleter.hpp>
 
 using std::vector;
 
-World::World()
-{
-	setDimensions(300, 200);
 
-	/* initialize random seed: */
+World::World() : statistics_(*this)
+{
+    setDimensions(300, 200);
+
+    /* initialize random seed: */
 	srand (time(NULL));
 }
 
 World::~World()
 {
     this->stopSimulation();
-}
-
-World &World::getInstance()
-{
-    static World world;
-    return world;
 }
 
 void World::setDimensions(int X, int Y)
@@ -56,17 +52,12 @@ void World::startSimulation()
 	srand (time(NULL));
 
     /* statistics */
-    visitors_.push_back(boost::make_shared<Statistics>(*this));
-
-
+    addUpdatable(boost::shared_ptr<Statistics>(&this->statistics_, boost::null_deleter() ));
 
 	/* they add itself*/
-	/* remember one pheromone map per world! */
-    std::cout << "NIE UTWORZYLEM\n";
-    boost::shared_ptr<PheromoneMap> to_food = boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.01);
-    addUpdatable(to_food);
+    /* remember one pheromone map per world! */
+    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.01));
     addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::FromFood, width, height, 0.01));
-    std::cout << "UTWORZYLEM\n";
 
 	ShapeGenerator shape_gen;
 
@@ -161,14 +152,21 @@ std::vector<boost::shared_ptr<Derived>> World::getDerivedUpdatable()
     return ret;
 }
 
+Statistics World::getStatistics() const
+{
+    return statistics_;
+}
+
 #include "anthill.hpp"
 #include "ant.hpp"
 #include "pheromoneMap.hpp"
 #include "food.hpp"
 #include "entity.hpp"
+#include "visitable.hpp"
 
 template std::vector<boost::shared_ptr<Entity>> World::getDerivedUpdatable<Entity>();
 template std::vector<boost::shared_ptr<Ant>> World::getDerivedUpdatable<Ant>();
 template std::vector<boost::shared_ptr<Anthill>> World::getDerivedUpdatable();
 template std::vector<boost::shared_ptr<PheromoneMap>> World::getDerivedUpdatable<PheromoneMap>();
 template std::vector<boost::shared_ptr<Food>> World::getDerivedUpdatable<Food>();
+template std::vector<boost::shared_ptr<Visitable>> World::getDerivedUpdatable<Visitable>();

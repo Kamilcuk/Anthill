@@ -3,7 +3,7 @@
 
 #include "visitor.hpp"
 #include "updatable.hpp"
-#include <ostream>
+#include <string>
 
 class Statistics : public Visitor, public Updatable
 {
@@ -12,15 +12,13 @@ class Statistics : public Visitor, public Updatable
 public:
     Statistics(World& world);
 
-    void print(std::ostream& out);
+    const std::string print() const;
 
     // Visitor interface
-public:
     void visit(const Ant &a);
 
     // Updatable interface
-public:
-    void step(int);
+    void step(int s);
 };
 
 #endif // STATISTICS_HPP

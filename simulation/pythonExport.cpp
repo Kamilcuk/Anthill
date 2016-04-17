@@ -12,6 +12,7 @@
 #include "food.hpp"
 #include "anthill.hpp"
 #include "pheromoneMap.hpp"
+#include "statistics.hpp"
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <memory>
@@ -19,15 +20,10 @@
 
 using boost::shared_ptr;
 using std::vector;
-
-boost::shared_ptr<World> getSharedWorld() {
-    return boost::shared_ptr<World>( &World::getInstance(), boost::null_deleter() );
-}
-
+using namespace boost::python;
 
 //using boost::shared_ptr;
 BOOST_PYTHON_MODULE(anthill){
-    using namespace boost::python;
 
     boost::python::register_ptr_to_python<shared_ptr<World>>();
     boost::python::register_ptr_to_python<shared_ptr<Ant>>();
@@ -36,14 +32,14 @@ BOOST_PYTHON_MODULE(anthill){
     boost::python::register_ptr_to_python<shared_ptr<Obstacle>>();
     boost::python::register_ptr_to_python<shared_ptr<PheromoneMap>>();
 
-    class_<World, shared_ptr<World>, boost::noncopyable>("World", no_init)
-        .def("getInstance",&getSharedWorld).staticmethod("getInstance")
+    class_<World>("World", init<>())
         .def("getAnts",&World::getDerivedUpdatable<Ant>)
         .def("getFoods",&World::getDerivedUpdatable<Food>)
         .def("getAnthills",&World::getDerivedUpdatable<Anthill>)
         .def("getPheromoneMaps",&World::getDerivedUpdatable<PheromoneMap>)
         .def("getObstacles",&World::getObstacles)
 
+        .def("getStatistics",&World::getStatistics)
         .def("setDimensions",&World::setDimensions)
         .def("setSimulationFramerate",&World::setSimulationFramerate)
         .def("startSimulation",&World::startSimulation)
@@ -81,14 +77,14 @@ BOOST_PYTHON_MODULE(anthill){
     class_<Obstacle,shared_ptr<Obstacle>>("Obstacle",no_init)
         .def("getLoc",&Obstacle::getPos)
     ;
-
     class_<PheromoneMap,shared_ptr<PheromoneMap>>("PheromoneMap",no_init)
         .def("getMapCopy",&PheromoneMap::getMapCopy)
     ;
-
     class_<Point>("Point",init<int,int>())
         .def("posX",&Point::posX)
         .def("posY",&Point::posY)
     ;
-
+    class_<Statistics>("Statistics",no_init)
+            .def("print",&Statistics::print)
+    ;
 }
