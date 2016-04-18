@@ -1,0 +1,32 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "C++ Launch (GDB)",
+			"type": "cppdbg",
+			"request": "launch",
+			"launchOptionType": "Local",
+			"miDebuggerPath": "/usr/bin/gdb",
+			"targetArchitecture": "x64",
+			"program": "/usr/bin/python3",
+			"args": ["${workspaceRoot}/main.py"],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": []
+		},
+		{
+			"name": "C++ Attach (GDB)",
+			"type": "cppdbg",
+			"request": "launch",
+			"launchOptionType": "Local",
+			"miDebuggerPath": "/usr/bin/gdb",
+			"targetArchitecture": "x64",
+			"program": "${workspaceRoot}/main.py",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": [],
+			"processId": 1337
+		}
+	]
+}
