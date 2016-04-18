@@ -44,6 +44,10 @@ env_test.VariantDir('_build_test2', 'tests', duplicate=0)
 anthill_test2 = env_test2.Program(target = 'test2', source = [ Glob('_build_test2/*.cpp'), 'main_tests.cpp' ] );
 Depends(anthill_test2, libanthill)
 
+# -- test3 runs test2 -- #
+anthill_test3 = env_test2.Command(target = 'test3', source = "./test2", action = "./test2" );
+Depends(anthill_test3, anthill_test2)
+
 
 
 
