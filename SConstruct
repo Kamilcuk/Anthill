@@ -24,7 +24,7 @@ env['SHLIBPREFIX'] = ''; # we want anthill.so, default is libanthill.se
 
 # -- default target - shared library for python linking -- #
 libanthill = env.SharedLibrary(target = 'anthill', source = sources);
-Default(libanthill);
+#Default(libanthill);
 # -- anthill standalone -- #
 anthill = env.Program(target = 'anthill_standalone', source = [ sources, 'main_standalone.cpp' ] );
 
@@ -45,5 +45,11 @@ anthill_test2 = env_test2.Program(target = 'test2', source = [ Glob('_build_test
 Depends(anthill_test2, libanthill)
 
 # -- test3 runs test2 -- #
-anthill_test3 = env_test2.Command(target = 'test3', source = "./test2", action = "./test2" );
+import os
+def run_tests(target, source, env):
+	print "\n\n\t\t\t----- TESTING ----- \n";
+	os.system("./test2 --log_level=message show_progress=yes --report_level=short")
+	return None
+anthill_test3 = env_test2.Command(target = 'test3', source = "./test2", action = run_tests );
 Depends(anthill_test3, anthill_test2)
+Default(anthill_test3)
