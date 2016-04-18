@@ -16,7 +16,6 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <memory>
-#include <boost/core/null_deleter.hpp>
 
 using boost::shared_ptr;
 using std::vector;
