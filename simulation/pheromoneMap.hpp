@@ -2,8 +2,6 @@
 #define PHEROMONE_MAP_H
 
 #include <vector>
-#include <stdexcept>
-#include <math.h>
 
 #include "updatable.hpp"
 #include "point.hpp"
@@ -17,7 +15,7 @@ public:
 		FromFood
 	};
 private:
-	using Grid2D = std::vector<std::vector<float>>;
+	using Grid2D = std::vector<std::vector<float> >;
 	Grid2D map_;
 
 	PheromoneMap::Type type_;

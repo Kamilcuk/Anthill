@@ -20,7 +20,7 @@
 #include <algorithm>
 #include "bodyParts.hpp"
 #include "statistics.hpp"
-#include <boost/core/null_deleter.hpp>
+//#include <boost/core/null_deleter.hpp>
 
 using std::vector;
 
@@ -52,7 +52,7 @@ void World::startSimulation()
 	srand (time(NULL));
 
     /* statistics */
-    addUpdatable(boost::shared_ptr<Statistics>(&this->statistics_, boost::null_deleter() ));
+  //  addUpdatable(boost::shared_ptr<Statistics>(&this->statistics_, boost::null_deleter() ));
 
 	/* they add itself*/
     /* remember one pheromone map per world! */

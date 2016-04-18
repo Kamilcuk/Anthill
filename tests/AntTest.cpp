@@ -1,6 +1,8 @@
+#ifndef BOST_TEST_DYN_LINK
 #define BOOST_TEST_DYN_LINK
+#endif
 #include <boost/test/unit_test.hpp>
-
+#include <boost/make_shared.hpp>
 
 #include "../simulation/ant.hpp"
 #include "../simulation/world.hpp"
@@ -8,7 +10,7 @@
 BOOST_AUTO_TEST_CASE( testAntNoTeleportation )
 {
     World w;
-    auto p=std::make_shared<Ant>(w,Point(30,30));
+    auto p=boost::make_shared<Ant>(w,Point(30,30));
     w.addUpdatable(p);
 
     Point lastPos=p->getPos();
