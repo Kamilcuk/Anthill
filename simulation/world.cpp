@@ -93,7 +93,7 @@ void World::stopSimulation()
 /* well, i know */
 void World::simulationStep()
 {
-    std::cout<<"--------------------------------------------"<<std::endl;
+    //std::cout<<"--------------------------------------------"<<std::endl;
     for(auto& u : updatables_) {
         u->step(1);
     }

@@ -22,6 +22,14 @@ PheromoneMap::Type PheromoneMap::getType() const
 	return type_;
 }
 
+void PheromoneMap::reset()
+{
+	for(auto& row : map_) for(auto& cell : row)
+	{
+		cell = 0;
+	}
+}
+
 float PheromoneMap::decay(float p_current_strength)
 {
 	return p_current_strength * (1 - decay_coeff_);
@@ -31,11 +39,9 @@ float PheromoneMap::decay(float p_current_strength)
 void PheromoneMap::addStrengthClipping(unsigned p_x, unsigned p_y, 
 	float p_strength)
 {
-	if(p_x < 0) p_x = 0;
-	if(p_x > map_.size() - 1) p_x = map_.size() - 1;
-	if(p_y < 0) p_y = 0;
-	if(p_y > map_[0].size() - 1) p_y = map_.size() - 1;
-	addStrength(p_x, p_y, p_strength);
+	// only add if within map boundaries
+	if(p_x >= 0 && p_y >= 0 && p_x < map_.size() && p_y < map_[0].size())
+		addStrength(p_x, p_y, p_strength);
 }
 
 
@@ -99,7 +105,7 @@ void PheromoneMap::createBlob(const Point& p_pos, const float p_radius,
 	// consider each cell in a square
 	for(unsigned x = p_pos.posX() - p_radius; x < p_pos.posX() + p_radius; x++)
 		for(unsigned y = p_pos.posY() - p_radius; y < p_pos.posY() + p_radius; y++)
-		{
+		{			
 			// strength falls off linearly with distance from center
 			const float dist_from_center = sqrt((p_pos.posX() - x) * (p_pos.posX() - x) + 
 					(p_pos.posY() - y) * (p_pos.posY() - y));

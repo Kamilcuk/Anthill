@@ -37,6 +37,9 @@ public:
 
 	void step(int);
 
+	// resets all pheromone map squares to zero
+	void reset();
+
 	// Determines how fast the smell decays. Must be 0-1.
 	void setDecayCoeff(float p_decay_coeff);
 

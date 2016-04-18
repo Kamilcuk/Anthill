@@ -8,10 +8,9 @@
 	"tasks": 
 	[
 		{
-			"taskName": "test",
+			"taskName": "test2",
 			"isTestCommand": true,
 			"showOutput": "always",
-			"args": ["test"],
 			"isWatching": true
 		},
 		{

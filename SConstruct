@@ -43,7 +43,3 @@ env_test2.Append(CCFLAGS='--define BOOST_TEST_DYN_LINK')
 env_test.VariantDir('_build_test2', 'tests', duplicate=0)
 anthill_test2 = env_test2.Program(target = 'test2', source = [ Glob('_build_test2/*.cpp'), 'main_tests.cpp' ] );
 Depends(anthill_test2, libanthill)
-
-
-
-
