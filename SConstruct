@@ -1,6 +1,11 @@
 #!/bin/python3
 # Sconstruct file, Kamil Cukrowski
 
+# !	scons anthill (default) builds shared library for python
+# !	scons test				builds & runs tests
+# 	scons standalone		builds standalone version of anthill (for debug)
+# 	scons build_test		builds tests, doesn't run them
+
 # -- init -- #
 SetOption('num_jobs', 3)
 sources = [ Glob('simulation/*.cpp') ];
@@ -22,34 +27,26 @@ else:
 
 env['SHLIBPREFIX'] = ''; # we want anthill.so, default is libanthill.se
 
-# -- default target - shared library for python linking -- #
+# -- shared library for python linking -- #
 libanthill = env.SharedLibrary(target = 'anthill', source = sources);
-#Default(libanthill);
-# -- anthill standalone -- #
-anthill = env.Program(target = 'anthill_standalone', source = [ sources, 'main_standalone.cpp' ] );
+Default(libanthill)
 
-# -- test2 -- #
-env_test = env.Clone();
-env_test.Append(LINKFLAGS=' -lboost_unit_test_framework ')
-env_test.Append(CCFLAGS='--define BOOST_TEST_DYN_LINK')
-env_test.VariantDir('_build_test/simulation', 'simulation', duplicate=0)
-env_test.VariantDir('_build_test/', './', duplicate=0)
-anthill_test = env_test.Program(target = 'test', source = [ Glob('_build_test/simulation/*.cpp'), Glob('tests/*.cpp'), '_build_test/main_tests.cpp' ] );
+# -- anthill standalone -- #
+anthill_standalone = env.Program(target = 'standalone', source = [ sources, 'main_standalone.cpp' ] );
 
 # -- test using shared library that in the same folder that executable -- #
-env_test2 = env.Clone();
-env_test2.Append(LINKFLAGS=' -lboost_unit_test_framework -L./ -Wl,-rpath -Wl,' + Dir('#').abspath + ' -lanthill ');
-env_test2.Append(CCFLAGS='--define BOOST_TEST_DYN_LINK')
-env_test.VariantDir('_build_test2', 'tests', duplicate=0)
-anthill_test2 = env_test2.Program(target = 'test2', source = [ Glob('_build_test2/*.cpp'), 'main_tests.cpp' ] );
-Depends(anthill_test2, libanthill)
+env_test = env.Clone();
+env_test.Append(LINKFLAGS=' -lboost_unit_test_framework -L./ -Wl,-rpath -Wl,' + Dir('#').abspath + ' -lanthill ');
+env_test.Append(CCFLAGS='--define BOOST_TEST_DYN_LINK')
+env_test.VariantDir('_build_test', 'tests', duplicate=0)
+anthill_test = env_test.Program(target = 'build_test', source = [ Glob('_build_test/*.cpp'), 'main_tests.cpp' ] );
+Depends(anthill_test, libanthill)
 
-# -- test3 runs test2 -- #
+# -- build and run tests -- #
 import os
 def run_tests(target, source, env):
 	print "\n\n\t\t\t----- TESTING ----- \n";
 	os.system("./test2 --log_level=message show_progress=yes --report_level=short")
 	return None
-anthill_test3 = env_test2.Command(target = 'test3', source = "./test2", action = run_tests );
-Depends(anthill_test3, anthill_test2)
-Default(anthill_test3)
+anthill_test_run = env_test.Command(target = 'test', source = "./build_test", action = run_tests );
+Depends(anthill_test_run, anthill_test)

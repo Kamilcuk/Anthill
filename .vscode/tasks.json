@@ -1,6 +1,6 @@
 {
-	// See http://go.microsoft.com/fwlink/?LinkId=733558
-	// for the documentation about the tasks.json format
+	// http://go.microsoft.com/fwlink/?LinkId=733558
+	
 	"version": "0.1.0",
 	"isShellCommand": true,
 	"command": "scons",
@@ -8,16 +8,20 @@
 	"tasks": 
 	[
 		{
-			"taskName": "test2",
-			"isTestCommand": true,
-			"showOutput": "always",
-			"isWatching": true
-		},
-		{
-			"taskName": "-Q", // -Q means default
+			"taskName": "build shared python lib", 
+			"args": ["-Q"], // -Q means default
 			"isBuildCommand": true,
 			"showOutput": "always",
-			"isWatching": true
+			"isWatching": true,
+			"suppressTaskName": true
+		},
+		{
+			"taskName": "build & run tests",
+			"args": ["test"],
+			"isTestCommand": true,
+			"showOutput": "always",
+			"isWatching": true,
+			"suppressTaskName": true
 		}
     ]
 }
