@@ -51,9 +51,9 @@ void PheromoneMap::addStrength(unsigned p_x, unsigned p_y, float p_strength)
 }
 
 
-void PheromoneMap::step(int deltaTime)
+void PheromoneMap::step(int p_delta_time)
 {
-    if(!deltaTime)
+    if(!p_delta_time)
         return;
 	for(auto& row : map_) for(auto& cell : row)
 	{
@@ -82,16 +82,17 @@ Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 	/** for now its a quadrant */
 	float strongest = -1;
 	Point ret(-1,-1);
-	for(int i=-radius;i<radius;++i) {
-		for(int j=-radius;j<radius;++j) {
-			const unsigned int x = middle.posX()+i;
-			const unsigned int y = middle.posY()+i;
-			if ( x >= 0 && y >= 0 && x < map_.size() && y < map_.size() ) {
-				float strength = getStrengthAtPosition(Point(x, y));
-				if ( strength > strongest ) {
-					ret = Point(x,y);
-					strongest = strength;
-				}
+	for(int i=-radius;i<radius;++i) for(int j=-radius;j<radius;++j) 
+	{
+		const unsigned int x = middle.posX()+i;
+		const unsigned int y = middle.posY()+i;
+		if ( x >= 0 && y >= 0 && x < map_.size() && y < map_.size() ) 
+		{
+			float strength = getStrengthAtPosition(Point(x, y));
+			if ( strength > strongest ) 
+			{
+				ret = Point(x,y);
+				strongest = strength;
 			}
 		}
 	}
@@ -102,6 +103,10 @@ Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 void PheromoneMap::createBlob(const Point& p_pos, const float p_radius, 
 	float p_initial_strength)
 {
+	if((unsigned)p_pos.posX() > map_.size() || (unsigned)p_pos.posY() > map_[0].size() ||
+		(unsigned)p_pos.posX() < 0 || (unsigned)p_pos.posY() < 0)
+		throw std::runtime_error("Specified position exceeds pheromone map.");
+	
 	// consider each cell in a square
 	for(unsigned x = p_pos.posX() - p_radius; x < p_pos.posX() + p_radius; x++)
 		for(unsigned y = p_pos.posY() - p_radius; y < p_pos.posY() + p_radius; y++)

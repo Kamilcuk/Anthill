@@ -35,7 +35,7 @@ public:
 	PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, unsigned p_size_y, float decay_coeff);
 	~PheromoneMap();
 
-	void step(int);
+	void step(int p_delta_time);
 
 	// resets all pheromone map squares to zero
 	void reset();
