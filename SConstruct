@@ -46,7 +46,7 @@ Depends(anthill_test, libanthill)
 import os
 def run_tests(target, source, env):
 	print "\n\n\t\t\t----- TESTING ----- \n";
-	os.system("./build_test --log_level=message show_progress=yes --report_level=short")
+	os.system("./build_test --log_level=message --show_progress=yes --report_level=short")
 	return None
 anthill_test_run = env_test.Command(target = 'test', source = "./build_test", action = run_tests );
 Depends(anthill_test_run, anthill_test)

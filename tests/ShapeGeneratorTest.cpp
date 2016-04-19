@@ -82,7 +82,6 @@ BOOST_AUTO_TEST_CASE(test_lineReverseStartEnd_shouldBeSimilarToNotReversed)
     
     ShapeGenerator shape_gen;    
     auto output = shape_gen.GenerateLine(start, end, thickness);
-    std::cout << std::endl;
     auto output_reversed = shape_gen.GenerateLine(end, start, thickness);
     
     BOOST_CHECK(FindPoint(2, 2, output));

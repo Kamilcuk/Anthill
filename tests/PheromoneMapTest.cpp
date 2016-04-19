@@ -21,14 +21,7 @@ struct Fixture
     Fixture() :
         size_x(10), size_y(10), decay_coef(1), world(),
         pheromone_map(world, PheromoneMap::Type::ToFood, size_x, size_y, decay_coef)
-    {
-        BOOST_TEST_MESSAGE("setting up pheromone map test");
-    }
-    
-    ~Fixture()
-    {
-        BOOST_TEST_MESSAGE("tearing down pheromone map test");
-    }
+    {}
 };
 
 BOOST_FIXTURE_TEST_CASE(test_getInvalidPoint_shouldThrow, Fixture)
