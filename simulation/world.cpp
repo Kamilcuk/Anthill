@@ -52,8 +52,8 @@ void World::startSimulation()
 
 	/* they add itself*/
     /* remember one pheromone map per world! */
-    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.01));
-    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::FromFood, width, height, 0.01));
+    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.1));
+    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::FromFood, width, height, 0.1));
 
 	ShapeGenerator shape_gen;
 

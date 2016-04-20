@@ -93,7 +93,7 @@ void AntWorkerAbdomen::dropToFoodPheromones(){
 void AntWorkerAbdomen::step(int deltaTime){
     if(deltaTime<=0)
         return;
-    if(dropType==-1)
+    if(dropType == PheromoneMap::Type::None)
         return;
     for(auto pm : world_.getDerivedUpdatable<PheromoneMap>()){
         if(pm->getType()==dropType){
@@ -102,7 +102,7 @@ void AntWorkerAbdomen::step(int deltaTime){
         }
     }
 
-    dropType=-1;
+    dropType = PheromoneMap::Type::None;
 }
 
 

@@ -7,12 +7,15 @@
 #ifndef BODY_PARTS_H
 #define BODY_PARTS_H
 
-#include "updatable.hpp"
-#include "point.hpp"
-#include <vector>
 #include <iostream>
+#include <vector>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+
+#include "updatable.hpp"
+#include "point.hpp"
+#include "pheromoneMap.hpp"
 
 using boost::weak_ptr;
 using boost::shared_ptr;
@@ -79,11 +82,11 @@ public:
 };
 
 class AntWorkerAbdomen : public BodyPart{
-    int dropType;
+    PheromoneMap::Type dropType;
 public:
     AntWorkerAbdomen(World& w,Creature* owner):
         BodyPart(w,owner),
-        dropType(-1) // don't drop
+        dropType(PheromoneMap::Type::None) // don't drop
     {};
     void dropToFoodPheromones();
     void dropFromFoodPheromones();
