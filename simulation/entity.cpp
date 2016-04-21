@@ -5,12 +5,16 @@ Entity::Entity(World* world, Point pos) :
     Updatable(world),
     pos_(pos)
 {
-    world_->addEntity(this);
+}
+
+Entity::Entity(const Entity& other) :
+    Updatable(other.world_),
+    pos_(other.pos_)
+{
 }
 
 Entity::~Entity()
 {
-    world_->removeEntity(this);
 }
 
 Point Entity::getPos() const
@@ -26,4 +30,11 @@ void Entity::setPos(Point pos)
 float Entity::getDistance(Entity * const e)const
 {
     return this->getPos().getDistance(e->getPos());
+}
+
+Entity& Entity::operator=(const Entity& other)
+{
+    world_ = other.world_;
+    pos_ = other.pos_;
+    return *this;
 }

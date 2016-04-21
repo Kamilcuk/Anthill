@@ -6,24 +6,28 @@
  */
 
 #include "ant.hpp"
+
 #include <iostream>
 #include <cstdlib>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+
 #include "anthill.hpp"
 #include "visitor.hpp"
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-
+#include "bodyParts.hpp"
 
 Ant::Ant(World* world, Point pos) :
-    Creature(world, pos),
-    Visitable(world)
+    Visitable(world),
+    Creature(world, pos)
 {
-    addAntLegs();
-    addAntMandibles();
-    addAntSensor();
-    addAntWorkerAbdomen();
+    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+    antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+    antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
+        this));
 }
-
+    
 Ant::~Ant()
 {
 }
@@ -38,36 +42,35 @@ void Ant::step(int deltaTime) {
     // test AI - all the below(like below) will be in Controller (similar context)
     // in this function will be probably only: controller.step()
     
-    auto sensors=getAntSensors();
-    auto mands=getAntMandibles();
-    auto legsVec=getAntLegs();
-    auto abdomensVec=getAntWorkerAbdomens();
-
-    if(sensors.empty()){
+    if(antLegs.empty()){
         std::cout<<"Nie mam sensorow\n";
         return;
     }
-    if(mands.empty()){
+    if(antMandibles.empty()){
         std::cout<<"Nie mam rzujek\n";
         return;
     }
-    if(legsVec.empty()){
+    if(antSensors.empty()){
         std::cout<<"Nie mam nog\n";
         return;
     }
-
-    AntSensor& sensor=sensors[0];
-    AntMandibles& ma=mands[0];
-    AntLegs& legs=legsVec[0];
-    AntWorkerAbdomen& abd=abdomensVec[0];
-
+    if(antWorkerAbdomens.empty()){
+        std::cout<<"Nie mam kaloryfera\n";
+        return;
+    }
+    
+    auto legs = antLegs[0];
+    auto ma = antMandibles[0];
+    auto sensor = antSensors[0];
+    auto abd = antWorkerAbdomens[0];
+    
     bool targetPosChanged=0;
     Point targetPos=Point(rand()%40+1,rand()%40+1);
-
-    auto observations=sensor.getEntities();
+        
+    auto observations = sensor->getEntities();
     for(auto o : observations){
         // smell of food (enum ?)
-        if((o.getSmell()==100) && !ma.isHolding()){
+        if((o.getSmell()==100) && !ma->isHolding()){
             if(o.getPos() != getPos()){
                 if(!targetPosChanged){
                     targetPos=o.getPos();
@@ -75,23 +78,22 @@ void Ant::step(int deltaTime) {
                 }
                 continue;
             }
-            ma.grab(o);
+            ma->grab(o);
             std::cout<<"grabbed\n";
             break;
         }
     }
 
-    if(!ma.isHolding()){
-        abd.dropToFoodPheromones();
+    if(!ma->isHolding()){
+        abd->dropToFoodPheromones();
     }else{
         //TODO: return somewhere
         // example - point (0,0)
-        legs.goToPos(Point(0,0));
+        legs->goToPos(Point(0,0));
         return;
     }
 
-    legs.goToPos(targetPos);
-    
+    legs->goToPos(targetPos);
 }
 
 void Ant::accept(Visitor& v) const {

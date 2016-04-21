@@ -20,6 +20,9 @@ class Entity : public Updatable
 public:
 	Entity(World *world, Point pos);
 	virtual ~Entity();
+    
+	Entity(const Entity&);    
+    Entity& operator=(const Entity&);
 
     Point getPos() const;
     void setPos(Point pos);

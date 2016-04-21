@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CREATURE_H
+#define CREATURE_H
 
 #include <vector>
 
@@ -6,32 +7,9 @@
 #include "bodyParts.hpp"
 
 class Creature : public Entity{
-    // vectors of body parts
-    std::vector<AntLegs> antLegs;
-    std::vector<AntMandibles> antMandibles;
-    std::vector<AntSensor> antSensors;
-    std::vector<AntWorkerAbdomen> antWorkerAbdomens;
-
-protected:
-    void addAntLegs();
-    void addAntMandibles();
-    void addAntSensor();
-    void addAntWorkerAbdomen();
+public:
 	Creature(World* world, Point pos):
         Entity(world, pos) {}
-
-public:
-
-    inline std::vector<AntLegs>& getAntLegs(){
-        return antLegs;
-    }
-    inline std::vector<AntMandibles>& getAntMandibles(){
-        return antMandibles;
-    }
-    inline std::vector<AntSensor>& getAntSensors(){
-        return antSensors;
-    }
-    inline std::vector<AntWorkerAbdomen>& getAntWorkerAbdomens(){
-        return antWorkerAbdomens;
-    }
 };
+
+#endif // CREATURE_H

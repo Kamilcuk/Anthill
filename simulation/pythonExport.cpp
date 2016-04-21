@@ -25,31 +25,28 @@ using namespace boost::python;
 
 BOOST_PYTHON_MODULE(anthill)
 {
-/*
-    boost::python::register_ptr_to_python<shared_ptr<World>>();
-    boost::python::register_ptr_to_python<shared_ptr<Ant>>();
-    boost::python::register_ptr_to_python<shared_ptr<Food>>();
-    boost::python::register_ptr_to_python<shared_ptr<Anthill>>();
-    boost::python::register_ptr_to_python<shared_ptr<Obstacle>>();
-    boost::python::register_ptr_to_python<shared_ptr<PheromoneMap>>();
-*/
+#define REGISTER_SHAREDPTR(x) boost::python::register_ptr_to_python\
+    <shared_ptr<x>>();
+    REGISTER_SHAREDPTR(World);
+    REGISTER_SHAREDPTR(Ant);
+    REGISTER_SHAREDPTR(Food);
+    REGISTER_SHAREDPTR(Anthill);
+    REGISTER_SHAREDPTR(Obstacle);
+    REGISTER_SHAREDPTR(PheromoneMap);
 
-    class_<vector<Ant> >("vector_ants")
-        .def(vector_indexing_suite<vector<Ant>>() );
-    class_<vector<Food> >("vector_food")
-        .def(vector_indexing_suite<vector<Food>>() );
-    class_<vector<Anthill> >("vector_anthills")
-        .def(vector_indexing_suite<vector<Anthill>>() );
-    class_<vector<Obstacle> >("vector_obstacles")
-        .def(vector_indexing_suite<vector<Obstacle>>() );
-    class_<vector<PheromoneMap> >("vector_pmaps")
-        .def(vector_indexing_suite<vector<PheromoneMap>>() );
+#define VECTOR_SHAREDPTR(x) class_<vector<shared_ptr<x> > >(#x "_vector")\
+        .def(vector_indexing_suite<vector<shared_ptr<x>>, true>() );
+    VECTOR_SHAREDPTR(Ant);
+    VECTOR_SHAREDPTR(Food);
+    VECTOR_SHAREDPTR(Anthill);
+    VECTOR_SHAREDPTR(Obstacle);
+    VECTOR_SHAREDPTR(PheromoneMap);
 
     class_<vector<float> >("vector_float")
         .def(vector_indexing_suite<vector<float> >() );
     class_<vector<vector<float> > >("vector_vector_float")
         .def(vector_indexing_suite<vector< vector<float> > >() );
-
+        
 #define WORLD_METHOD(x) .def(#x, &World::x)
 #define WORLD_METHOD_REF(x) .def(#x, &World::x, return_internal_reference<>())
     class_<World>("World", init<>())
@@ -64,6 +61,8 @@ BOOST_PYTHON_MODULE(anthill)
         WORLD_METHOD(startSimulation)
         WORLD_METHOD(stopSimulation)
         WORLD_METHOD(simulationStep)
+        WORLD_METHOD(saveState)
+        WORLD_METHOD(loadState)
     ;
     
     class_<Ant>("Ant",no_init)

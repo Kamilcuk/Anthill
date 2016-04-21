@@ -10,28 +10,30 @@
 #include <iostream>
 #include <vector>
 
+#include <boost/weak_ptr.hpp>
+
 #include "updatable.hpp"
 #include "point.hpp"
 #include "pheromoneMap.hpp"
 
-class Creature;
 class Entity;
-
+class Creature;
 
 class BodyPart : public Updatable{
 protected:
     Creature* owner_;
 public:
-    BodyPart(World* w,Creature* c):
-        Updatable(w),owner_(c){}
+    BodyPart(World* w, Creature* c):
+        Updatable(w), owner_(c){}
     virtual void step(int deltaTime){};
 };
 
 class AntLegs : public BodyPart{
     Point targetPos_;
 public:
-    AntLegs(World* w,Creature* owner);
-
+    AntLegs(World* w, Creature* owner);
+    AntLegs(const AntLegs& o) :
+        BodyPart(o) {}
     void goToPos(const Point& p);
     void step(int);
 };
@@ -41,9 +43,9 @@ class AntMandibles;
 class AntSensor : public BodyPart{
 public:
     class Observation {
-        Entity* ent_;
+        boost::weak_ptr<Entity> ent_;
     public:
-        Observation(Entity* e) : ent_(e)
+        Observation(boost::weak_ptr<Entity> e) : ent_(e)
         { }
         Point getPos()const;
         int getSmell()const;
@@ -56,29 +58,28 @@ public:
         // so,
         friend AntMandibles;
     };
-    AntSensor(World* w,Creature* owner):
+    AntSensor(World* w, Creature* owner):
         BodyPart(w,owner){}
 
     std::vector<Observation> getEntities();
 };
 
 class AntMandibles : public BodyPart{
-    Entity* holdingObject_;
+    boost::weak_ptr<Entity> holdingObject_;
 public:
-    AntMandibles(World* w,Creature* owner):
-       BodyPart(w,owner),
-        holdingObject_(nullptr)
+    AntMandibles(World* w, Creature* owner):
+       BodyPart(w,owner)
     {}
-    bool grab(Entity* e);
+    bool grab(boost::weak_ptr<Entity> e);
     bool grab(AntSensor::Observation o);
     void step(int);
-    bool isHolding(){ return holdingObject_ != nullptr; }
+    bool isHolding(){ return !holdingObject_.expired(); }
 };
 
 class AntWorkerAbdomen : public BodyPart{
     PheromoneMap::Type dropType;
 public:
-    AntWorkerAbdomen(World* w,Creature* owner):
+    AntWorkerAbdomen(World* w, Creature* owner):
         BodyPart(w,owner),
         dropType(PheromoneMap::Type::None) // don't drop
     {};

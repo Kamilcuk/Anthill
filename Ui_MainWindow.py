@@ -27,6 +27,14 @@ class Ui_MainWindow(object):
         self.stopSimulationButton = QtWidgets.QPushButton(self.OptionsGroupBox)
         self.stopSimulationButton.setObjectName("stopSimulationButton")
         self.verticalLayout.addWidget(self.stopSimulationButton)
+        
+        self.saveStateButton = QtWidgets.QPushButton(self.OptionsGroupBox)
+        self.saveStateButton.setObjectName("saveStateButton")
+        self.verticalLayout.addWidget(self.saveStateButton)
+        self.loadStateButton = QtWidgets.QPushButton(self.OptionsGroupBox)
+        self.loadStateButton.setObjectName("loadStateButton")
+        self.verticalLayout.addWidget(self.loadStateButton)
+        
         self.label_2 = QtWidgets.QLabel(self.OptionsGroupBox)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
@@ -89,6 +97,8 @@ class Ui_MainWindow(object):
         self.OptionsGroupBox.setTitle(_translate("MainWindow", "Options"))
         self.startSimulationButton.setText(_translate("MainWindow", "Start Simulation"))
         self.stopSimulationButton.setText(_translate("MainWindow", "Stop Simulation"))
+        self.saveStateButton.setText(_translate("MainWindow", "Save state"))
+        self.loadStateButton.setText(_translate("MainWindow", "Load state"))
         self.label_2.setText(_translate("MainWindow", "Framerate:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.PreviewTab), _translate("MainWindow", "Simulation Preview"))
         self.stat_label.setText(_translate("MainWindow", "There will be for example statistics, graphs etc."))

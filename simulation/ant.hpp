@@ -14,14 +14,24 @@
 #include "visitable.hpp"
 
 class World;
-class Ant : public Creature, public Visitable {
+class AntLegs;
+class AntMandibles;
+class AntSensor;
+class AntWorkerAbdomen;
+
+class Ant : public Creature, virtual Visitable {
 	int speed_ = 1;
 	int visibility_ = 4;
-
+	
+    // vectors of body parts
+    std::vector<boost::shared_ptr<AntLegs> > antLegs;
+    std::vector<boost::shared_ptr<AntMandibles> > antMandibles;
+    std::vector<boost::shared_ptr<AntSensor> > antSensors;
+    std::vector<boost::shared_ptr<AntWorkerAbdomen> > antWorkerAbdomens;
 public:
 	Ant(World* world, Point pos);
-	~Ant();
-
+	virtual ~Ant();
+	
 	void step(int);
 	
     // Visitable interface

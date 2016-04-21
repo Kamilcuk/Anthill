@@ -12,7 +12,7 @@ sources = [ Glob('simulation/*.cpp') ];
 
 # -- env -- #
 env = Environment();
-env.Append(CCFLAGS = ' -Wall --std=c++11 -O2 -g -fPIC ');
+env.Append(CCFLAGS = ' -Werror -Wall --std=c++11 -O2 -g -fPIC ');
 env.Append(CCFLAGS = '-Iboost'); # add boost support
 env.Append(LINKFLAGS = '-fPIC'); # compile shared
 

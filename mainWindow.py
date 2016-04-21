@@ -175,7 +175,13 @@ class MainWindow(QMainWindow):
             self.refreshTimer=None
 
             self.world.stopSimulation()
-
+            
+    def on_saveStateButton_released(self):
+        self.world.saveState()
+            
+    def on_loadStateButton_released(self):
+        self.world.loadState()
+            
     def on_framerateBox_valueChanged(self):
         self.simulationFramerate=self.ui.framerateBox.value()
         if(self.refreshTimer):
