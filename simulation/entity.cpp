@@ -7,6 +7,11 @@ Entity::Entity(World* world, Point pos) :
 {
 }
 
+Entity::Entity(World *world) :
+    Updatable(world)
+{
+}
+
 Entity::Entity(const Entity& other) :
     Updatable(other.world_),
     pos_(other.pos_)

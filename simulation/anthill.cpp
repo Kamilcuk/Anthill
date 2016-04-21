@@ -10,6 +10,12 @@ Anthill::Anthill(World* world,Point pos) :
     //this->setVisibilityRadius(0);
 }
 
+Anthill::Anthill(World* world) :
+    Entity(world)
+{
+    //this->setVisibilityRadius(0);
+}
+
 Anthill::~Anthill()
 {
 	/* dont delete food_ vector, couse it gets deleted in world */

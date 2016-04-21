@@ -1,6 +1,9 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 class Point
 {
 	int posX_;
@@ -33,7 +36,15 @@ public:
 	
 	Point getPosition() const;
     float getDistance(Point p) const;
-
+	
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & posX_;
+		ar & posY_;
+	}
 };
 
 #endif // POINT_H

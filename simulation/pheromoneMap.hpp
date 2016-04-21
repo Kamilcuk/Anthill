@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <boost/serialization/base_object.hpp>
+
 #include "updatable.hpp"
 #include "point.hpp"
 
@@ -25,6 +27,7 @@ public:
 		FromFood
 	};
 
+	PheromoneMap();
 	PheromoneMap(World* world, PheromoneMap::Type type, unsigned p_size_x, 
 		unsigned p_size_y, float decay_coeff);
 	PheromoneMap(const PheromoneMap&);
@@ -79,7 +82,13 @@ private:
 	// outside of map
 	void addStrengthClipping(unsigned p_x, unsigned p_y, 
 		float p_strength);
-		
+
+private:
+    friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+	}
 };
 
 #endif // PHEROMONE_MAP_H

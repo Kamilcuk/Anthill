@@ -8,6 +8,18 @@
 #include "food.hpp"
 
 
+Food::Food(World* world, Point pos) :
+	Entity(world, pos),
+	used(false)
+{
+}
+
+Food::Food(World* world) :
+	Entity(world),
+	used(false)
+{
+}
+
 bool Food::getUsed() const
 {
 	return used;
@@ -16,13 +28,6 @@ bool Food::getUsed() const
 void Food::setUsed(bool value)
 {
 	used = value;
-}
-
-Food::Food(World* world, Point pos) :
-	Entity(world, pos),
-	used(false)
-{
-
 }
 
 void Food::step(int deltaTime)

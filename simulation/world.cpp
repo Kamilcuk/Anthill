@@ -18,6 +18,10 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
+#include "serialization.hpp"
 
 #include "anthill.hpp"
 #include "pheromoneMap.hpp"
@@ -136,12 +140,12 @@ void World::saveState()
 {
     std::cout << "Saving simulation state..." << std::endl;
     std::ofstream file(filename_);
-    //boost::archive::text_oarchive out_archive(file);
+    boost::archive::text_oarchive out_archive(file);
     
-    // out_archive << foods_;
-    // out_archive << obstacles_;
+    out_archive << foods_;
+    out_archive << obstacles_;
     // out_archive << ants_;
-    // out_archive << anthills_;
+    out_archive << anthills_;
     // out_archive << pheromone_maps_;
 }
 
@@ -149,12 +153,14 @@ void World::loadState()
 {
     std::cout << "Loading simulation state..." << std::endl;
     std::ifstream file(filename_);
-    //boost::archive::text_iarchive in_archive(file);
+    boost::archive::text_iarchive in_archive(file);
     
-    // in_archive >> foods_;
-    // in_archive >> obstacles_;
+    g_world = this; // see serialization.hpp for info on this line
+    
+    in_archive >> foods_;
+    in_archive >> obstacles_;
     // in_archive >> ants_;
-    // in_archive >> anthills_;
+    in_archive >> anthills_;
     // in_archive >> pheromone_maps_;
 }
 

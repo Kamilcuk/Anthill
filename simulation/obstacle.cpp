@@ -7,6 +7,11 @@ Obstacle::Obstacle(World* world, Point pos) :
 {
 }
 
+Obstacle::Obstacle(World* world) :
+	Entity(world)
+{
+}
+
 void Obstacle::step(int)
 {
 	// in future: some obstacles may move something
