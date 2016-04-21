@@ -15,6 +15,9 @@ env = Environment();
 env.Append(CCFLAGS = ' -Werror -Wall --std=c++11 -O2 -g -fPIC ');
 env.Append(CCFLAGS = '-Iboost'); # add boost support
 env.Append(LINKFLAGS = '-fPIC'); # compile shared
+env.Append(LINKFLAGS = '-lboost_serialization'); # boost serialization
+
+
 
 # add python3 support
 env.ParseConfig('pkg-config --cflags --libs python3')
