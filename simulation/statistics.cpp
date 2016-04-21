@@ -12,7 +12,7 @@ const std::string Statistics::print() const
 {
     std::string ret = "";
     ret = "Number ants alive: " + std::to_string(this->antsAlive);
-    std::cout << ret << std::endl;
+    //std::cout << ret << std::endl;
     return ret;
 }
 
@@ -26,7 +26,6 @@ void Statistics::step(int s)
     if ( !s ) return;
     antsAlive = 0;
     auto vv = world_->getVisitablePtrs();
-    std::cout << "num visitable ptrs " << vv.size() << std::endl;
     for (auto& v : vv) {
         v->accept(*this);
     }

@@ -118,8 +118,6 @@ void World::stopSimulation()
 
 void World::simulationStep()
 {
-    std::cout << "updating number:" << updatable_ptrs_.size() << std::endl;
-    
     for(auto u : updatable_ptrs_)
         u->step(1);
     for(auto u : updatable_ptrs_)
