@@ -24,8 +24,10 @@
 using std::vector;
 
 
-World::World() : statistics_(*this)
-{
+World::World() : statistics_(this)
+{    
+    filename_ = "simulation_state";
+    
     setDimensions(300, 200);
 
     /* initialize random seed: */
@@ -52,118 +54,99 @@ void World::startSimulation()
 
 	/* they add itself*/
     /* remember one pheromone map per world! */
-    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::ToFood, width, height, 0.1));
-    addUpdatable(boost::make_shared<PheromoneMap>(*this, PheromoneMap::Type::FromFood, width, height, 0.1));
+    pheromone_maps_.emplace_back(PheromoneMap(this, 
+        PheromoneMap::Type::ToFood, width, height, 0.1));
+    pheromone_maps_.emplace_back(PheromoneMap(this, 
+        PheromoneMap::Type::FromFood, width, height, 0.1));
+                
+    ants_.emplace_back(Ant(this, Point(30,30)));
+    ants_.emplace_back(Ant(this, Point(25,25)));
+    ants_.emplace_back(Ant(this, Point(20,20)));
+    ants_.emplace_back(Ant(this, Point(50,50)));
+    ants_.emplace_back(Ant(this, Point(30,20)));
+
+    anthills_.emplace_back(Anthill(this, Point(35,35)));
 
 	ShapeGenerator shape_gen;
-
-    addUpdatable(boost::make_shared<Ant>(*this, Point(30,30)));
-    addUpdatable(boost::make_shared<Ant>(*this, Point(25,25)));
-    addUpdatable(boost::make_shared<Ant>(*this, Point(20,20)));
-    addUpdatable(boost::make_shared<Ant>(*this, Point(50,50)));
-    addUpdatable(boost::make_shared<Ant>(*this, Point(30,20)));
-
-    addUpdatable(boost::make_shared<Anthill>(*this, Point(35,35)));
-
-	
 	for(auto point : shape_gen.GenerateCircle(Point(15, 30), 3))
-	{
-        addUpdatable(boost::make_shared<Food>(*this, point));
-	}
+	    foods_.emplace_back(Food(this, point));
 	for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
-	{
-        addUpdatable(boost::make_shared<Food>(*this, point));
-	}
-
-	//for(auto point : shape_gen.GenerateLine(Point(10, 20), Point(30, 30), 3))
-	//{
-	//	obstacles_.emplace_back(Obstacle(*this, point));
-	//}
+	    foods_.emplace_back(Food(this, point));
 }
 
 void World::stopSimulation()
 {
-	updatables_.clear();
+    foods_.clear();
+    obstacles_.clear();
+    ants_.clear();
+    anthills_.clear();
+    pheromone_maps_.clear();
+    
+	updatable_ptrs_.clear();
+    entity_ptrs_.clear();
+    visitable_ptrs_.clear();
 }
 
-/* well, i know */
 void World::simulationStep()
 {
-    //std::cout<<"--------------------------------------------"<<std::endl;
-    for(auto& u : updatables_) {
+    std::cout << "updating number:" << updatable_ptrs_.size() << std::endl;
+    
+    for(auto u : updatable_ptrs_)
         u->step(1);
-    }
-    for(auto& u : updatables_) {
+    for(auto u : updatable_ptrs_)
         u->step(0);
-    }
-    for(auto u = updatables_.begin(); u<updatables_.end(); ++u) {
-        if ( !(*u)->isAlive() ){
-            removeUpdatable(*u);
-        }
-    }
+    
+    // remove from notification list if flagged to remove
+    updatable_ptrs_.erase(
+        std::remove_if(updatable_ptrs_.begin(), updatable_ptrs_.end(),
+            [] (Updatable* x) -> bool { return x->isFlaggedToRemove(); }), 
+        updatable_ptrs_.end());
+    
     statistics_.step(1);
 }
 
-void World::addUpdatable(boost::shared_ptr<Updatable> e)
+void World::serializeState()
 {
-    auto it = std::find_if(updatables_.begin(), updatables_.end(),
-                           [&](boost::shared_ptr<Updatable> const &u){return u == e;});
-    if ( it == updatables_.end() ) {
-        // no such elemnt
-        updatables_.push_back(e);
-    }
+    std::cout << "serializeState TODO\n";
 }
 
-void World::removeUpdatable(boost::shared_ptr<Updatable> e)
+void World::deserializeState()
 {
-    auto it = std::find_if(updatables_.begin(), updatables_.end(),
-                           [&](boost::shared_ptr<Updatable> const &u){return u == e;});
-	if ( it == updatables_.end() ) {
-        // no such elemnt
-		return;
-	}
-	updatables_.erase(it);
+    std::cout << "deserializeState TODO\n";
 }
 
-
-std::vector<boost::shared_ptr<Obstacle>> World::getObstacles()
+void World::addUpdatable(Updatable* u)
 {
-    return obstacles_;
+    updatable_ptrs_.emplace_back(u);
 }
 
-std::vector<boost::shared_ptr<Updatable>> World::getUpdatables() const
-{
-    return updatables_;
+void World::removeUpdatable(Updatable* u)
+{  
+    updatable_ptrs_.erase(
+        std::remove(updatable_ptrs_.begin(), updatable_ptrs_.end(), u), 
+        updatable_ptrs_.end());
 }
 
-template<typename Derived>
-std::vector<boost::shared_ptr<Derived>> World::getDerivedUpdatable()
+void World::addEntity(Entity* e)
 {
-    std::vector<boost::shared_ptr<Derived>> ret;
-    for( auto p : updatables_ ) {
-        boost::shared_ptr<Derived> d = boost::dynamic_pointer_cast<Derived>(p);
-        if ( d ) {
-            ret.push_back(d);
-        }
-    }
-    return ret;
+    entity_ptrs_.emplace_back(e);
 }
 
-Statistics World::getStatistics() const
+void World::removeEntity(Entity* e)
 {
-    return statistics_;
+    entity_ptrs_.erase(
+        std::remove(entity_ptrs_.begin(), entity_ptrs_.end(), e), 
+        entity_ptrs_.end());
 }
 
-#include "anthill.hpp"
-#include "ant.hpp"
-#include "pheromoneMap.hpp"
-#include "food.hpp"
-#include "entity.hpp"
-#include "visitable.hpp"
+void World::addVisitable(Visitable* v)
+{
+    visitable_ptrs_.emplace_back(v);
+}
 
-template std::vector<boost::shared_ptr<Entity>> World::getDerivedUpdatable<Entity>();
-template std::vector<boost::shared_ptr<Ant>> World::getDerivedUpdatable<Ant>();
-template std::vector<boost::shared_ptr<Anthill>> World::getDerivedUpdatable();
-template std::vector<boost::shared_ptr<PheromoneMap>> World::getDerivedUpdatable<PheromoneMap>();
-template std::vector<boost::shared_ptr<Food>> World::getDerivedUpdatable<Food>();
-template std::vector<boost::shared_ptr<Visitable>> World::getDerivedUpdatable<Visitable>();
+void World::removeVisitable(Visitable* v)
+{
+    visitable_ptrs_.erase(
+        std::remove(visitable_ptrs_.begin(), visitable_ptrs_.end(), v), 
+        visitable_ptrs_.end());
+}    

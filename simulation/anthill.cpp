@@ -4,7 +4,7 @@
 #include "ant.hpp"
 #include "entity.hpp"
 
-Anthill::Anthill(World& world,Point pos) :
+Anthill::Anthill(World* world,Point pos) :
     Entity(world, pos)
 {
     //this->setVisibilityRadius(0);

@@ -1,28 +1,24 @@
-#ifndef LIVING_H
-#define LIVING_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
-#include "point.hpp"
 #include "updatable.hpp"
-#include <vector>
-#include <memory>
-#include <map>
-#include <algorithm>
-class World;
-class Food;
-class Anthill;
+#include "point.hpp"
 
+class World;
 
 /**
- * @brief The Living class
- * All that lives shall be here!
+ * Represents all physical entities in simulation, like objects.
+ * Upon creation, automatically adds pointer to this to generic entity_ptrs
+ * list inside World instance provided in constructor. This allows entities to
+ * get a list of all other entities easily and quickly.
  */
-class Entity : public Updatable {
-
+class Entity : public Updatable
+{
 	/** position of this entity */
 	Point pos_;
 
 public:
-	Entity(World &world, Point pos);
+	Entity(World *world, Point pos);
 	virtual ~Entity();
 
     Point getPos() const;
@@ -39,9 +35,4 @@ public:
 
 };
 
-/* predeclarations */
-class Food;
-class Anthill;
-
-
-#endif // LIVING_H
+#endif // ENTITY_H

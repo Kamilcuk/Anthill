@@ -1,9 +1,10 @@
 #include "obstacle.hpp"
 
-Obstacle::Obstacle(World& world, Point pos) :
+#include <iostream>
+
+Obstacle::Obstacle(World* world, Point pos) :
 	Entity(world, pos)
 {
-	
 }
 
 void Obstacle::step(int)

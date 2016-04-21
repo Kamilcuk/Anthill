@@ -7,7 +7,7 @@ class Obstacle : public Entity
 {
 
 public:
-	Obstacle(World& world, Point pos);
+	Obstacle(World* world, Point pos);
 	void step(int);
 };
 

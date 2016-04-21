@@ -15,15 +15,15 @@
 
 class World;
 class Ant : public Creature, public Visitable {
-	const int speed_ = 1;
-	const int visibility_ = 15;
+	int speed_ = 1;
+	int visibility_ = 4;
 
 public:
-	Ant(World& world, Point pos);
+	Ant(World* world, Point pos);
 	~Ant();
 
 	void step(int);
-
+	
     // Visitable interface
     void accept(Visitor& v) const;
 };

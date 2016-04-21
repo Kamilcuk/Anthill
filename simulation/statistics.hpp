@@ -5,12 +5,15 @@
 #include "updatable.hpp"
 #include <string>
 
+class World;
+
 class Statistics : public Visitor, public Updatable
 {
     int antsAlive;
+    World* world_;
 
 public:
-    Statistics(World& world);
+    Statistics(World* world);
 
     const std::string print() const;
 

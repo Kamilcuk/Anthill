@@ -1,6 +1,9 @@
 #include "pheromoneMap.hpp"
 
-PheromoneMap::PheromoneMap(World& world, PheromoneMap::Type type, 
+#include <stdexcept>
+#include <math.h>
+
+PheromoneMap::PheromoneMap(World* world, PheromoneMap::Type type, 
 	unsigned p_size_x, unsigned p_size_y, float decay_coeff)
 	:
     Updatable(world), type_(type), decay_coeff_(decay_coeff)
@@ -9,12 +12,35 @@ PheromoneMap::PheromoneMap(World& world, PheromoneMap::Type type,
 		(p_size_x, std::vector<float>(p_size_y, 0.0));
 }
 
+PheromoneMap::PheromoneMap(const PheromoneMap& other)
+	:
+    Updatable(other.world_), map_(other.map_), type_(other.type_),
+	decay_coeff_(other.decay_coeff_)
+{
+}
 
 PheromoneMap::~PheromoneMap()
 {
 
 }
 
+PheromoneMap& PheromoneMap::operator=(const PheromoneMap& other)
+{
+	map_ = other.map_;
+	type_ = other.type_;
+	decay_coeff_ = other.decay_coeff_;
+    return *this;
+}
+
+bool PheromoneMap::operator==(const PheromoneMap& other)
+{
+    return *this == other;
+}
+
+bool PheromoneMap::operator!=(const PheromoneMap& other)
+{
+    return *this != other;
+}
 
 PheromoneMap::Type PheromoneMap::getType() const
 {
@@ -114,8 +140,8 @@ void PheromoneMap::createBlob(const Point& p_pos, const float p_radius,
 	float p_initial_strength)
 {
 	if((unsigned)p_pos.posX() > map_.size() || 
-		(unsigned)p_pos.posY() > map_[0].size() ||
-		(unsigned)p_pos.posX() < 0 || (unsigned)p_pos.posY() < 0)
+			(unsigned)p_pos.posY() > map_[0].size() ||
+			(unsigned)p_pos.posX() < 0 || (unsigned)p_pos.posY() < 0)
 		throw std::runtime_error("Specified position exceeds pheromone map.");
 	
 	// consider each cell in a square

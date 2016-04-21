@@ -13,7 +13,7 @@
 class Food : public Entity {
 	bool used;
 public:
-	Food(World &world, Point pos);
+	Food(World* world, Point pos);
 
 	void step(int);
 	bool getUsed() const;

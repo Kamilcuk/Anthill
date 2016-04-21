@@ -4,10 +4,8 @@
 #include "pheromoneMap.hpp"
 #include "ant.hpp"
 
-#include <iostream>
-
 // AntLegs
-AntLegs::AntLegs(World& w,Creature* owner)
+AntLegs::AntLegs(World* w,Creature* owner)
     : BodyPart(w,owner){
         targetPos_=owner->getPos();
 }
@@ -17,6 +15,9 @@ void AntLegs::goToPos(const Point& p){
 }
 
 void AntLegs::step(int deltatime){
+    owner_->setPos(Point(25, 15));
+    
+    /*
     while((deltatime--)>0){
         Point curPos=owner_->getPos();
         int x=curPos.posX();
@@ -28,44 +29,42 @@ void AntLegs::step(int deltatime){
 
         // check if this position is free (there is no other Ant)
         // (detect collision)
-        for(auto a : world_.getDerivedUpdatable<Ant>()){
-            if(a->getPos()==Point(x,y)){
+        for(auto a : world_->getAnts()){
+            if(a.getPos() == Point(x,y)){
                 // collision detected
                 return;
             }
         }
         owner_->setPos(Point(x,y));
-    }
+    }*/
 }
 
 // AntSensor
 Point AntSensor::Observation::getPos()const{ 
-    return ent_.lock()->getPos(); 
+    return ent_->getPos(); 
 }
 
 int AntSensor::Observation::getSmell()const{
-    return ent_.lock()->getSmell(); 
+    return ent_->getSmell(); 
 }
 
 std::vector<AntSensor::Observation> AntSensor::getEntities(){
     std::vector<Observation> ret;
-    for(auto a : world_.getDerivedUpdatable<Entity>()){
+    for(auto a : world_->getEntityPtrs()){
         if(a->getPos().getDistance(owner_->getPos()) <= 4)
-            ret.push_back(Observation( a ));
+            ret.push_back(Observation(a));
     }
     Point ownerPos=owner_->getPos();
     std::sort(ret.begin(),ret.end(),
-        [ownerPos](const Observation& a,const Observation& b) -> bool {
-            return ownerPos.getDistance(a.getPos()) 
-                < ownerPos.getDistance(b.getPos()); 
-        });
+        [ownerPos] (const Observation& a,const Observation& b) -> bool 
+        { return ownerPos.getDistance(a.getPos()) 
+            < ownerPos.getDistance(b.getPos()); });
     return ret;
 }
 
 // AntMandibles
-bool AntMandibles::grab(weak_ptr<Entity> e){
-    auto ent=e.lock();
-    if(owner_->getPos()!=ent->getPos())
+bool AntMandibles::grab(Entity* e){
+    if(owner_->getPos()!=e->getPos())
         return 0;
     if(isHolding()){
         return 0;
@@ -81,7 +80,7 @@ bool AntMandibles::grab(AntSensor::Observation o){
 
 void AntMandibles::step(int deltaTime){
     if(isHolding()){
-        holdingObject_.lock()->setPos(owner_->getPos());
+        holdingObject_->setPos(owner_->getPos());
     }
 }
 
@@ -95,9 +94,9 @@ void AntWorkerAbdomen::step(int deltaTime){
         return;
     if(dropType == PheromoneMap::Type::None)
         return;
-    for(auto pm : world_.getDerivedUpdatable<PheromoneMap>()){
-        if(pm->getType()==dropType){
-            pm->createBlob(owner_->getPos(), 2, 100);
+    for(auto pm : world_->getPheromoneMaps()){
+        if(pm.getType()==dropType){
+            pm.createBlob(owner_->getPos(), 2, 100);
             return;
         }
     }

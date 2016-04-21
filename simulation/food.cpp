@@ -18,7 +18,7 @@ void Food::setUsed(bool value)
 	used = value;
 }
 
-Food::Food(World& world, Point pos) :
+Food::Food(World* world, Point pos) :
 	Entity(world, pos),
 	used(false)
 {
@@ -28,5 +28,5 @@ Food::Food(World& world, Point pos) :
 void Food::step(int deltaTime)
 {
 	if ( getUsed() == true )
-        this->remove();
+        this->flagToRemove();
 }

@@ -1,27 +1,35 @@
 #include "updatable.hpp"
 #include "world.hpp"
 
-Updatable::Updatable(World &world) :
+Updatable::Updatable(World* world) :
     world_(world)
 {
+    world_->addUpdatable(this);
 }
 
 Updatable::~Updatable()
 {
-
+    world_->removeUpdatable(this);
 }
 
-World &Updatable::getWorld()
+Updatable::Updatable(const Updatable& other)  :
+    world_(other.world_)
 {
-    return world_;
+    world_->addUpdatable(this);
 }
 
-void Updatable::remove()
+Updatable& Updatable::operator=(const Updatable& other)
 {
-    alive = false;
+    world_ = other.world_;
+    return *this;
 }
 
-bool Updatable::isAlive() const
+bool Updatable::operator==(const Updatable& other)
 {
-    return alive;
+    return *this == other;
+}
+
+bool Updatable::operator!=(const Updatable& other)
+{
+    return *this != other;
 }

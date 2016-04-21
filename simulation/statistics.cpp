@@ -3,9 +3,9 @@
 #include "visitable.hpp"
 #include <iostream>
 
-Statistics::Statistics(World &world) : Updatable(world), antsAlive(0)
+Statistics::Statistics(World* world) : Updatable(world), antsAlive(0),
+    world_(world)
 {
-
 }
 
 const std::string Statistics::print() const
@@ -25,7 +25,8 @@ void Statistics::step(int s)
 {
     if ( !s ) return;
     antsAlive = 0;
-    auto vv = getWorld().getDerivedUpdatable<Visitable>();
+    auto vv = world_->getVisitablePtrs();
+    std::cout << "num visitable ptrs " << vv.size() << std::endl;
     for (auto& v : vv) {
         v->accept(*this);
     }

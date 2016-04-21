@@ -13,7 +13,7 @@ class Anthill : public Entity
 	/** all the food we have! hahahaha */
     std::vector<boost::shared_ptr<Food>> food_;
 public:
-    Anthill(World& world, Point pos);
+    Anthill(World* world, Point pos);
     ~Anthill();
 	void step(int);
 

@@ -25,9 +25,16 @@ public:
 		FromFood
 	};
 
-	PheromoneMap(World& world, PheromoneMap::Type type, unsigned p_size_x, 
+	PheromoneMap(World* world, PheromoneMap::Type type, unsigned p_size_x, 
 		unsigned p_size_y, float decay_coeff);
+	PheromoneMap(const PheromoneMap&);
 	~PheromoneMap();
+	
+    // we need to provide following operators so that we can use references
+    // in Python module (Python lists use these operators)
+	PheromoneMap& operator=(const PheromoneMap&);
+    bool operator==(const PheromoneMap&);
+    bool operator!=(const PheromoneMap&);
 
 	/// Implemented from Updatable.
 	void step(int p_delta_time);
@@ -59,7 +66,7 @@ public:
 private:
 	Grid2D map_;
 
-	const PheromoneMap::Type type_;
+	PheromoneMap::Type type_;
 
 	// trying to achieve (1-e^-(t/To))
 	float decay_coeff_;

@@ -14,8 +14,9 @@
 #include <boost/weak_ptr.hpp>
 
 
-Ant::Ant(World& world, Point pos) :
-    Creature(world, pos)
+Ant::Ant(World* world, Point pos) :
+    Creature(world, pos),
+    Visitable(world)
 {
     addAntLegs();
     addAntMandibles();
@@ -31,6 +32,7 @@ using boost::shared_ptr;
 using boost::weak_ptr;
 
 void Ant::step(int deltaTime) {
+    
     if(!deltaTime)
         return;
     // test AI - all the below(like below) will be in Controller (similar context)
@@ -54,10 +56,10 @@ void Ant::step(int deltaTime) {
         return;
     }
 
-    AntSensor& sensor=*sensors[0];
-    AntMandibles& ma=*mands[0];
-    AntLegs& legs=*legsVec[0];
-    AntWorkerAbdomen& abd=*abdomensVec[0];
+    AntSensor& sensor=sensors[0];
+    AntMandibles& ma=mands[0];
+    AntLegs& legs=legsVec[0];
+    AntWorkerAbdomen& abd=abdomensVec[0];
 
     bool targetPosChanged=0;
     Point targetPos=Point(rand()%40+1,rand()%40+1);
@@ -89,7 +91,7 @@ void Ant::step(int deltaTime) {
     }
 
     legs.goToPos(targetPos);
-
+    
 }
 
 void Ant::accept(Visitor& v) const {
