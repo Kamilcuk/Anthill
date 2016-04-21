@@ -2,7 +2,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "C++ Launch (GDB)",
+			"name": "Python debug",
 			"type": "cppdbg",
 			"request": "launch",
 			"launchOptionType": "Local",
@@ -10,6 +10,19 @@
 			"targetArchitecture": "x64",
 			"program": "/usr/bin/python3",
 			"args": ["${workspaceRoot}/main.py"],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": []
+		},
+		{
+			"name": "Standalone debug",
+			"type": "cppdbg",
+			"request": "launch",
+			"launchOptionType": "Local",
+			"miDebuggerPath": "/usr/bin/gdb",
+			"targetArchitecture": "x64",
+			"program": "/usr/bin/gdb",
+			"args": ["${workspaceRoot}/standalone"],
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}",
 			"environment": []
