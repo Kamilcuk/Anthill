@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
+from PyQt5.QtWidgets import QFileDialog
 
 from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QBrush
@@ -175,13 +176,22 @@ class MainWindow(QMainWindow):
             self.refreshTimer=None
 
             self.world.stopSimulation()
-            
+
     def on_saveStateButton_released(self):
-        self.world.saveState()
-            
+        path=QFileDialog.getSaveFileName(self, "Save File",
+                                    "/home", "All Files (*)")
+        path=path[0]
+        print("Saving state to: ",path)
+        if(path and path!=''):
+            self.world.saveState(path)
+
     def on_loadStateButton_released(self):
-        self.world.loadState()
-            
+        path=QFileDialog.getOpenFileName(self, "Open File",
+                                    "/home", "All Files (*)")
+        path=path[0]
+        if(path and path!=''):
+            self.world.loadState(path)
+
     def on_framerateBox_valueChanged(self):
         self.simulationFramerate=self.ui.framerateBox.value()
         if(self.refreshTimer):

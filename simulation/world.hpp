@@ -37,9 +37,6 @@ class World {
     int width,height;
     float framerate;
     
-    // For serialization of simulation state
-    std::string filename_;
-    
     // Pointers to stuff that is automatically updated in simualtion loop.
     // We're using an observer pattern here, so raw pointers are appropriate.
     // (http://stackoverflow.com/questions/17648912/)
@@ -86,9 +83,9 @@ public:
     void simulationStep();
     
     /// Serializes simulation state.
-    void saveState();
+    void saveState(std::string);
     /// Deserializes simulation state.
-    void loadState();
+    void loadState(std::string);
     
     inline std::vector<boost::shared_ptr<Food> >& getFoods() 
     { return foods_; }

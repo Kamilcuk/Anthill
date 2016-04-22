@@ -32,8 +32,6 @@ using std::vector;
 
 World::World() : statistics_(this)
 {    
-    filename_ = "simulation_state";
-    
     setDimensions(300, 200);
 
     /* initialize random seed: */
@@ -132,10 +130,10 @@ void World::simulationStep()
     statistics_.step(1);
 }
 
-void World::saveState()
+void World::saveState(std::string filename)
 {
     std::cout << "Saving simulation state..." << std::endl;
-    std::ofstream file(filename_);
+    std::ofstream file(filename);
     boost::archive::text_oarchive out_archive(file);
     
     out_archive << foods_;
@@ -145,10 +143,10 @@ void World::saveState()
     out_archive << pheromone_maps_;
 }
 
-void World::loadState()
+void World::loadState(std::string filename)
 {
     std::cout << "Loading simulation state..." << std::endl;
-    std::ifstream file(filename_);
+    std::ifstream file(filename);
     boost::archive::text_iarchive in_archive(file);
     
     g_world = this; // see serialization.hpp for info on this line
