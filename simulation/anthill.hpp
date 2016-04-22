@@ -4,10 +4,7 @@
 #include <vector>
 #include <memory>
 
-#include <boost/serialization/base_object.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
+#include "serialization.hpp"
 #include "entity.hpp"
 #include "ant.hpp"
 

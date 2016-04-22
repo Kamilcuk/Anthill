@@ -8,8 +8,12 @@ PheromoneMap::PheromoneMap(World* world, PheromoneMap::Type type,
 	:
     Updatable(world), type_(type), decay_coeff_(decay_coeff)
 {
-	map_ = std::vector<std::vector<float>>
-		(p_size_x, std::vector<float>(p_size_y, 0.0));
+	resize(p_size_x, p_size_y);
+}
+
+PheromoneMap::PheromoneMap(World* world) : 
+	Updatable(world), type_(Type::None), decay_coeff_(0)
+{
 }
 
 PheromoneMap::PheromoneMap(const PheromoneMap& other)
@@ -21,7 +25,6 @@ PheromoneMap::PheromoneMap(const PheromoneMap& other)
 
 PheromoneMap::~PheromoneMap()
 {
-
 }
 
 PheromoneMap& PheromoneMap::operator=(const PheromoneMap& other)
@@ -47,7 +50,6 @@ PheromoneMap::Type PheromoneMap::getType() const
 	return type_;
 }
 
-
 void PheromoneMap::reset()
 {
 	for(auto& row : map_) for(auto& cell : row)
@@ -56,6 +58,11 @@ void PheromoneMap::reset()
 	}
 }
 
+void PheromoneMap::resize(unsigned p_size_x, unsigned p_size_y)
+{
+	map_ = std::vector<std::vector<float>>
+		(p_size_x, std::vector<float>(p_size_y, 0.0));
+}
 
 float PheromoneMap::decay(float p_current_strength)
 {
@@ -74,12 +81,10 @@ void PheromoneMap::addStrengthClipping(unsigned p_x, unsigned p_y,
 		addStrength(p_x, p_y, p_strength);
 }
 
-
 void PheromoneMap::addStrength(unsigned p_x, unsigned p_y, float p_strength)
 {
 	map_[p_x][p_y] += p_strength;
 }
-
 
 void PheromoneMap::step(int p_delta_time)
 {
@@ -91,18 +96,15 @@ void PheromoneMap::step(int p_delta_time)
 	}
 }
 
-
 const PheromoneMap::Grid2D& PheromoneMap::getMap()
 {
 	return map_;
 }
 
-
 PheromoneMap::Grid2D PheromoneMap::getMapCopy()
 {
 	return map_;
 }
-
 
 float PheromoneMap::getStrengthAtPosition(const Point& p_pos)
 {
@@ -111,7 +113,6 @@ float PheromoneMap::getStrengthAtPosition(const Point& p_pos)
 		throw std::runtime_error("Specified position exceeds pheromone map.");
 	return map_[(unsigned)p_pos.posX()][(unsigned)p_pos.posY()];
 }
-
 
 Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 {
@@ -134,7 +135,6 @@ Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 	}
 	return ret;
 }
-
 
 void PheromoneMap::createBlob(const Point& p_pos, const float p_radius, 
 	float p_initial_strength)

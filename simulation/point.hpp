@@ -1,8 +1,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include "serialization.hpp"
 
 class Point
 {

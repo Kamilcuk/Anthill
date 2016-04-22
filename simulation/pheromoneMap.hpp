@@ -3,8 +3,7 @@
 
 #include <vector>
 
-#include <boost/serialization/base_object.hpp>
-
+#include "serialization.hpp"
 #include "updatable.hpp"
 #include "point.hpp"
 
@@ -27,9 +26,9 @@ public:
 		FromFood
 	};
 
-	PheromoneMap();
 	PheromoneMap(World* world, PheromoneMap::Type type, unsigned p_size_x, 
 		unsigned p_size_y, float decay_coeff);
+	PheromoneMap(World* world);
 	PheromoneMap(const PheromoneMap&);
 	~PheromoneMap();
 	
@@ -44,6 +43,9 @@ public:
 
 	/// Resets all pheromone map squares to zero.
 	void reset();
+	
+	/// Resets map and resizes it;
+	void resize(unsigned p_size_x, unsigned p_size_y);
 
 	/// Determines how fast the smell decays. Must be 0-1.
 	void setDecayCoeff(float p_decay_coeff);
@@ -88,6 +90,11 @@ private:
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
 	{
+		ar & decay_coeff_;
+		ar & map_;
+		// implementation of enum class serialization is in 
+		// serializationCustom.hpp
+		ar & type_;	
 	}
 };
 

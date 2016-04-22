@@ -8,10 +8,7 @@
 #ifndef SRC_FOOD_HPP_
 #define SRC_FOOD_HPP_
 
-#include <boost/serialization/base_object.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
+#include "serialization.hpp"
 #include "entity.hpp"
 
 class Food : public Entity 

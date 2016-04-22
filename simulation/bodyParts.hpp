@@ -12,6 +12,7 @@
 
 #include <boost/weak_ptr.hpp>
 
+#include "serialization.hpp"
 #include "updatable.hpp"
 #include "point.hpp"
 #include "pheromoneMap.hpp"
@@ -36,6 +37,14 @@ public:
         BodyPart(o) {}
     void goToPos(const Point& p);
     void step(int);
+    
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & targetPos_;
+	}
 };
 
 class AntMandibles;
@@ -62,6 +71,13 @@ public:
         BodyPart(w,owner){}
 
     std::vector<Observation> getEntities();
+    
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+    {
+	}
 };
 
 class AntMandibles : public BodyPart{
@@ -74,6 +90,14 @@ public:
     bool grab(AntSensor::Observation o);
     void step(int);
     bool isHolding(){ return !holdingObject_.expired(); }
+    
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & holdingObject_;
+	}
 };
 
 class AntWorkerAbdomen : public BodyPart{
@@ -86,6 +110,14 @@ public:
     void dropToFoodPheromones();
     void dropFromFoodPheromones();
     void step(int);
+    
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & dropType;
+	}
 };
 
 

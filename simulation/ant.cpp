@@ -27,7 +27,18 @@ Ant::Ant(World* world, Point pos) :
     antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
         this));
 }
-    
+
+Ant::Ant(World* world) :
+    Visitable(world),
+    Creature(world)
+{
+    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+    antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+    antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
+        this));
+}
+
 Ant::~Ant()
 {
 }

@@ -1,11 +1,10 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
 #include "updatable.hpp"
 #include "point.hpp"
+
+#include "serialization.hpp"
 
 class World;
 

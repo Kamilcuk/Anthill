@@ -16,12 +16,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-
 #include "serialization.hpp"
+#include "serializationCustom.hpp"
 
 #include "anthill.hpp"
 #include "pheromoneMap.hpp"
@@ -144,9 +140,9 @@ void World::saveState()
     
     out_archive << foods_;
     out_archive << obstacles_;
-    // out_archive << ants_;
+    out_archive << ants_;
     out_archive << anthills_;
-    // out_archive << pheromone_maps_;
+    out_archive << pheromone_maps_;
 }
 
 void World::loadState()
@@ -159,9 +155,9 @@ void World::loadState()
     
     in_archive >> foods_;
     in_archive >> obstacles_;
-    // in_archive >> ants_;
+    in_archive >> ants_;
     in_archive >> anthills_;
-    // in_archive >> pheromone_maps_;
+    in_archive >> pheromone_maps_;
 }
 
 std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()

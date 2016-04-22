@@ -6,7 +6,7 @@
 
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
-        targetPos_=owner->getPos();
+    targetPos_=owner->getPos();
 }
 
 void AntLegs::goToPos(const Point& p){
