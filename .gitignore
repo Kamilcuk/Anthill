@@ -16,6 +16,10 @@
 *.so
 *.dylib
 *.dll
+# some other, strange, produced by msvc, Compiled Dynamic Libraries
+*.exp
+# python Compiled Dynamic Libraries
+*.pyd
 
 # Fortran module files
 *.mod

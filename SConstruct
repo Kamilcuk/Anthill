@@ -10,25 +10,30 @@
 SetOption('num_jobs', 3)
 sources = [ Glob('simulation/*.cpp') ];
 
-# -- env -- #
+# -- Environment() setup -- #
 env = Environment();
-env.Append(CCFLAGS = ' -Werror -Wall --std=c++11 -O2 -g -fPIC ');
-env.Append(CCFLAGS = '-Iboost'); # add boost support
-env.Append(LINKFLAGS = '-fPIC'); # compile shared
-env.Append(LINKFLAGS = '-lboost_serialization'); # boost serialization
-
-
-
-# add python3 support
-env.ParseConfig('pkg-config --cflags --libs python3')
-# strange library name on debian
-import os.path
-if  os.path.exists('/etc/debian_version'):
-	env.Append(LINKFLAGS = '-lboost_python-py34');
+if env['PLATFORM'] == 'win32':
+	env.Append(CCFLAGS = " /D BOOST_PYTHON_STATIC_LIB /O2 /D_USRDLL /D_WINDLL /DOTHER_DEFINES /LD /EHsc ");
+	env.Append(LINKFLAGS = " /DLL ");
+	# boost and python paths need to be customized depending on user installation
+	env.Append(CCFLAGS = "         /I D:/boost_1_60_0/                /I D:/python34/include ");
+	env.Append(LINKFLAGS = " /LIBPATH:D:/boost_1_60_0/stage/lib /LIBPATH:D:/Python34/libs     ");
+	# we want anthill.pyd, not anthill.lib, we want to link it with python.
+	env['SHLIBSUFFIX'] = '.pyd' ; # we want anthill.so, default is libanthill.se
 else:
-	env.Append(LINKFLAGS = '-lboost_python3');
-
-env['SHLIBPREFIX'] = ''; # we want anthill.so, default is libanthill.se
+	# linux platform
+	env.Append(CCFLAGS = ' -Wall --std=c++11 -O2 -g -fPIC ');
+	env.Append(CCFLAGS = '-Iboost'); # add boost support
+	env.Append(LINKFLAGS = '-fPIC -lboost_serialization'); # compile shared # boost serialization
+	# add python3 support
+	env.ParseConfig('pkg-config --cflags --libs python3')
+	# strange library name on debian
+	import os.path
+	if  os.path.exists('/etc/debian_version'):
+		env.Append(LINKFLAGS = '-lboost_python-py34');
+	else:
+		env.Append(LINKFLAGS = '-lboost_python3');
+	env['SHLIBPREFIX'] = ''; # we want anthill.so, default is libanthill.se
 
 # -- shared library for python linking -- #
 libanthill = env.SharedLibrary(target = 'anthill', source = sources);
@@ -53,3 +58,4 @@ def run_tests(target, source, env):
 	return None
 anthill_test_run = env_test.Command(target = 'test', source = "./build_test", action = run_tests );
 Depends(anthill_test_run, anthill_test)
+
