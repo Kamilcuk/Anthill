@@ -13,7 +13,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-#include "shapeGenerator.hpp"
 #include "obstacle.hpp"
 #include "visitor.hpp"
 #include "statistics.hpp"
@@ -56,7 +55,8 @@ class World {
     // Stores pointers to every simulation object.
     std::vector<boost::weak_ptr<Entity> > entity_ptrs_;
 
-    Statistics statistics_;
+    // Stats object.
+    boost::shared_ptr<Statistics> statistics_;
     
 public:
     World();
@@ -67,7 +67,8 @@ public:
 
     /// This helper template method is used kinda like a decorator when adding
     /// new objects to simulation. It makes it so that newly added objects
-    /// have corresponding weak_ptrs stored in entity_ptrs_.
+    /// have corresponding weak_ptrs stored in entity_ptrs_. 
+    /// All objects should be added via this method!
     template<class C>
     boost::shared_ptr<C> trackEntity(boost::shared_ptr<C> obj)
     {
@@ -111,13 +112,13 @@ public:
     /// Removes expired pointers and returns a vector of weak_ptrs of entities
     std::vector<boost::weak_ptr<Entity> >& getEntityPtrs();
     
-
-    Statistics getStatistics() const
+    boost::shared_ptr<Statistics> getStatistics() const
     { return statistics_; }
     
 private:
     friend class Updatable;
     friend class Visitable;
+    friend class Entity;
 
     /// Adds updatable object to updatables_ptrs vector. Should be called only
     /// inside Updatable constructor!!
@@ -132,6 +133,11 @@ private:
     /// Removes an Visitable from visitable_ptrs vector. Should be called only
     /// inside Visitable destructor!!
     void removeVisitable(Visitable* v);
+    
+    /// Invalidates list of entities, so that it is updated on the next call to
+    /// getEntityPtrs(). Should be called in Entity destructor.
+    void invalidateEntities();
+    bool invalid_entities_ = true;
 };
 
 #endif // WORLD_H_

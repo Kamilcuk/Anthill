@@ -20,6 +20,7 @@ Entity::Entity(const Entity& other) :
 
 Entity::~Entity()
 {
+    world_->invalidateEntities();
 }
 
 Point Entity::getPos() const

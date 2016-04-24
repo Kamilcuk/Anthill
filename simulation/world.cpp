@@ -13,12 +13,11 @@
 #include <fstream>
 
 #include <boost/make_shared.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 #include "serialization.hpp"
 #include "serializationCustom.hpp"
 
+#include "shapeGenerator.hpp"
 #include "anthill.hpp"
 #include "pheromoneMap.hpp"
 #include "ant.hpp"
@@ -30,7 +29,7 @@
 using std::vector;
 
 
-World::World() : statistics_(this)
+World::World()
 {    
     setDimensions(300, 200);
 
@@ -55,9 +54,10 @@ void World::setSimulationFramerate(float)
 
 void World::startSimulation()
 {
-	/* initialize random seed: */
+	// init random seed
 	srand (time(NULL));
 
+    statistics_ = boost::make_shared<Statistics>(this);
 
     pheromone_maps_.emplace_back(
         trackEntity<PheromoneMap>(
@@ -126,8 +126,6 @@ void World::simulationStep()
         std::remove_if(updatable_ptrs_.begin(), updatable_ptrs_.end(),
             [] (Updatable* x) -> bool { return x->isFlaggedToRemove(); }), 
         updatable_ptrs_.end());
-            
-    statistics_.step(1);
 }
 
 void World::saveState(std::string filename)
@@ -160,12 +158,16 @@ void World::loadState(std::string filename)
 
 std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()
 { 
-    // remove expired stuff from entities list
-    entity_ptrs_.erase(
-        std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
-            [] (boost::weak_ptr<Entity> e) -> bool { return e.expired(); }),
-        entity_ptrs_.end());
-    
+    if(invalid_entities_)
+    {
+        invalid_entities_ = false;
+        // remove expired stuff from entities list
+        entity_ptrs_.erase(
+            std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
+                [] (boost::weak_ptr<Entity> e) -> bool { return e.expired(); }),
+            entity_ptrs_.end());
+    }
+
     return entity_ptrs_; 
 }
 
@@ -191,4 +193,9 @@ void World::removeVisitable(Visitable* v)
     visitable_ptrs_.erase(
         std::remove(visitable_ptrs_.begin(), visitable_ptrs_.end(), v), 
         visitable_ptrs_.end());
+}
+
+void World::invalidateEntities()
+{
+    invalid_entities_ = true;
 }
