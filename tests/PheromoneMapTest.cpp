@@ -9,6 +9,9 @@
 #include "../simulation/pheromoneMap.hpp"
 #include "../simulation/point.hpp"
 
+namespace PheromoneMapTest
+{
+    
 const float g_epsilon = 0.0001;
 
 struct Fixture 
@@ -17,10 +20,10 @@ struct Fixture
     const float decay_coef;
     World world;
     PheromoneMap pheromone_map;
- 
+
     Fixture() :
         size_x(10), size_y(10), decay_coef(1), world(),
-        pheromone_map(world, PheromoneMap::Type::ToFood, size_x, size_y, decay_coef)
+        pheromone_map(&world, PheromoneMap::Type::ToFood, size_x, size_y, decay_coef)
     {}
 };
 
@@ -88,3 +91,5 @@ BOOST_FIXTURE_TEST_CASE(test_decay_shouldDropWithTime, Fixture)
     BOOST_CHECK_LE(pheromone_map.getStrengthAtPosition(Point(5, 5)),
         test_strength);
 }
+
+} // namespace PheromoneMapTest

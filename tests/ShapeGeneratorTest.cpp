@@ -10,6 +10,9 @@
 #include "../simulation/shapeGenerator.hpp"
 #include "../simulation/point.hpp"
 
+namespace ShapeGeneratorTest
+{
+    
 const float g_epsilon = 0.0001;
 
 bool FindPoint(int x, int y, std::set<Point>& set)
@@ -120,3 +123,5 @@ BOOST_AUTO_TEST_CASE(test_generateCircle_shouldBeCorrectRadius)
     BOOST_CHECK(!FindPoint(2, 5, output));
     BOOST_CHECK(!FindPoint(1, 5, output));
 }
+
+} // namespace ShapeGeneratorTest
