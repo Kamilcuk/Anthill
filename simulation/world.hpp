@@ -14,6 +14,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
+#include "serialization.hpp"
+
 #include "obstacle.hpp"
 #include "visitor.hpp"
 #include "statistics.hpp"
@@ -66,19 +68,8 @@ public:
     World();
     ~World();
 
-	void setDimensions(int X, int Y);
-    void setSimulationFramerate(float);
-
-    /// This helper template method is used kinda like a decorator when adding
-    /// new objects to simulation. It makes it so that newly added objects
-    /// have corresponding weak_ptrs stored in entity_ptrs_. 
-    /// All objects should be added via this method!
-    template<class C>
-    boost::shared_ptr<C> trackEntity(boost::shared_ptr<C> obj)
-    {
-        entity_ptrs_.emplace_back(boost::dynamic_pointer_cast<Entity>(obj));
-        return obj;
-    }
+	void setDimensions(int x, int y);
+    void setSimulationFramerate(float frames_per_sec);
 
     /// Sets up simulation.
     void startSimulation();
@@ -88,9 +79,9 @@ public:
     void simulationStep();
     
     /// Serializes simulation state.
-    void saveState(std::string);
+    void saveState(std::string filename);
     /// Deserializes simulation state.
-    void loadState(std::string);
+    void loadState(std::string filename);
         
     inline std::vector<boost::shared_ptr<Food> >& getFoods() 
     { return foods_; }
@@ -113,11 +104,11 @@ public:
     inline std::vector<Visitable*>& getVisitablePtrs()
     { return visitable_ptrs_; }
     
-    /// Removes expired pointers and returns a vector of weak_ptrs of entities
-    std::vector<boost::weak_ptr<Entity> >& getEntityPtrs();
-    
     boost::shared_ptr<Statistics> getStatistics()
     { return statistics_; }
+    
+    /// Removes expired pointers and returns a vector of weak_ptrs of entities
+    std::vector<boost::weak_ptr<Entity> >& getEntityPtrs();
     
 private:
     // using friends here because we want methods below to be called in very
@@ -140,10 +131,30 @@ private:
     /// inside Visitable destructor!!
     void removeVisitable(Visitable* v);
     
+    /// Adds weak_ptr to specified Entity to entity_ptrs_ vector.
+    void trackEntity(boost::shared_ptr<Entity> e);
     /// Invalidates list of entities, so that it is updated on the next call to
     /// getEntityPtrs(). Should be called in Entity destructor.
     void invalidateEntities();
     bool invalid_entities_ = true;
+    
+private:
+    /// Resets each shared_ptr in a vector.
+    // template<class C>
+    // void ResetVector(std::vector<boost::shared_ptr<C> > vec)
+    // {
+    //     std::for_each(vec.begin(), vec.end(), 
+    //         [] (boost::shared_ptr<C> el) { el.reset(); });
+    // }
+    
+private:
+    friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & width;
+		ar & height;
+	}
 };
 
 #endif // WORLD_H_

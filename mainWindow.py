@@ -106,7 +106,6 @@ class MainWindow(QMainWindow):
     def refresh(self):
     
         if self.paused:
-            print("PAUZA") 
             return
 
         scene=self.ui.graphicsView.scene()
@@ -123,7 +122,6 @@ class MainWindow(QMainWindow):
         # symulacja tak? Kamil
         # na razie może być, później się zrobi wątek w c++. ms
         self.world.simulationStep()
-
         s=self.pixelSize
 
         # draw pheromone map
@@ -150,7 +148,7 @@ class MainWindow(QMainWindow):
         antPen=QPen(QBrush(QColor()),0)
         antBrush=QBrush(QColor(100,100,50,200))
         self.drawEntities(ants,antPen,antBrush,True)
-
+        
         # draw anthills
         anthills=self.world.getAnthills()
         anthillPen=QPen(QBrush(QColor()),0)
@@ -162,9 +160,13 @@ class MainWindow(QMainWindow):
         if stats:
             _translate = QtCore.QCoreApplication.translate
             self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
+        
+        import gc; print(gc.get_stats())
 
     def restartTimer(self):
         self.refresh()
+        if self.refreshTimer:
+            self.refreshTimer.stop()
         self.refreshTimer=QTimer(self)
         self.refreshTimer.timeout.connect(self.refresh)
         self.refreshTimer.start(1000/self.simulationFramerate)
@@ -202,12 +204,18 @@ class MainWindow(QMainWindow):
 
     def on_stopSimulationButton_released(self):
         if self.refreshTimer:
+            _translate = QtCore.QCoreApplication.translate
+            self.ui.startSimulationButton.setText(_translate(
+                "MainWindow", "Start Simulation"))
+            self.paused = True
+            
             self.refresh()
 
             self.refreshTimer.stop()
             self.refreshTimer=None
 
             self.world.stopSimulation()
+            
 
     def on_saveStateButton_released(self):
         self.paused = True

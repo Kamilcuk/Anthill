@@ -23,11 +23,11 @@ void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
 {
     for(int i = 0; i < params.quantity; i++)
     {
-        int x = rand() % world->width,
-            y = rand() % (world->height);
-        world->getAnthills().emplace_back(
-            world->trackEntity<Anthill>(
-                boost::make_shared<Anthill>(world, Point(x, y))));
+        Point pos(rand() % world->width, rand() % (world->height));
+            
+        auto new_anthill = boost::make_shared<Anthill>(world, pos);
+        new_anthill->track();
+        world->getAnthills().emplace_back(new_anthill);
     }
 }
 
@@ -55,9 +55,9 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         if (!pos.isInBounds(world->width, world->height))
             continue;
         
-        world->getAnts().emplace_back(
-            world->trackEntity<Ant>(
-                boost::make_shared<Ant>(world, pos)));
+        auto new_ant = boost::make_shared<Ant>(world, pos);
+        new_ant->track();
+        world->getAnts().emplace_back(new_ant);
 
         // all correct
         num_spawned++;
@@ -77,11 +77,11 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
         {
             if(!point.isInBounds(world->width, world->height))
                 continue;
-            world->getObstacles().emplace_back(
-                world->trackEntity<Obstacle>(
-                    boost::make_shared<Obstacle>(world, point)));
+            auto new_obsctacle = boost::make_shared<Obstacle>(world, point);
+            new_obsctacle->track();
+            world->getObstacles().emplace_back(new_obsctacle);
         }
-                    
+    
         // all correct
         num_spawned++;
     }  
@@ -97,9 +97,13 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
     {       
         for(auto point : generateBlob<Food>(params.blob, 
                 world->width, world->height))
-            world->getFoods().emplace_back(
-                world->trackEntity<Food>(
-                    boost::make_shared<Food>(world, point)));
+        {
+            if(!point.isInBounds(world->width, world->height))
+                continue;
+            auto new_food = boost::make_shared<Food>(world, point);
+            new_food->track();
+            world->getFoods().emplace_back(new_food);
+        }
                     
         // all correct
         num_spawned++;
