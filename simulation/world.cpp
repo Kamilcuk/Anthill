@@ -101,7 +101,7 @@ void World::simulationStep()
 
 void World::saveState(std::string filename)
 {
-    std::cout << "Saving simulation state..." << std::endl;
+    std::cout << "Saving simulation state to " << filename << std::endl;
     std::ofstream file(filename);
     boost::archive::text_oarchive out_archive(file);
     
@@ -110,11 +110,13 @@ void World::saveState(std::string filename)
     out_archive << ants_;
     out_archive << anthills_;
     out_archive << pheromone_maps_;
+    
+    std::cout << "Finished saving" << std::endl;
 }
 
 void World::loadState(std::string filename)
 {
-    std::cout << "Loading simulation state..." << std::endl;
+    std::cout << "Loading simulation state from " << filename << std::endl;
     std::ifstream file(filename);
     boost::archive::text_iarchive in_archive(file);
     
@@ -125,6 +127,8 @@ void World::loadState(std::string filename)
     in_archive >> ants_;
     in_archive >> anthills_;
     in_archive >> pheromone_maps_;
+    
+    std::cout << "Finished loading" << std::endl;
 }
 
 std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()

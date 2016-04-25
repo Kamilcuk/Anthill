@@ -54,9 +54,11 @@ class MainWindow(QMainWindow):
         self.world.setSimulationFramerate(self.simulationFramerate)
         
         self.maxPheromone=1        
+        self.paused = True
 
     def __exit__(self):
         self.refreshTimer.stop()
+
 
     def drawPheromoneMap(self,map,
             baseRGB=(50,30,100),
@@ -102,6 +104,10 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def refresh(self):
+    
+        if self.paused:
+            print("PAUZA") 
+            return
 
         scene=self.ui.graphicsView.scene()
         scene.clear()
@@ -157,31 +163,43 @@ class MainWindow(QMainWindow):
             _translate = QtCore.QCoreApplication.translate
             self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
 
+    def restartTimer(self):
+        self.refresh()
+        self.refreshTimer=QTimer(self)
+        self.refreshTimer.timeout.connect(self.refresh)
+        self.refreshTimer.start(1000/self.simulationFramerate)
+        
 
     def on_startSimulationButton_released(self):
-        if self.refreshTimer is None:
-            self.refresh()
+        _translate = QtCore.QCoreApplication.translate
+        if self.paused:
+            if self.refreshTimer is None:
+                self.restartTimer()
 
-            self.refreshTimer=QTimer(self)
-            self.refreshTimer.timeout.connect(self.refresh)
-            self.refreshTimer.start(1000/self.simulationFramerate)
+                # todo: some dialog asking for params?
+                obstaclesParams = anthill.ObstaclesParams()
+                anthill.WorldGenerator.placeObstacles(self.world, 
+                    obstaclesParams)
+                
+                foodsParams = anthill.FoodsParams()
+                anthill.WorldGenerator.placeFoods(self.world, foodsParams)
+                
+                anthillParams = anthill.AnthillParams()
+                anthill.WorldGenerator.placeAnthill(self.world, anthillParams)
+                
+                antsParams = anthill.AntsParams()
+                anthill.WorldGenerator.placeAnts(self.world, antsParams)
 
-            # todo: some dialog asking for params?
-            obstaclesParams = anthill.ObstaclesParams()
-            anthill.WorldGenerator.placeObstacles(self.world, obstaclesParams)
-            
-            foodsParams = anthill.FoodsParams()
-            anthill.WorldGenerator.placeFoods(self.world, foodsParams)
-            
-            anthillParams = anthill.AnthillParams()
-            anthill.WorldGenerator.placeAnthill(self.world, anthillParams)
-            
-            antsParams = anthill.AntsParams()
-            anthill.WorldGenerator.placeAnts(self.world, antsParams)
+                self.world.startSimulation()
+                
+            self.ui.startSimulationButton.setText(_translate(
+                "MainWindow", "Pause Simulation"))
+            self.paused = False
+        else:
+            self.ui.startSimulationButton.setText(_translate(
+                "MainWindow", "Start Simulation"))
+            self.paused = True
 
-            self.world.startSimulation()
-            
-        
     def on_stopSimulationButton_released(self):
         if self.refreshTimer:
             self.refresh()
@@ -192,20 +210,26 @@ class MainWindow(QMainWindow):
             self.world.stopSimulation()
 
     def on_saveStateButton_released(self):
+        self.paused = True
         path=QFileDialog.getSaveFileName(self, "Save File",
-                                    "/home", "All Files (*)")
+                                    ".", "All Files (*)")
         path=path[0]
         print("Saving state to: ",path)
         if(path and path!=''):
             self.world.saveState(path)
-
+        self.paused = False
+        
     def on_loadStateButton_released(self):
+        self.paused = True
+        self.world.stopSimulation()
         path=QFileDialog.getOpenFileName(self, "Open File",
-                                    "/home", "All Files (*)")
+                                    ".", "All Files (*)")
         path=path[0]
         if(path and path!=''):
             self.world.loadState(path)
+            self.restartTimer()
             self.world.startSimulation()
+        self.paused = False
 
     def on_framerateBox_valueChanged(self):
         self.simulationFramerate=self.ui.framerateBox.value()
