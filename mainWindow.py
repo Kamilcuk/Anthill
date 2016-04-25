@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
             baseRGB=(50,30,100),
             baseRGB2=(10,10,10) ):
 
-        data=map.getMapCopy()
+        data=map.getMap()
         data=list(data)
 
         s=self.pixelSize
@@ -92,8 +92,8 @@ class MainWindow(QMainWindow):
         scene=self.ui.graphicsView.scene()
 
         for ent in ents:
-            x=ent.getLoc().posX()
-            y=ent.getLoc().posY()
+            x=ent.getPos().posX()
+            y=ent.getPos().posY()
             if(ellipse):
                 scene.addEllipse(x*s,y*s,s,s,pen=qpen,brush=qbrush)
             else:

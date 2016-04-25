@@ -85,26 +85,26 @@ BOOST_PYTHON_MODULE(anthill)
     REGISTER_CLASS(ObstaclesParams);
     REGISTER_CLASS(FoodsParams);
     
-    class_<Ant>("Ant",no_init)
-        .def("getLoc",&Ant::getPos)
+    REGISTER_CLASS_NOINIT(Ant)
+        REGISTER_METHOD(Ant, getPos)
     ;
-    class_<Food>("Food",no_init)
-        .def("getLoc",&Food::getPos)
+    REGISTER_CLASS_NOINIT(Food)
+        REGISTER_METHOD(Food, getPos)
     ;
-    class_<Anthill>("Anthill",no_init)
-        .def("getLoc",&Anthill::getPos)
+    REGISTER_CLASS_NOINIT(Anthill)
+        REGISTER_METHOD(Anthill, getPos)
+    ;   
+    REGISTER_CLASS_NOINIT(Obstacle)
+        REGISTER_METHOD(Obstacle, getPos)
     ;
-    class_<Obstacle>("Obstacle",no_init)
-        .def("getLoc",&Obstacle::getPos)
+    REGISTER_CLASS_NOINIT(PheromoneMap)
+        REGISTER_METHOD_REF(PheromoneMap, getMap)
     ;
-    class_<PheromoneMap>("PheromoneMap",no_init)
-        .def("getMapCopy",&PheromoneMap::getMapCopy)
-    ;
-    class_<Point>("Point",init<int,int>())
-        .def("posX",&Point::posX)
-        .def("posY",&Point::posY)
-    ;
-    class_<Statistics>("Statistics",no_init)
-            .def("print",&Statistics::print)
+    REGISTER_CLASS_NOINIT(Point)
+        REGISTER_METHOD(Point, posX)
+        REGISTER_METHOD(Point, posY)
+    ;    
+    REGISTER_CLASS_NOINIT(Statistics)
+        REGISTER_METHOD(Statistics, print)
     ;
 }
