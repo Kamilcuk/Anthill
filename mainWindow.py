@@ -37,11 +37,11 @@ class MainWindow(QMainWindow):
         #self.showMaximized()
 
         # world/simulation parameters - hardcoded - test
-        self.worldWidth=50
-        self.worldHeight=50
+        self.worldWidth=200
+        self.worldHeight=150
         self.simulationFramerate=10
 
-        self.pixelSize=10
+        self.pixelSize=3
         w=self.worldWidth * self.pixelSize
         h=self.worldHeight * self.pixelSize
 
@@ -50,10 +50,10 @@ class MainWindow(QMainWindow):
 
         # configure world
         self.world = anthill.World();
-        self.world.setDimensions(w,h)
+        self.world.setDimensions(self.worldWidth, self.worldHeight)
         self.world.setSimulationFramerate(self.simulationFramerate)
-
-        self.maxPheromone=1
+        
+        self.maxPheromone=1        
 
     def __exit__(self):
         self.refreshTimer.stop()
@@ -150,12 +150,12 @@ class MainWindow(QMainWindow):
         anthillPen=QPen(QBrush(QColor()),0)
         anthillBrush=QBrush(QColor(200,20,20,150))
         self.drawEntities(anthills,anthillPen,anthillBrush)
-
-        # show statistics Kamil
-        s = self.world.getStatistics()
-        s2 = s.print()
-        _translate = QtCore.QCoreApplication.translate
-        self.ui.stat_label.setText(_translate("MainWindow", s2))
+        
+        # update statistics
+        stats = self.world.getStatistics()
+        if stats:
+            _translate = QtCore.QCoreApplication.translate
+            self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
 
 
     def on_startSimulationButton_released(self):
@@ -166,8 +166,22 @@ class MainWindow(QMainWindow):
             self.refreshTimer.timeout.connect(self.refresh)
             self.refreshTimer.start(1000/self.simulationFramerate)
 
-            self.world.startSimulation()
+            # todo: some dialog asking for params?
+            obstaclesParams = anthill.ObstaclesParams()
+            anthill.WorldGenerator.placeObstacles(self.world, obstaclesParams)
+            
+            foodsParams = anthill.FoodsParams()
+            anthill.WorldGenerator.placeFoods(self.world, foodsParams)
+            
+            anthillParams = anthill.AnthillParams()
+            anthill.WorldGenerator.placeAnthill(self.world, anthillParams)
+            
+            antsParams = anthill.AntsParams()
+            anthill.WorldGenerator.placeAnts(self.world, antsParams)
 
+            self.world.startSimulation()
+            
+        
     def on_stopSimulationButton_released(self):
         if self.refreshTimer:
             self.refresh()
@@ -191,6 +205,7 @@ class MainWindow(QMainWindow):
         path=path[0]
         if(path and path!=''):
             self.world.loadState(path)
+            self.world.startSimulation()
 
     def on_framerateBox_valueChanged(self):
         self.simulationFramerate=self.ui.framerateBox.value()

@@ -39,7 +39,7 @@ public:
 	
     inline bool isInBounds(int size_x, int size_y)
     {
-        return posX() > 0 && posX() < size_x && posY() > 0 && posY() < size_y;
+        return posX() >= 0 && posX() < size_x && posY() >= 0 && posY() < size_y;
     }
 	
 private:

@@ -26,7 +26,7 @@ struct Fixture
 BOOST_FIXTURE_TEST_CASE(test_placeAnthill_shouldBeAnthill, Fixture)
 {
     BOOST_CHECK_EQUAL(world.getAnthills().size(), 0);
-    WorldGenerator::AnthillParams params;
+    AnthillParams params;
     params.quantity = 1;    
     WorldGenerator::placeAnthill(&world, params);
     BOOST_CHECK_EQUAL(world.getAnthills().size(), 1);
@@ -38,7 +38,7 @@ BOOST_FIXTURE_TEST_CASE(test_placeAnts_shouldBeAnts, Fixture)
     WorldGenerator::placeAnthill(&world);    
     
     BOOST_CHECK_EQUAL(world.getAnts().size(), 0);    
-    WorldGenerator::AntsParams params;
+    AntsParams params;
     params.quantity = 10;
     params.min_dist_from_anthill = 2;
     params.max_dist_from_anthill = 5;

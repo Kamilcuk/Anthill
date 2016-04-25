@@ -13,27 +13,25 @@
 #include "food.hpp"
 
 // initialize static members
-#define INIT_STATIC(cl, st, val) cl::st cl::val = cl::st();
+#define INIT_STATIC(cl, st, val) st cl::val = st();
 INIT_STATIC(WorldGenerator, AnthillParams, default_anthill_params);
 INIT_STATIC(WorldGenerator, AntsParams, default_ants_params);
 INIT_STATIC(WorldGenerator, ObstaclesParams, default_obstacles_params);
-INIT_STATIC(WorldGenerator, FoodParams, default_food_params);
+INIT_STATIC(WorldGenerator, FoodsParams, default_food_params);
 
-void WorldGenerator::placeAnthill(World* world, 
-    WorldGenerator::AnthillParams& params)
+void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
 {
     for(int i = 0; i < params.quantity; i++)
     {
-        int x = rand() % world->width;
-        int y = rand() % world->height;
+        int x = rand() % world->width,
+            y = rand() % (world->height);
         world->getAnthills().emplace_back(
             world->trackEntity<Anthill>(
                 boost::make_shared<Anthill>(world, Point(x, y))));
     }
 }
 
-void WorldGenerator::placeAnts(World* world, 
-    WorldGenerator::AntsParams& params)
+void WorldGenerator::placeAnts(World* world, AntsParams& params)
 {
     if(params.quantity < 0) 
         throw std::runtime_error("Invalid quantity of ants");
@@ -57,24 +55,54 @@ void WorldGenerator::placeAnts(World* world,
         if (!pos.isInBounds(world->width, world->height))
             continue;
         
-        //world->getAnts().emplace_back(
-        world->ants_.emplace_back(
+        world->getAnts().emplace_back(
             world->trackEntity<Ant>(
                 boost::make_shared<Ant>(world, pos)));
 
         // all correct
         num_spawned++;
-    }
+    }   
 }
 
-void WorldGenerator::placeObstacles(World* world, 
-    WorldGenerator::ObstaclesParams& params)
+void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
 {
-    
+    if(params.quantity < 0) 
+        throw std::runtime_error("Invalid quantity of obstacles");
+        
+    int num_spawned = 0;
+    while(num_spawned < params.quantity)
+    {       
+        for(auto point : generateBlob<Obstacle>(params.blob, 
+                world->width, world->height))
+        {
+            if(!point.isInBounds(world->width, world->height))
+                continue;
+            world->getObstacles().emplace_back(
+                world->trackEntity<Obstacle>(
+                    boost::make_shared<Obstacle>(world, point)));
+        }
+                    
+        // all correct
+        num_spawned++;
+    }  
 }
 
-void WorldGenerator::placeFood(World* world, 
-    WorldGenerator::FoodParams& params)
+void WorldGenerator::placeFoods(World* world, FoodsParams& params)
 {
-    
+    if(params.quantity < 0) 
+        throw std::runtime_error("Invalid quantity of foods");
+        
+    int num_spawned = 0;
+    while(num_spawned < params.quantity)
+    {       
+        for(auto point : generateBlob<Food>(params.blob, 
+                world->width, world->height))
+            world->getFoods().emplace_back(
+                world->trackEntity<Food>(
+                    boost::make_shared<Food>(world, point)));
+                    
+        // all correct
+        num_spawned++;
+    }  
+
 }

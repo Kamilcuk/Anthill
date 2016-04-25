@@ -28,3 +28,14 @@ BOOST_AUTO_TEST_CASE( position )
 
     BOOST_CHECK( q==p );
 }
+
+BOOST_AUTO_TEST_CASE(test_isInBounds)
+{
+    Point p(10, 10);
+    BOOST_CHECK_EQUAL(p.isInBounds(15, 15), true);    
+    BOOST_CHECK_EQUAL(p.isInBounds(11, 11), true);
+    BOOST_CHECK_EQUAL(p.isInBounds(10, 10), false);
+    BOOST_CHECK_EQUAL(p.isInBounds(15, 5), false);    
+    BOOST_CHECK_EQUAL(p.isInBounds(5, 15), false);    
+    BOOST_CHECK_EQUAL(p.isInBounds(5, 5), false);    
+}

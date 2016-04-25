@@ -37,7 +37,6 @@ World::World()
 
     /* initialize random seed: */
 	srand (time(NULL));
-    statistics_ = boost::make_shared<Statistics>(this);
 }
 
 World::~World()
@@ -60,6 +59,7 @@ void World::startSimulation()
 	// init random seed
 	srand (time(NULL));
 
+    statistics_ = boost::make_shared<Statistics>(this);
 
     pheromone_maps_.emplace_back(
         trackEntity<PheromoneMap>(
@@ -69,26 +69,6 @@ void World::startSimulation()
         trackEntity<PheromoneMap>(
             boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::FromFood, 
                 width, height, 0.1)));
-    
-    ants_.emplace_back(
-        trackEntity<Ant>(
-            boost::make_shared<Ant>(this, Point(30,30))));
-    
-    WorldGenerator::placeAnthill(this);
-    WorldGenerator::AntsParams params;
-    params.quantity = 10;
-    params.min_dist_from_anthill = 2;
-    params.max_dist_from_anthill = 15;
-    WorldGenerator::placeAnts(this, params);
-    
-	for(auto point : ShapeGenerator::GenerateCircle(Point(15, 30), 3))
-	    foods_.emplace_back(
-            trackEntity<Food>(
-                boost::make_shared<Food>(this, point)));
-	for(auto point : ShapeGenerator::GenerateLine(Point(5, 40), Point(20, 20), 2))
-	    foods_.emplace_back(
-            trackEntity<Food>(
-                boost::make_shared<Food>(this, point)));
 }
 
 void World::stopSimulation()
