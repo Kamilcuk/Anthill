@@ -18,6 +18,8 @@
 #include "serializationCustom.hpp"
 
 #include "shapeGenerator.hpp"
+#include "worldGenerator.hpp"
+
 #include "anthill.hpp"
 #include "pheromoneMap.hpp"
 #include "ant.hpp"
@@ -35,6 +37,7 @@ World::World()
 
     /* initialize random seed: */
 	srand (time(NULL));
+    statistics_ = boost::make_shared<Statistics>(this);
 }
 
 World::~World()
@@ -57,7 +60,6 @@ void World::startSimulation()
 	// init random seed
 	srand (time(NULL));
 
-    statistics_ = boost::make_shared<Statistics>(this);
 
     pheromone_maps_.emplace_back(
         trackEntity<PheromoneMap>(
@@ -67,33 +69,23 @@ void World::startSimulation()
         trackEntity<PheromoneMap>(
             boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::FromFood, 
                 width, height, 0.1)));
-                
+    
     ants_.emplace_back(
         trackEntity<Ant>(
             boost::make_shared<Ant>(this, Point(30,30))));
-    ants_.emplace_back(
-        trackEntity<Ant>(
-            boost::make_shared<Ant>(this, Point(25,25))));
-    ants_.emplace_back(
-        trackEntity<Ant>(
-            boost::make_shared<Ant>(this, Point(20,20))));
-    ants_.emplace_back(
-        trackEntity<Ant>(
-            boost::make_shared<Ant>(this, Point(50,50))));
-    ants_.emplace_back(
-        trackEntity<Ant>(
-            boost::make_shared<Ant>(this, Point(30,20))));
     
-    anthills_.emplace_back(
-        trackEntity<Anthill>(
-            boost::make_shared<Anthill>(this, Point(35,35))));
-
-	ShapeGenerator shape_gen;
-	for(auto point : shape_gen.GenerateCircle(Point(15, 30), 3))
+    WorldGenerator::placeAnthill(this);
+    WorldGenerator::AntsParams params;
+    params.quantity = 10;
+    params.min_dist_from_anthill = 2;
+    params.max_dist_from_anthill = 15;
+    WorldGenerator::placeAnts(this, params);
+    
+	for(auto point : ShapeGenerator::GenerateCircle(Point(15, 30), 3))
 	    foods_.emplace_back(
             trackEntity<Food>(
                 boost::make_shared<Food>(this, point)));
-	for(auto point : shape_gen.GenerateLine(Point(5, 40), Point(20, 20), 2))
+	for(auto point : ShapeGenerator::GenerateLine(Point(5, 40), Point(20, 20), 2))
 	    foods_.emplace_back(
             trackEntity<Food>(
                 boost::make_shared<Food>(this, point)));
@@ -111,11 +103,10 @@ void World::stopSimulation()
     
 	updatable_ptrs_.clear();
     visitable_ptrs_.clear();
-    
 }
 
 void World::simulationStep()
-{
+{   
     for(auto u : updatable_ptrs_)
         u->step(1);
     for(auto u : updatable_ptrs_)
@@ -160,8 +151,8 @@ std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()
 { 
     if(invalid_entities_)
     {
-        invalid_entities_ = false;
         // remove expired stuff from entities list
+        invalid_entities_ = false;
         entity_ptrs_.erase(
             std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
                 [] (boost::weak_ptr<Entity> e) -> bool { return e.expired(); }),

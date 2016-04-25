@@ -33,7 +33,8 @@ BOOST_PYTHON_MODULE(anthill)
     REGISTER_SHAREDPTR(Anthill);
     REGISTER_SHAREDPTR(Obstacle);
     REGISTER_SHAREDPTR(PheromoneMap);
-
+    REGISTER_SHAREDPTR(Statistics);
+    
 #define VECTOR_SHAREDPTR(x) class_<vector<shared_ptr<x> > >(#x "_vector")\
         .def(vector_indexing_suite<vector<shared_ptr<x>>, true>() );
     VECTOR_SHAREDPTR(Ant);

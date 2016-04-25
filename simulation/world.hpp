@@ -9,6 +9,7 @@
 #define WORLD_H_
 
 #include <vector>
+#include <utility>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -16,6 +17,8 @@
 #include "obstacle.hpp"
 #include "visitor.hpp"
 #include "statistics.hpp"
+
+#include "ant.hpp"
 
 class Ant;
 class Updatable;
@@ -31,9 +34,10 @@ class Visitable;
  * storage of simulation state in a file.
  */
 class World {
+    friend class WorldGenerator;
 
     // world properties
-    int width,height;
+    int width, height;
     float framerate;
     
     // Pointers to stuff that is automatically updated in simualtion loop.
@@ -87,7 +91,7 @@ public:
     void saveState(std::string);
     /// Deserializes simulation state.
     void loadState(std::string);
-    
+        
     inline std::vector<boost::shared_ptr<Food> >& getFoods() 
     { return foods_; }
     
@@ -112,10 +116,12 @@ public:
     /// Removes expired pointers and returns a vector of weak_ptrs of entities
     std::vector<boost::weak_ptr<Entity> >& getEntityPtrs();
     
-    boost::shared_ptr<Statistics> getStatistics() const
+    boost::shared_ptr<Statistics> getStatistics()
     { return statistics_; }
     
 private:
+    // using friends here because we want methods below to be called in very
+    // specific situations.
     friend class Updatable;
     friend class Visitable;
     friend class Entity;

@@ -23,6 +23,7 @@ public:
 	bool operator==(const Point& rhs) const 
 	{ return !(*this != rhs); }
 	
+	
 	int posX() const;
 	int posY() const;
 	
@@ -35,6 +36,11 @@ public:
 	
 	Point getPosition() const;
     float getDistance(Point p) const;
+	
+    inline bool isInBounds(int size_x, int size_y)
+    {
+        return posX() > 0 && posX() < size_x && posY() > 0 && posY() < size_y;
+    }
 	
 private:
 	friend class boost::serialization::access;
