@@ -70,13 +70,7 @@ void World::startSimulation()
 }
 
 void World::stopSimulation()
-{
-    // ResetVector<Food>(foods_);
-    // ResetVector<Obstacle>(obstacles_);
-    // ResetVector<Ant>(ants_);
-    // ResetVector<Anthill>(anthills_);
-    // ResetVector<PheromoneMap>(pheromone_maps_);
-    
+{   
     foods_.clear();
     obstacles_.clear();
     ants_.clear();
@@ -150,15 +144,10 @@ std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()
     {
         // remove expired stuff from entities list
         invalid_entities_ = false;
-        size_t num_before = entity_ptrs_.size();
-        
         entity_ptrs_.erase(
             std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
                 [] (boost::weak_ptr<Entity> e) -> bool { return e.expired(); }),
             entity_ptrs_.end());
-            
-        std::cout << "Removed expired entity ptrs: "
-            << num_before - entity_ptrs_.size() << std::endl;
     }
     return entity_ptrs_; 
 }

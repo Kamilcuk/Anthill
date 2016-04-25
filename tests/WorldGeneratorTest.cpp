@@ -44,7 +44,27 @@ BOOST_FIXTURE_TEST_CASE(test_placeAnts_shouldBeAnts, Fixture)
     params.max_dist_from_anthill = 5;
     WorldGenerator::placeAnts(&world, params);
     BOOST_CHECK_EQUAL(world.getAnts().size(), 10);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 11);
+    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 11); // (+ anthill)
+}
+
+BOOST_FIXTURE_TEST_CASE(test_placeObstacles_shouldBeObstacles, Fixture)
+{
+    BOOST_CHECK_EQUAL(world.getObstacles().size(), 0);    
+    ObstaclesParams params;
+    params.quantity = 5;
+    WorldGenerator::placeObstacles(&world, params);
+    BOOST_CHECK(world.getObstacles().size() > 0);
+    BOOST_CHECK(world.getEntityPtrs().size() > 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_placeFoods_shouldBeFoods, Fixture)
+{
+    BOOST_CHECK_EQUAL(world.getFoods().size(), 0);    
+    FoodsParams params;
+    params.quantity = 5;
+    WorldGenerator::placeFoods(&world, params);
+    BOOST_CHECK(world.getFoods().size() > 0);
+    BOOST_CHECK(world.getEntityPtrs().size() > 0);
 }
 
 } // namespace WorldGeneratorTest

@@ -28,6 +28,7 @@ BOOST_PYTHON_MODULE(anthill)
 {
 #define REGISTER_SHAREDPTR(x) boost::python::register_ptr_to_python\
     <shared_ptr<x>>();
+    
     REGISTER_SHAREDPTR(World);
     REGISTER_SHAREDPTR(WorldGenerator);
     REGISTER_SHAREDPTR(Ant);
@@ -39,6 +40,7 @@ BOOST_PYTHON_MODULE(anthill)
     
 #define REGISTER_VECTOR_SHAREDPTR(x) class_<vector<shared_ptr<x> > >(#x "_vec")\
         .def(vector_indexing_suite<vector<shared_ptr<x>>, true>() );
+        
     REGISTER_VECTOR_SHAREDPTR(Ant);
     REGISTER_VECTOR_SHAREDPTR(Food);
     REGISTER_VECTOR_SHAREDPTR(Anthill);

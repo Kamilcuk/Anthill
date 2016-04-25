@@ -70,21 +70,16 @@ BOOST_FIXTURE_TEST_CASE(
     test_makeTrackedEntityInLexicalScope_shouldBeImmediatelyExpired, Fixture)
 {
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
-    world.trackEntity<EntityConcrete>(
-        boost::make_shared<EntityConcrete>(&world));
+    (boost::make_shared<EntityConcrete>(&world))->track();
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_makeTrackedEntity_shouldStore, Fixture)
 {   
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
-    auto tracked_entity_moved = world.trackEntity<EntityConcrete>(
-        boost::make_shared<EntityConcrete>(&world));
+    auto tracked_entity = boost::make_shared<EntityConcrete>(&world);
+    tracked_entity->track();
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
-    
-    auto tracked_entity_copied = boost::make_shared<EntityConcrete>(&world);
-    world.trackEntity<EntityConcrete>(tracked_entity_copied);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 2);
 }
 
 BOOST_FIXTURE_TEST_CASE(
@@ -92,8 +87,8 @@ BOOST_FIXTURE_TEST_CASE(
 {   
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
     {
-        auto local_entity = world.trackEntity<EntityConcrete>(
-            boost::make_shared<EntityConcrete>(&world));
+        auto local_entity = boost::make_shared<EntityConcrete>(&world);
+        local_entity->track();
         BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
     }
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
@@ -105,8 +100,8 @@ BOOST_FIXTURE_TEST_CASE(test_trackedEntitySetValue_shouldGetSameValue, Fixture)
 
     const int test_val = 13;    
     
-    auto tracked_entity = world.trackEntity<EntityConcrete>(
-        boost::make_shared<EntityConcrete>(&world));
+    auto tracked_entity = boost::make_shared<EntityConcrete>(&world);
+    tracked_entity->track();
     tracked_entity->some_value = test_val;
         
     auto weak_entity = world.getEntityPtrs()[0];

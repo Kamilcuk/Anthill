@@ -1,5 +1,7 @@
-// test_main.cpp
+#ifndef BOOST_TEST_DYN_LINK
 #define BOOST_TEST_DYN_LINK
+#endif
+
 #define BOOST_TEST_MODULE Main
 #include <boost/test/unit_test.hpp>
 

@@ -160,8 +160,6 @@ class MainWindow(QMainWindow):
         if stats:
             _translate = QtCore.QCoreApplication.translate
             self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
-        
-        import gc; print(gc.get_stats())
 
     def restartTimer(self):
         self.refresh()

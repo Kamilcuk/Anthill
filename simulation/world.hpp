@@ -139,15 +139,6 @@ private:
     bool invalid_entities_ = true;
     
 private:
-    /// Resets each shared_ptr in a vector.
-    // template<class C>
-    // void ResetVector(std::vector<boost::shared_ptr<C> > vec)
-    // {
-    //     std::for_each(vec.begin(), vec.end(), 
-    //         [] (boost::shared_ptr<C> el) { el.reset(); });
-    // }
-    
-private:
     friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
