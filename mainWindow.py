@@ -160,13 +160,13 @@ class MainWindow(QMainWindow):
 
     def on_startSimulationButton_released(self):
         if self.refreshTimer is None:
+            self.world.startSimulation()
             self.refresh()
 
             self.refreshTimer=QTimer(self)
             self.refreshTimer.timeout.connect(self.refresh)
             self.refreshTimer.start(1000/self.simulationFramerate)
 
-            self.world.startSimulation()
 
     def on_stopSimulationButton_released(self):
         if self.refreshTimer:
