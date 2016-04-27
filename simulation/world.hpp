@@ -121,7 +121,7 @@ public:
         auto& remove_from = getSimulationObjects<C>();
         remove_from.erase(
             std::remove_if(remove_from.begin(), remove_from.end(), 
-                [] (boost::shared_ptr<C> obj) 
+                [] (auto obj) 
                     { return obj->isFlaggedToRemove(); }),
             remove_from.end());
     }

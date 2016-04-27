@@ -150,7 +150,7 @@ std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()
         invalid_entities_ = false;
         entity_ptrs_.erase(
             std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
-                [] (boost::weak_ptr<Entity> e) -> bool { return e.expired(); }),
+                [] (auto e) -> bool { return e.expired(); }),
             entity_ptrs_.end());
     }
     return entity_ptrs_; 
