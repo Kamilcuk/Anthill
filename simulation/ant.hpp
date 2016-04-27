@@ -42,7 +42,7 @@ public:
 	
     // Visitable interface
     void accept(Visitor& v) const;
-    
+
 private:
 	friend class boost::serialization::access;
 	template<class Archive>

@@ -122,6 +122,7 @@ class MainWindow(QMainWindow):
         # symulacja tak? Kamil
         # na razie może być, później się zrobi wątek w c++. ms
         self.world.simulationStep()
+
         s=self.pixelSize
 
         # draw pheromone map

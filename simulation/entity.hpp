@@ -45,6 +45,7 @@ public:
     Point getPos() const;
     void setPos(Point pos);
 
+	/** return lenght of a straight line betweej this and the other entity */
     float getDistance(Entity * const e) const;
 
     virtual int getSmell(){ return 0;}

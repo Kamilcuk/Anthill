@@ -59,7 +59,7 @@ void World::startSimulation()
 	// init random seed
 	srand (time(NULL));
 
-    statistics_ = boost::make_shared<Statistics>(this);
+	statistics_ = boost::make_shared<Statistics>();
 
     pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::ToFood, 
@@ -87,7 +87,11 @@ void World::stopSimulation()
 void World::simulationStep()
 {   
     for(auto u : updatable_ptrs_)
-        u->step(1);
+		u->step(1);
+
+	// we can track visitables that want to be erased/die
+	statistics_->update(this->getVisitablePtrs());
+
     for(auto u : updatable_ptrs_)
         u->step(0);
     

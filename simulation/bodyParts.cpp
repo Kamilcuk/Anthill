@@ -62,8 +62,13 @@ std::vector<AntSensor::Observation> AntSensor::getEntities(){
 }
 
 // AntMandibles
+boost::weak_ptr<Entity> AntMandibles::getHoldingObject() const
+{
+	return holdingObject_;
+}
+
 bool AntMandibles::grab(boost::weak_ptr<Entity> e){
-    if(owner_->getPos()!=e.lock()->getPos())
+	if(owner_->getPos()!=e.lock()->getPos())
         return 0;
     if(isHolding()){
         return 0;
@@ -80,7 +85,12 @@ bool AntMandibles::grab(AntSensor::Observation o){
 void AntMandibles::step(int deltaTime){
     if(isHolding()){
         holdingObject_.lock()->setPos(owner_->getPos());
-    }
+	}
+}
+
+void AntMandibles::accept(Visitor &v) const
+{
+	v.visit(*this);
 }
 
 // AntWorkerAbdomen

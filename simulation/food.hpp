@@ -10,8 +10,12 @@
 
 #include "serialization.hpp"
 #include "entity.hpp"
+#include "visitable.hpp"
 
-class Food : public Entity
+/**
+ * Represents food.
+ */
+class Food : public Entity, virtual Visitable
 {
 	bool used;
 public:
@@ -24,6 +28,7 @@ public:
 
     int getSmell(){return 100;}
 
+	/// serialization
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -32,6 +37,10 @@ private:
 		ar & boost::serialization::base_object<Entity>(*this);
 		ar & used;
 	}
+
+	/// Visitable interface
+public:
+	void accept(Visitor &v) const;
 };
 
 #endif /* SRC_FOOD_HPP_ */
