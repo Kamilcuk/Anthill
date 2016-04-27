@@ -65,7 +65,6 @@ public:
 	Point getStrongestAtArea(const Point& middle, const float radius);
 	
 	const Grid2D& getMap();
-	Grid2D getMapCopy();
 	PheromoneMap::Type getType() const;
 	
 private:

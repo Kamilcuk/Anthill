@@ -1,4 +1,7 @@
 #include "entity.hpp"
+
+#include <boost/shared_ptr.hpp>
+
 #include "world.hpp"
 
 Entity::Entity(World* world, Point pos) :
@@ -20,6 +23,12 @@ Entity::Entity(const Entity& other) :
 
 Entity::~Entity()
 {
+    world_->invalidateEntities();
+}
+
+void Entity::track()
+{
+    world_->trackEntity(shared_from_this());
 }
 
 Point Entity::getPos() const

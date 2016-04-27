@@ -37,11 +37,11 @@ class MainWindow(QMainWindow):
         #self.showMaximized()
 
         # world/simulation parameters - hardcoded - test
-        self.worldWidth=50
-        self.worldHeight=50
+        self.worldWidth=200
+        self.worldHeight=150
         self.simulationFramerate=10
 
-        self.pixelSize=10
+        self.pixelSize=3
         w=self.worldWidth * self.pixelSize
         h=self.worldHeight * self.pixelSize
 
@@ -50,19 +50,21 @@ class MainWindow(QMainWindow):
 
         # configure world
         self.world = anthill.World();
-        self.world.setDimensions(w,h)
+        self.world.setDimensions(self.worldWidth, self.worldHeight)
         self.world.setSimulationFramerate(self.simulationFramerate)
-
-        self.maxPheromone=1
+        
+        self.maxPheromone=1        
+        self.paused = True
 
     def __exit__(self):
         self.refreshTimer.stop()
+
 
     def drawPheromoneMap(self,map,
             baseRGB=(50,30,100),
             baseRGB2=(10,10,10) ):
 
-        data=map.getMapCopy()
+        data=map.getMap()
         data=list(data)
 
         s=self.pixelSize
@@ -92,8 +94,8 @@ class MainWindow(QMainWindow):
         scene=self.ui.graphicsView.scene()
 
         for ent in ents:
-            x=ent.getLoc().posX()
-            y=ent.getLoc().posY()
+            x=ent.getPos().posX()
+            y=ent.getPos().posY()
             if(ellipse):
                 scene.addEllipse(x*s,y*s,s,s,pen=qpen,brush=qbrush)
             else:
@@ -102,6 +104,9 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def refresh(self):
+    
+        if self.paused:
+            return
 
         scene=self.ui.graphicsView.scene()
         scene.clear()
@@ -144,53 +149,94 @@ class MainWindow(QMainWindow):
         antPen=QPen(QBrush(QColor()),0)
         antBrush=QBrush(QColor(100,100,50,200))
         self.drawEntities(ants,antPen,antBrush,True)
-
+        
         # draw anthills
         anthills=self.world.getAnthills()
         anthillPen=QPen(QBrush(QColor()),0)
         anthillBrush=QBrush(QColor(200,20,20,150))
         self.drawEntities(anthills,anthillPen,anthillBrush)
+        
+        # update statistics
+        stats = self.world.getStatistics()
+        if stats:
+            _translate = QtCore.QCoreApplication.translate
+            self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
 
-        # show statistics Kamil
-        s = self.world.getStatistics()
-        s2 = s.print()
-        _translate = QtCore.QCoreApplication.translate
-        self.ui.stat_label.setText(_translate("MainWindow", s2))
-
+    def restartTimer(self):
+        self.refresh()
+        if self.refreshTimer:
+            self.refreshTimer.stop()
+        self.refreshTimer=QTimer(self)
+        self.refreshTimer.timeout.connect(self.refresh)
+        self.refreshTimer.start(1000/self.simulationFramerate)
+        
 
     def on_startSimulationButton_released(self):
-        if self.refreshTimer is None:
-            self.world.startSimulation()
-            self.refresh()
+        _translate = QtCore.QCoreApplication.translate
+        if self.paused:
+            if self.refreshTimer is None:
+                self.restartTimer()
 
-            self.refreshTimer=QTimer(self)
-            self.refreshTimer.timeout.connect(self.refresh)
-            self.refreshTimer.start(1000/self.simulationFramerate)
+                # todo: some dialog asking for params?
+                obstaclesParams = anthill.ObstaclesParams()
+                anthill.WorldGenerator.placeObstacles(self.world, 
+                    obstaclesParams)
+                
+                foodsParams = anthill.FoodsParams()
+                anthill.WorldGenerator.placeFoods(self.world, foodsParams)
+                
+                anthillParams = anthill.AnthillParams()
+                anthill.WorldGenerator.placeAnthill(self.world, anthillParams)
+                
+                antsParams = anthill.AntsParams()
+                anthill.WorldGenerator.placeAnts(self.world, antsParams)
 
+                self.world.startSimulation()
+                
+            self.ui.startSimulationButton.setText(_translate(
+                "MainWindow", "Pause Simulation"))
+            self.paused = False
+        else:
+            self.ui.startSimulationButton.setText(_translate(
+                "MainWindow", "Start Simulation"))
+            self.paused = True
 
     def on_stopSimulationButton_released(self):
         if self.refreshTimer:
+            _translate = QtCore.QCoreApplication.translate
+            self.ui.startSimulationButton.setText(_translate(
+                "MainWindow", "Start Simulation"))
+            self.paused = True
+            
             self.refresh()
 
             self.refreshTimer.stop()
             self.refreshTimer=None
 
             self.world.stopSimulation()
+            
 
     def on_saveStateButton_released(self):
+        self.paused = True
         path=QFileDialog.getSaveFileName(self, "Save File",
-                                    "/home", "All Files (*)")
+                                    ".", "All Files (*)")
         path=path[0]
         print("Saving state to: ",path)
         if(path and path!=''):
             self.world.saveState(path)
-
+        self.paused = False
+        
     def on_loadStateButton_released(self):
+        self.paused = True
+        self.world.stopSimulation()
         path=QFileDialog.getOpenFileName(self, "Open File",
-                                    "/home", "All Files (*)")
+                                    ".", "All Files (*)")
         path=path[0]
         if(path and path!=''):
             self.world.loadState(path)
+            self.restartTimer()
+            self.world.startSimulation()
+        self.paused = False
 
     def on_framerateBox_valueChanged(self):
         self.simulationFramerate=self.ui.framerateBox.value()

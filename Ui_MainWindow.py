@@ -19,11 +19,14 @@ class Ui_MainWindow(object):
         self.OptionsGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.OptionsGroupBox.setMinimumSize(QtCore.QSize(150, 200))
         self.OptionsGroupBox.setObjectName("OptionsGroupBox")
+        
         self.verticalLayout = QtWidgets.QVBoxLayout(self.OptionsGroupBox)
         self.verticalLayout.setObjectName("verticalLayout")
+        
         self.startSimulationButton = QtWidgets.QPushButton(self.OptionsGroupBox)
         self.startSimulationButton.setObjectName("startSimulationButton")
         self.verticalLayout.addWidget(self.startSimulationButton)
+        
         self.stopSimulationButton = QtWidgets.QPushButton(self.OptionsGroupBox)
         self.stopSimulationButton.setObjectName("stopSimulationButton")
         self.verticalLayout.addWidget(self.stopSimulationButton)
@@ -31,6 +34,7 @@ class Ui_MainWindow(object):
         self.saveStateButton = QtWidgets.QPushButton(self.OptionsGroupBox)
         self.saveStateButton.setObjectName("saveStateButton")
         self.verticalLayout.addWidget(self.saveStateButton)
+        
         self.loadStateButton = QtWidgets.QPushButton(self.OptionsGroupBox)
         self.loadStateButton.setObjectName("loadStateButton")
         self.verticalLayout.addWidget(self.loadStateButton)
@@ -96,7 +100,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.OptionsGroupBox.setTitle(_translate("MainWindow", "Options"))
         self.startSimulationButton.setText(_translate("MainWindow", "Start Simulation"))
-        self.stopSimulationButton.setText(_translate("MainWindow", "Stop Simulation"))
+        self.stopSimulationButton.setText(_translate("MainWindow", "Stop Simulation"))        
         self.saveStateButton.setText(_translate("MainWindow", "Save state"))
         self.loadStateButton.setText(_translate("MainWindow", "Load state"))
         self.label_2.setText(_translate("MainWindow", "Framerate:"))

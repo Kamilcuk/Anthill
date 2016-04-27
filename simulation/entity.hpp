@@ -1,6 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <boost/enable_shared_from_this.hpp>
+
 #include "updatable.hpp"
 #include "point.hpp"
 
@@ -14,7 +16,7 @@ class World;
  * list inside World instance provided in constructor. This allows entities to
  * get a list of all other entities easily and quickly.
  */
-class Entity : public Updatable
+class Entity : public Updatable, public boost::enable_shared_from_this<Entity>
 {
 	/** position of this entity */
 	Point pos_;
@@ -26,6 +28,9 @@ public:
     
 	Entity(const Entity&);    
     Entity& operator=(const Entity&);
+    
+    /// Stores weak_ptr to this Entity in a special simulation state buffer.
+    void track();
 
     /// We need to provide implementation so that Entity is serializable.
     virtual void step(int) {}
