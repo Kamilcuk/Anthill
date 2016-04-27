@@ -26,11 +26,6 @@ Entity::~Entity()
     world_->invalidateEntities();
 }
 
-void Entity::track()
-{
-    world_->trackEntity(shared_from_this());
-}
-
 Point Entity::getPos() const
 {
     return this->pos_;

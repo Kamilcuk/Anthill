@@ -8,6 +8,7 @@
 #include "point.hpp"
 
 #include "anthill.hpp"
+#include "creature.hpp"
 #include "ant.hpp"
 #include "obstacle.hpp"
 #include "food.hpp"
@@ -25,9 +26,8 @@ void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
     {
         Point pos(rand() % world->width, rand() % (world->height));
             
-        auto new_anthill = boost::make_shared<Anthill>(world, pos);
-        new_anthill->track();
-        world->getAnthills().emplace_back(new_anthill);
+        world->addSimulationObject<Anthill>(
+            boost::make_shared<Anthill>(world, pos));
     }
 }
 
@@ -37,13 +37,13 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         throw std::runtime_error("Invalid quantity of ants");
     if(params.min_dist_from_anthill > params.max_dist_from_anthill) 
         throw std::runtime_error("Min dist can't be higher than max dist");
-    if(world->getAnthills().size() == 0) 
+    if(world->getSimulationObjects<Anthill>().size() == 0) 
         throw std::runtime_error("No anthill!");
         
     int delta = params.max_dist_from_anthill - params.min_dist_from_anthill;
     
     // todo: more anthills
-    auto anthill_pos = world->getAnthills()[0]->getPos();
+    auto anthill_pos = world->getSimulationObjects<Anthill>()[0]->getPos();
     
     int num_spawned = 0;
     while(num_spawned < params.quantity)
@@ -54,10 +54,9 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         // check map bounds
         if (!pos.isInBounds(world->width, world->height))
             continue;
-        
-        auto new_ant = boost::make_shared<Ant>(world, pos);
-        new_ant->track();
-        world->getAnts().emplace_back(new_ant);
+            
+        world->addSimulationObject<Creature>(
+            boost::make_shared<Ant>(world, pos));
 
         // all correct
         num_spawned++;
@@ -77,9 +76,9 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
         {
             if(!point.isInBounds(world->width, world->height))
                 continue;
-            auto new_obsctacle = boost::make_shared<Obstacle>(world, point);
-            new_obsctacle->track();
-            world->getObstacles().emplace_back(new_obsctacle);
+                
+            world->addSimulationObject<Obstacle>(
+                boost::make_shared<Obstacle>(world, point));
         }
     
         // all correct
@@ -100,9 +99,9 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
         {
             if(!point.isInBounds(world->width, world->height))
                 continue;
-            auto new_food = boost::make_shared<Food>(world, point);
-            new_food->track();
-            world->getFoods().emplace_back(new_food);
+
+            world->addSimulationObject<Food>(
+                boost::make_shared<Food>(world, point));
         }
                     
         // all correct

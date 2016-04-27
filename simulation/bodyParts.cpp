@@ -23,9 +23,9 @@ void AntLegs::step(int deltatime){
         if(curPos.posY() != targetPos_.posY())
             y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
-        // check if this position is free (there is no other Ant)
+        // check if this position is free (there is no other creature)
         // (detect collision)
-        for(auto a : world_->getAnts()){
+        for(auto a : world_->getSimulationObjects<Creature>()){
             if(a->getPos() == Point(x,y)){
                 // collision detected
                 return;
@@ -93,7 +93,7 @@ void AntWorkerAbdomen::step(int deltaTime){
         return;
     if(dropType == PheromoneMap::Type::None)
         return;
-    for(auto pm : world_->getPheromoneMaps()){
+    for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
             pm->createBlob(owner_->getPos(), 2, 100);
             return;

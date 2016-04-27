@@ -7,7 +7,8 @@
 #include "entity.hpp"
 #include "bodyParts.hpp"
 
-class Creature : public Entity{
+class Creature : public Entity
+{
 public:
     Creature(World* world, Point pos):
         Entity(world, pos) {}

@@ -14,8 +14,9 @@
 #include "worldGenerator.hpp"
 #include "entity.hpp"
 #include "point.hpp"
-#include "ant.hpp"
+#include "creature.hpp"
 #include "food.hpp"
+#include "obstacle.hpp"
 #include "anthill.hpp"
 #include "pheromoneMap.hpp"
 #include "statistics.hpp"
@@ -31,7 +32,7 @@ BOOST_PYTHON_MODULE(anthill)
     
     REGISTER_SHAREDPTR(World);
     REGISTER_SHAREDPTR(WorldGenerator);
-    REGISTER_SHAREDPTR(Ant);
+    REGISTER_SHAREDPTR(Creature);
     REGISTER_SHAREDPTR(Food);
     REGISTER_SHAREDPTR(Anthill);
     REGISTER_SHAREDPTR(Obstacle);
@@ -41,7 +42,7 @@ BOOST_PYTHON_MODULE(anthill)
 #define REGISTER_VECTOR_SHAREDPTR(x) class_<vector<shared_ptr<x> > >(#x "_vec")\
         .def(vector_indexing_suite<vector<shared_ptr<x>>, true>() );
         
-    REGISTER_VECTOR_SHAREDPTR(Ant);
+    REGISTER_VECTOR_SHAREDPTR(Creature);
     REGISTER_VECTOR_SHAREDPTR(Food);
     REGISTER_VECTOR_SHAREDPTR(Anthill);
     REGISTER_VECTOR_SHAREDPTR(Obstacle);
@@ -59,12 +60,17 @@ BOOST_PYTHON_MODULE(anthill)
 #define REGISTER_METHOD_REF(cl, x) \
     .def(#x, &cl::x, return_internal_reference<>())
     
+// for specific template method:
+#define REGISTER_WORLDGETOBJ_METHOD_REF(x) \
+    .def("get"#x"s", &World::getSimulationObjects<x>,\
+        return_internal_reference<>())
+    
     REGISTER_CLASS(World)
-        REGISTER_METHOD_REF(World, getAnts)
-        REGISTER_METHOD_REF(World, getFoods)
-        REGISTER_METHOD_REF(World, getAnthills)
-        REGISTER_METHOD_REF(World, getPheromoneMaps)
-        REGISTER_METHOD_REF(World, getObstacles)
+        REGISTER_WORLDGETOBJ_METHOD_REF(Food)
+        REGISTER_WORLDGETOBJ_METHOD_REF(Obstacle)
+        REGISTER_WORLDGETOBJ_METHOD_REF(Creature)
+        REGISTER_WORLDGETOBJ_METHOD_REF(Anthill)
+        REGISTER_WORLDGETOBJ_METHOD_REF(PheromoneMap)
         REGISTER_METHOD(World, getStatistics)
         REGISTER_METHOD(World, setDimensions)
         REGISTER_METHOD(World, setSimulationFramerate)
@@ -87,8 +93,8 @@ BOOST_PYTHON_MODULE(anthill)
     REGISTER_CLASS(ObstaclesParams);
     REGISTER_CLASS(FoodsParams);
     
-    REGISTER_CLASS_NOINIT(Ant)
-        REGISTER_METHOD(Ant, getPos)
+    REGISTER_CLASS_NOINIT(Creature)
+        REGISTER_METHOD(Creature, getPos)
     ;
     REGISTER_CLASS_NOINIT(Food)
         REGISTER_METHOD(Food, getPos)

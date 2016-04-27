@@ -26,27 +26,9 @@ public:
     
     /// Interface for single simulation step. @todo
 	virtual void step(int delta_time) = 0;
-
-    /// Since simulation is "double buffered", we don't want to be removed
-    /// if other objects still want to interact with this. So if we want to be
-    /// removed from simulation, we must be flagged to remove. After proper
-    /// simulation step, this object will be removed from updatable notify list.
-    inline void flagToRemove()
-    {
-        to_remove_flag_ = true;
-    }
-    
-    /// @see flagToRemove
-    inline bool isFlaggedToRemove() const
-    {
-        return to_remove_flag_;
-    }
     
 protected:
     World* world_;
-    
-private:
-    bool to_remove_flag_ = false;  
 };
 
 #endif // UPDATABLE_H

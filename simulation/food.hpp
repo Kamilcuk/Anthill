@@ -11,7 +11,7 @@
 #include "serialization.hpp"
 #include "entity.hpp"
 
-class Food : public Entity 
+class Food : public Entity
 {
 	bool used;
 public:

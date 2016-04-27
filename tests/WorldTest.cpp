@@ -10,6 +10,7 @@
 #include "../simulation/updatable.hpp"
 #include "../simulation/visitable.hpp"
 #include "../simulation/entity.hpp"
+#include "../simulation/creature.hpp"
 
 namespace WorldTest
 {
@@ -30,12 +31,7 @@ struct Fixture
         virtual void accept(Visitor& v) const override {}
     };
     
-    struct EntityConcrete : public Entity 
-    {
-        EntityConcrete(World* w) : Entity(w), some_value(0) {}
-        int some_value;
-    };
-};    
+};
 
 BOOST_FIXTURE_TEST_CASE(test_makeUpdatable_shouldAddToVectorInWorld, Fixture)
 {
@@ -62,52 +58,16 @@ BOOST_FIXTURE_TEST_CASE(test_makeVisitable_shouldAddToVectorInWorld, Fixture)
 BOOST_FIXTURE_TEST_CASE(test_makeUntrackedEntity_shouldntBeStored, Fixture)
 {
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
-    EntityConcrete entity_untracked(&world);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
-}
-
-BOOST_FIXTURE_TEST_CASE(
-    test_makeTrackedEntityInLexicalScope_shouldBeImmediatelyExpired, Fixture)
-{
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
-    (boost::make_shared<EntityConcrete>(&world))->track();
+    Creature entity_untracked(&world);
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_makeTrackedEntity_shouldStore, Fixture)
 {   
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
-    auto tracked_entity = boost::make_shared<EntityConcrete>(&world);
-    tracked_entity->track();
+    world.addSimulationObject<Creature>(
+        boost::make_shared<Creature>(&world));
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
-}
-
-BOOST_FIXTURE_TEST_CASE(
-    test_makeTrackedEntityLocalScope_shouldExpireUponLeaving, Fixture)
-{   
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
-    {
-        auto local_entity = boost::make_shared<EntityConcrete>(&world);
-        local_entity->track();
-        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
-    }
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
-}
-
-BOOST_FIXTURE_TEST_CASE(test_trackedEntitySetValue_shouldGetSameValue, Fixture)
-{
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
-
-    const int test_val = 13;    
-    
-    auto tracked_entity = boost::make_shared<EntityConcrete>(&world);
-    tracked_entity->track();
-    tracked_entity->some_value = test_val;
-        
-    auto weak_entity = world.getEntityPtrs()[0];
-    auto shared_concrete = boost::dynamic_pointer_cast<EntityConcrete>(
-        weak_entity.lock());
-    BOOST_CHECK_EQUAL(shared_concrete->some_value, tracked_entity->some_value);
 }
 
 } // namespace WorldTest

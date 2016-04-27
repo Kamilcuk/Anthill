@@ -15,19 +15,17 @@
 #include <boost/weak_ptr.hpp>
 
 #include "serialization.hpp"
-
-#include "obstacle.hpp"
 #include "visitor.hpp"
 #include "statistics.hpp"
 
-#include "ant.hpp"
-
-class Ant;
-class Updatable;
 class Food;
-class Entity;
-class PheromoneMap;
+class Obstacle;
+class Creature;
 class Anthill;
+class PheromoneMap;
+
+class Entity;
+class Updatable;
 class Visitable;
 
 /**
@@ -54,7 +52,7 @@ class World {
     // Simulation objects.
     std::vector<boost::shared_ptr<Food> > foods_;
     std::vector<boost::shared_ptr<Obstacle> > obstacles_;
-    std::vector<boost::shared_ptr<Ant> > ants_;
+    std::vector<boost::shared_ptr<Creature> > creatures_;
     std::vector<boost::shared_ptr<Anthill> > anthills_;
     std::vector<boost::shared_ptr<PheromoneMap> > pheromone_maps_;
     
@@ -82,26 +80,20 @@ public:
     void saveState(std::string filename);
     /// Deserializes simulation state.
     void loadState(std::string filename);
+    
+    /// Returns reference to vector of specific simulation objects, for example
+    /// of type Creature or Food. 
+    template<class C>
+    const std::vector<boost::shared_ptr<C> >& getSimulationObjects() const;
+    
+    /// Adds a new object to simulation, for example of type Creature or Food.
+    template<class C>
+    boost::shared_ptr<C> addSimulationObject(boost::shared_ptr<C> obj);
         
-    inline std::vector<boost::shared_ptr<Food> >& getFoods() 
-    { return foods_; }
-    
-    inline std::vector<boost::shared_ptr<Obstacle> >& getObstacles() 
-    { return obstacles_; }
-    
-    inline std::vector<boost::shared_ptr<Ant> >& getAnts() 
-    { return ants_; }
-    
-    inline std::vector<boost::shared_ptr<Anthill> >& getAnthills() 
-    { return anthills_; }
-    
-    inline std::vector<boost::shared_ptr<PheromoneMap> >& getPheromoneMaps() 
-    { return pheromone_maps_; }
-    
-    inline std::vector<Updatable*>& getUpdatablePtrs()
+    inline const std::vector<Updatable*>& getUpdatablePtrs() const
     { return updatable_ptrs_; }
     
-    inline std::vector<Visitable*>& getVisitablePtrs()
+    inline const std::vector<Visitable*>& getVisitablePtrs() const
     { return visitable_ptrs_; }
     
     boost::shared_ptr<Statistics> getStatistics()

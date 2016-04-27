@@ -73,7 +73,7 @@ void World::stopSimulation()
 {   
     foods_.clear();
     obstacles_.clear();
-    ants_.clear();
+    creatures_.clear();
     anthills_.clear();
     pheromone_maps_.clear();
     
@@ -91,11 +91,12 @@ void World::simulationStep()
     for(auto u : updatable_ptrs_)
         u->step(0);
     
-    // remove from notification list if flagged to remove
-    updatable_ptrs_.erase(
-        std::remove_if(updatable_ptrs_.begin(), updatable_ptrs_.end(),
-            [] (Updatable* x) -> bool { return x->isFlaggedToRemove(); }), 
-        updatable_ptrs_.end());
+    // remove from simulation if flagged to remove.
+    // We're using "raw" entity_ptrs_ instead of getEntityPtrs() because
+    // getEntityPtrs() removes expired pointers from the vector and that would
+    // cause size of the vector to change mid-iteration -> undefined behaviour.
+    // std::for_each(entity_ptrs_.begin(), entity_ptrs_.end(),
+    //         [] (boost::weak_ptr<Entity> e) { e.lock()->removeIfFlagged(); });
 }
 
 void World::saveState(std::string filename)
@@ -107,7 +108,7 @@ void World::saveState(std::string filename)
     out_archive << *this;
     out_archive << foods_;
     out_archive << obstacles_;
-    out_archive << ants_;
+    out_archive << creatures_;
     out_archive << anthills_;
     out_archive << pheromone_maps_;
     
@@ -126,14 +127,14 @@ void World::loadState(std::string filename)
     
     in_archive >> foods_;
     in_archive >> obstacles_;
-    in_archive >> ants_;
+    in_archive >> creatures_;
     in_archive >> anthills_;
     in_archive >> pheromone_maps_;
     
-    for(const auto& entity : foods_) entity->track();
-    for(const auto& entity : obstacles_) entity->track();
-    for(const auto& entity : ants_) entity->track();
-    for(const auto& entity : anthills_) entity->track();
+    for(const auto& entity : foods_) trackEntity(entity);
+    for(const auto& entity : obstacles_) trackEntity(entity);
+    for(const auto& entity : creatures_) trackEntity(entity);
+    for(const auto& entity : anthills_) trackEntity(entity);
     
     std::cout << "Finished loading" << std::endl;
 }
@@ -184,4 +185,79 @@ void World::trackEntity(boost::shared_ptr<Entity> e)
 void World::invalidateEntities()
 {
     invalid_entities_ = true;
+}
+
+
+// getters
+
+template<>
+const std::vector<boost::shared_ptr<Food> >& 
+    World::getSimulationObjects<Food>() const
+{ return foods_; }
+
+template<>
+const std::vector<boost::shared_ptr<Obstacle> >& 
+    World::getSimulationObjects<Obstacle>() const
+{ return obstacles_; }
+
+template<>
+const std::vector<boost::shared_ptr<Creature> >& 
+    World::getSimulationObjects<Creature>() const
+{ return creatures_; }
+
+template<>
+const std::vector<boost::shared_ptr<Anthill> >& 
+    World::getSimulationObjects<Anthill>() const
+{ return anthills_; }
+
+template<>
+const std::vector<boost::shared_ptr<PheromoneMap> >& 
+    World::getSimulationObjects<PheromoneMap>() const
+{ return pheromone_maps_; }
+
+
+// adders
+
+template<>
+boost::shared_ptr<Food> 
+    World::addSimulationObject<Food>(boost::shared_ptr<Food> obj) 
+{ 
+    trackEntity(obj);
+    foods_.emplace_back(obj);
+    return obj; 
+}
+
+template<>
+boost::shared_ptr<Obstacle> 
+    World::addSimulationObject<Obstacle>(boost::shared_ptr<Obstacle> obj) 
+{ 
+    trackEntity(obj);
+    obstacles_.emplace_back(obj);
+    return obj; 
+}
+
+template<>
+boost::shared_ptr<Creature> 
+    World::addSimulationObject<Creature>(boost::shared_ptr<Creature> obj) 
+{ 
+    trackEntity(obj);
+    creatures_.emplace_back(obj);
+    return obj; 
+}
+
+template<>
+boost::shared_ptr<Anthill> 
+    World::addSimulationObject<Anthill>(boost::shared_ptr<Anthill> obj) 
+{ 
+    trackEntity(obj);
+    anthills_.emplace_back(obj);
+    return obj; 
+}
+
+template<>
+boost::shared_ptr<PheromoneMap> 
+    World::addSimulationObject<PheromoneMap>(boost::shared_ptr<PheromoneMap> obj) 
+{ 
+    pheromone_maps_.emplace_back(obj);
+    return obj; 
 }
