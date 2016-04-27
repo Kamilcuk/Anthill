@@ -27,7 +27,7 @@ class Anthill;
 class Visitable;
 
 /**
- * Represents simulation state and notifies all Updatable objetcts every 
+ * Represents simulation state and notifies all Updatable objects every
  * simulation frame. Also, implements serialization/deserialization to allow
  * storage of simulation state in a file.
  */

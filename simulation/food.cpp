@@ -9,12 +9,14 @@
 
 
 Food::Food(World* world, Point pos) :
+	Visitable(world),
 	Entity(world, pos),
 	used(false)
 {
 }
 
 Food::Food(World* world) :
+	Visitable(world),
 	Entity(world),
 	used(false)
 {
@@ -28,6 +30,11 @@ bool Food::getUsed() const
 void Food::setUsed(bool value)
 {
 	used = value;
+}
+
+void Food::accept(Visitor &v) const
+{
+	v.visit(*this);
 }
 
 void Food::step(int deltaTime)

@@ -17,11 +17,12 @@
 #include "visitor.hpp"
 #include "bodyParts.hpp"
 
+
 Ant::Ant(World* world, Point pos) :
-    Visitable(world),
-    Creature(world, pos)
+	Visitable(world),
+	Creature(world, pos)
 {
-    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+	antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
     antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
     antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
     antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
@@ -110,3 +111,4 @@ void Ant::step(int deltaTime) {
 void Ant::accept(Visitor& v) const {
     v.visit(*this);
 }
+

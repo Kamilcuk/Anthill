@@ -3,14 +3,18 @@
 
 #include "serialization.hpp"
 #include "entity.hpp"
+#include "visitable.hpp"
 
-class Obstacle : public Entity
+class Obstacle : public Entity, virtual Visitable
 {
 public:
 	Obstacle(World* world, Point pos);
 	Obstacle(World* world);
-	void step(int);
 
+	/// Updatable interface
+	void step(int delta_time);
+
+	/// serialization
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -18,6 +22,10 @@ private:
 	{
 		ar & boost::serialization::base_object<Entity>(*this);
 	}
+
+	// Visitable interface
+public:
+	void accept(Visitor &v) const;
 };
 
 #endif // OBSTACLE_H

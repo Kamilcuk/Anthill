@@ -16,6 +16,7 @@
 #include "updatable.hpp"
 #include "point.hpp"
 #include "pheromoneMap.hpp"
+#include "visitable.hpp"
 
 class Entity;
 class Creature;
@@ -80,16 +81,17 @@ private:
 	}
 };
 
-class AntMandibles : public BodyPart{
+class AntMandibles : public BodyPart, virtual Visitable {
     boost::weak_ptr<Entity> holdingObject_;
 public:
     AntMandibles(World* w, Creature* owner):
-       BodyPart(w,owner)
+		Visitable(w),
+		BodyPart(w,owner)
     {}
     bool grab(boost::weak_ptr<Entity> e);
     bool grab(AntSensor::Observation o);
     void step(int);
-    bool isHolding(){ return !holdingObject_.expired(); }
+	bool isHolding() const { return !holdingObject_.expired(); }
     
 private:
 	friend class boost::serialization::access;
@@ -98,10 +100,15 @@ private:
 	{
 		ar & holdingObject_;
 	}
+
+	// Visitable interface
+public:
+	void accept(Visitor &v) const;
+	boost::weak_ptr<Entity> getHoldingObject() const;
 };
 
 class AntWorkerAbdomen : public BodyPart{
-    PheromoneMap::Type dropType;
+	PheromoneMap::Type dropType;
 public:
     AntWorkerAbdomen(World* w, Creature* owner):
         BodyPart(w,owner),

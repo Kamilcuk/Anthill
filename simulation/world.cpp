@@ -30,7 +30,7 @@
 using std::vector;
 
 
-World::World() : statistics_(this)
+World::World()
 {    
     setDimensions(300, 200);
 
@@ -112,22 +112,25 @@ void World::stopSimulation()
 	updatable_ptrs_.clear();
     visitable_ptrs_.clear();
     
+	statistics_.reset();
 }
 
 void World::simulationStep()
 {
     for(auto u : updatable_ptrs_)
-        u->step(1);
+		u->step(1);
+
+	// we can track visitables that want to be erased/die
+	statistics_.update(this->getVisitablePtrs());
+
     for(auto u : updatable_ptrs_)
         u->step(0);
     
-    // remove from notification list if flagged to remove
-    updatable_ptrs_.erase(
+	// remove from notification list if flagged to remove
+	updatable_ptrs_.erase(
         std::remove_if(updatable_ptrs_.begin(), updatable_ptrs_.end(),
-            [] (Updatable* x) -> bool { return x->isFlaggedToRemove(); }), 
-        updatable_ptrs_.end());
-            
-    statistics_.step(1);
+			[] (Updatable* x) -> bool { return x->isFlaggedToRemove(); }),
+		updatable_ptrs_.end());
 }
 
 void World::saveState(std::string filename)
