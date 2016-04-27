@@ -22,7 +22,7 @@ public:
 	Food(World* world, Point pos);
 	Food(World* world);
 
-	void step(int);
+	void step(int) override;
 	bool getUsed() const;
 	void setUsed(bool value);
 

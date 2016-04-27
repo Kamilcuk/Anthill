@@ -12,7 +12,7 @@ public:
 	Obstacle(World* world);
 
 	/// Updatable interface
-	void step(int delta_time);
+	void step(int delta_time) override;
 
 	/// serialization
 private:

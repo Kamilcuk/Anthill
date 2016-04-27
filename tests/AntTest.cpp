@@ -11,7 +11,9 @@
 BOOST_AUTO_TEST_CASE( testAntNoTeleportation )
 {
     World w;
-    auto p=boost::make_shared<Ant>(&w, Point(30,30));
+    
+    auto p = w.addSimulationObject<Creature>(
+        boost::make_shared<Ant>(&w));
 
     Point lastPos=p->getPos();
     for(int a=0;a<100;++a){

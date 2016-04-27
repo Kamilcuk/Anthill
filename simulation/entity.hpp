@@ -1,6 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <stdexcept>
+
 #include <boost/enable_shared_from_this.hpp>
 
 #include "updatable.hpp"
@@ -30,7 +32,10 @@ public:
     Entity& operator=(const Entity&);
 
     /// We need to provide implementation so that Entity is serializable.
-    virtual void step(int) {}
+    virtual void step(int) override
+    {
+        throw std::runtime_error("Entity::step called, should never happen.");
+    }
     
     /// Since simulation is "double buffered", we don't want to be removed
     /// if other objects still want to interact with this. So if we want to be
@@ -39,6 +44,12 @@ public:
     inline void flagToRemove()
     {
         to_remove_flag_ = true;
+    }
+    
+    /// @see flagToRemove()
+    inline bool isFlaggedToRemove() const
+    {
+        return to_remove_flag_;
     }
     
 

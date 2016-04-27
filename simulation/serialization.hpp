@@ -7,6 +7,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/export.hpp>
 
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/binary_object.hpp>

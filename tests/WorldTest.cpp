@@ -31,6 +31,12 @@ struct Fixture
         virtual void accept(Visitor& v) const override {}
     };
     
+    struct ConcreteCreature : public Creature
+    {
+        ConcreteCreature(World* w) : Creature(w) {}
+        virtual void step(int) override {}
+    };
+    
 };
 
 BOOST_FIXTURE_TEST_CASE(test_makeUpdatable_shouldAddToVectorInWorld, Fixture)
@@ -68,6 +74,61 @@ BOOST_FIXTURE_TEST_CASE(test_makeTrackedEntity_shouldStore, Fixture)
     world.addSimulationObject<Creature>(
         boost::make_shared<Creature>(&world));
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
+}
+
+
+BOOST_FIXTURE_TEST_CASE(
+    test_removeSimulationObject_shouldBeGoneImmediately, Fixture)
+{   
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);
+    auto obj = world.addSimulationObject<Creature>(
+        boost::make_shared<Creature>(&world));
+        
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 1);
+    
+    world.removeSimulationObject<Creature>(obj);
+    
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);
+}
+
+BOOST_FIXTURE_TEST_CASE(
+    test_removeSimulationObject_shouldEntityGoneAtGetEntityPtrsCall, Fixture)
+{   
+    {
+        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
+        auto obj = world.addSimulationObject<Creature>(
+            boost::make_shared<Creature>(&world));
+            
+        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);    
+        
+        world.removeSimulationObject<Creature>(obj);
+        
+        // there should still be one in getEntityPtrs(), because shared_ptr
+        // to obj isn't invalidated yet, because there's still a local reference
+        // to obj.
+        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);    
+    } 
+    // After local reference to obj gets destroyed, getEntityPtrs() should
+    // remove expired pointers.
+    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
+}
+
+BOOST_FIXTURE_TEST_CASE(
+    test_flagToRemoveSimulationObject_shouldBeGoneAfterStep, Fixture)
+{   
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);
+    auto obj = world.addSimulationObject<Creature>(
+        boost::make_shared<ConcreteCreature>(&world));
+        
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 1);  
+    
+    obj->flagToRemove();
+    
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 1);
+    
+    world.simulationStep();
+    
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);
 }
 
 } // namespace WorldTest

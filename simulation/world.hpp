@@ -84,27 +84,63 @@ public:
     /// Returns reference to vector of specific simulation objects, for example
     /// of type Creature or Food. 
     template<class C>
-    const std::vector<boost::shared_ptr<C> >& getSimulationObjects() const;
+    std::vector<boost::shared_ptr<C> >& getSimulationObjects();
     
-    /// Adds a new object to simulation, for example of type Creature or Food.
+    /// Adds an object into a specific storage vector for specified type of 
+    /// object (for example, adds to foods_ vector if specified type is Food).
     template<class C>
-    boost::shared_ptr<C> addSimulationObject(boost::shared_ptr<C> obj);
-        
+    boost::shared_ptr<C> addSimulationObject(boost::shared_ptr<C> obj)
+    {
+        trackEntity(boost::dynamic_pointer_cast<Entity>(obj));
+        getSimulationObjects<C>().emplace_back(obj);
+        return obj;
+    }
+    
+    /// Removes an object from a specific storage vector for specified type of 
+    /// object (for example, removes form foods_ vector if specified type is 
+    /// Food).
+    /// This shouldn't be called by simulation objects interacting with other 
+    /// simulation objects! Use Entity::flagToRemove() instead.
+    template<class C>
+    void removeSimulationObject(boost::shared_ptr<C> obj)
+    {
+        auto& remove_from = getSimulationObjects<C>();
+        remove_from.erase(
+            std::remove(remove_from.begin(), remove_from.end(), obj),
+            remove_from.end());
+    }
+    
+    /// Removes simulation objects of specific type from their corresponding
+    /// storage vector only and only if they were flagged to remove.
+    /// This method should be called for every simulation object type after
+    /// each simulation step is finished, so that the simulation state is
+    /// updated.
+    template<class C>
+    void removeFlaggedSimulationObjects()
+    {
+        auto& remove_from = getSimulationObjects<C>();
+        remove_from.erase(
+            std::remove_if(remove_from.begin(), remove_from.end(), 
+                [] (boost::shared_ptr<C> obj) 
+                    { return obj->isFlaggedToRemove(); }),
+            remove_from.end());
+    }
+    
     inline const std::vector<Updatable*>& getUpdatablePtrs() const
     { return updatable_ptrs_; }
     
     inline const std::vector<Visitable*>& getVisitablePtrs() const
     { return visitable_ptrs_; }
     
-    boost::shared_ptr<Statistics> getStatistics()
+    boost::shared_ptr<Statistics> getStatistics() const
     { return statistics_; }
     
-    /// Removes expired pointers and returns a vector of weak_ptrs of entities
+    /// Removes expired pointers and returns a vector of weak_ptrs of entities.
     std::vector<boost::weak_ptr<Entity> >& getEntityPtrs();
     
 private:
-    // using friends here because we want methods below to be called in very
-    // specific situations.
+    // using friends here because we want following methods below to be called 
+    // in very specific situations.
     friend class Updatable;
     friend class Visitable;
     friend class Entity;
@@ -123,12 +159,17 @@ private:
     /// inside Visitable destructor!!
     void removeVisitable(Visitable* v);
     
-    /// Adds weak_ptr to specified Entity to entity_ptrs_ vector.
+    /// Checks if specified shared_ptr is valid and adds a weak_ptr created from
+    /// it to to entity_ptrs_ vector.
     void trackEntity(boost::shared_ptr<Entity> e);
     /// Invalidates list of entities, so that it is updated on the next call to
     /// getEntityPtrs(). Should be called in Entity destructor.
     void invalidateEntities();
     bool invalid_entities_ = true;
+    
+    // /// Removes flagged to remove objects of specific type from simulation.
+    // template<class C>
+    // void removeFlaggedObjects();
     
 private:
     friend class boost::serialization::access;

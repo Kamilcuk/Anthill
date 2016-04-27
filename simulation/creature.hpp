@@ -15,6 +15,11 @@ public:
     Creature(World* world):
         Entity(world) {}
         
+    virtual void step(int) override
+    {
+        throw std::runtime_error("Creature::step called, should never happen.");
+    }
+        
 private:
     friend class boost::serialization::access;
     template<class Archive>
