@@ -34,6 +34,11 @@ else:
 	else:
 		env.Append(LINKFLAGS = '-lboost_python3');
 	env['SHLIBPREFIX'] = ''; # we want anthill.so, default is libanthill.se
+	# check for ccache, and copmile with it to speed up
+	import distutils.spawn
+	if ( distutils.spawn.find_executable('ccache') != None ):
+		env.Replace(CXX = "ccache g++")
+
 
 # -- shared library for python linking -- #
 libanthill = env.SharedLibrary(target = 'anthill', source = sources);
