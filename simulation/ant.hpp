@@ -22,9 +22,6 @@ class AntMandibles;
 class AntSensor;
 class AntWorkerAbdomen;
 
-// for explanation of this line see serializationCustom.hpp
-extern Creature* g_current_owner;
-
 class Ant : public Creature, virtual Visitable {
 
 public:
@@ -44,11 +41,6 @@ private:
 	{
         ar & boost::serialization::base_object<Creature>(*this);
         // for explanation of this line see serializationCustom.hpp
-        g_current_owner = this; 
-		ar & antLegs;
-        ar & antMandibles;
-        ar & antSensors;
-        ar & antWorkerAbdomens;
 	}
 };
 
@@ -61,6 +53,14 @@ class AntWorker : public Ant, virtual Visitable{
 public:
     AntWorker(World*,Point);
     AntWorker(World*);
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+        ar & boost::serialization::base_object<Ant>(*this);
+	}
 };
 
 #endif /* ANT_H_ */
