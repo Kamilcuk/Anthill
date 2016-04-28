@@ -22,7 +22,7 @@ if env['PLATFORM'] == 'win32':
 	env['SHLIBSUFFIX'] = '.pyd' ; # we want anthill.so, default is libanthill.se
 else:
 	# linux platform
-	env.Append(CCFLAGS = ' -Wall --std=c++11 -O2 -g -fPIC ');
+	env.Append(CCFLAGS = ' -Werror -Wall --std=c++14 -O2 -g -fPIC ');
 	env.Append(CCFLAGS = '-Iboost'); # add boost support
 	env.Append(LINKFLAGS = '-fPIC -lboost_serialization'); # compile shared # boost serialization
 	# add python3 support

@@ -82,8 +82,8 @@ void Statistics::count(UpdatableCount &c, const Updatable &u)
 		c.init++;
 		c.existing++;
 	}
-	if ( u.isFlaggedToRemove() ) {
-		c.existing--;
-		c.removed++;
-	}
+	// if ( u.isFlaggedToRemove() ) {
+	// 	c.existing--;
+	// 	c.removed++;
+	// }
 }

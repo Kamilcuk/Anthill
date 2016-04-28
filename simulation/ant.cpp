@@ -111,4 +111,3 @@ void Ant::step(int deltaTime) {
 void Ant::accept(Visitor& v) const {
     v.visit(*this);
 }
-

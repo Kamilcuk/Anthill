@@ -14,7 +14,6 @@
 
 #include <boost/make_shared.hpp>
 
-#include "serialization.hpp"
 #include "serializationCustom.hpp"
 
 #include "shapeGenerator.hpp"
@@ -27,8 +26,6 @@
 #include "food.hpp"
 #include "bodyParts.hpp"
 #include "statistics.hpp"
-
-using std::vector;
 
 
 World::World()
@@ -73,7 +70,7 @@ void World::stopSimulation()
 {   
     foods_.clear();
     obstacles_.clear();
-    ants_.clear();
+    creatures_.clear();
     anthills_.clear();
     pheromone_maps_.clear();
     
@@ -90,16 +87,17 @@ void World::simulationStep()
 		u->step(1);
 
 	// we can track visitables that want to be erased/die
-	statistics_->update(this->getVisitablePtrs());
+	if(statistics_)
+        statistics_->update(this->getVisitablePtrs());
 
     for(auto u : updatable_ptrs_)
         u->step(0);
-    
-    // remove from notification list if flagged to remove
-    updatable_ptrs_.erase(
-        std::remove_if(updatable_ptrs_.begin(), updatable_ptrs_.end(),
-            [] (Updatable* x) -> bool { return x->isFlaggedToRemove(); }), 
-        updatable_ptrs_.end());
+        
+    // remove simulation objects that were flagged to remove;
+    removeFlaggedSimulationObjects<Food>();
+    removeFlaggedSimulationObjects<Obstacle>();
+    removeFlaggedSimulationObjects<Creature>();
+    removeFlaggedSimulationObjects<Anthill>();
 }
 
 void World::saveState(std::string filename)
@@ -108,10 +106,12 @@ void World::saveState(std::string filename)
     std::ofstream file(filename);
     boost::archive::text_oarchive out_archive(file);
     
+    // out_archive.register_type<Ant>();
+     
     out_archive << *this;
     out_archive << foods_;
     out_archive << obstacles_;
-    out_archive << ants_;
+    out_archive << creatures_;
     out_archive << anthills_;
     out_archive << pheromone_maps_;
     
@@ -125,19 +125,19 @@ void World::loadState(std::string filename)
     boost::archive::text_iarchive in_archive(file);
     
     g_world = this; // see serialization.hpp for info on this line
+    // in_archive.register_type<Ant>();
     
     in_archive >> *this;
-    
     in_archive >> foods_;
     in_archive >> obstacles_;
-    in_archive >> ants_;
+    in_archive >> creatures_;
     in_archive >> anthills_;
     in_archive >> pheromone_maps_;
     
-    for(const auto& entity : foods_) entity->track();
-    for(const auto& entity : obstacles_) entity->track();
-    for(const auto& entity : ants_) entity->track();
-    for(const auto& entity : anthills_) entity->track();
+    for(const auto& entity : foods_) trackEntity(entity);
+    for(const auto& entity : obstacles_) trackEntity(entity);
+    for(const auto& entity : creatures_) trackEntity(entity);
+    for(const auto& entity : anthills_) trackEntity(entity);
     
     std::cout << "Finished loading" << std::endl;
 }
@@ -150,7 +150,7 @@ std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()
         invalid_entities_ = false;
         entity_ptrs_.erase(
             std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
-                [] (boost::weak_ptr<Entity> e) -> bool { return e.expired(); }),
+                [] (auto e) -> bool { return e.expired(); }),
             entity_ptrs_.end());
     }
     return entity_ptrs_; 
@@ -182,10 +182,41 @@ void World::removeVisitable(Visitable* v)
 
 void World::trackEntity(boost::shared_ptr<Entity> e)
 {
-    entity_ptrs_.emplace_back(boost::weak_ptr<Entity>(e));
+    if(e)
+        entity_ptrs_.emplace_back(boost::weak_ptr<Entity>(e));
 }
 
 void World::invalidateEntities()
 {
     invalid_entities_ = true;
 }
+
+
+// Following are getSimulationObjects() template specializations. 
+// We need those, because we want to map a generic template method into
+// pre-defined set of storage vectors.
+
+template<>
+std::vector<boost::shared_ptr<Food> >& 
+    World::getSimulationObjects<Food>()
+{ return foods_; }
+
+template<>
+std::vector<boost::shared_ptr<Obstacle> >& 
+    World::getSimulationObjects<Obstacle>()
+{ return obstacles_; }
+
+template<>
+std::vector<boost::shared_ptr<Creature> >& 
+    World::getSimulationObjects<Creature>()
+{ return creatures_; }
+
+template<>
+std::vector<boost::shared_ptr<Anthill> >& 
+    World::getSimulationObjects<Anthill>()
+{ return anthills_; }
+
+template<>
+std::vector<boost::shared_ptr<PheromoneMap> >& 
+    World::getSimulationObjects<PheromoneMap>()
+{ return pheromone_maps_; }

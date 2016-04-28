@@ -144,11 +144,11 @@ class MainWindow(QMainWindow):
         foodBrush=QBrush(QColor(200,200,200,150))
         self.drawEntities(foods,foodPen,foodBrush)
 
-        # draw ants
-        ants=self.world.getAnts()
-        antPen=QPen(QBrush(QColor()),0)
-        antBrush=QBrush(QColor(100,100,50,200))
-        self.drawEntities(ants,antPen,antBrush,True)
+        # draw creatures
+        creatures=self.world.getCreatures()
+        creaturePen=QPen(QBrush(QColor()),0)
+        creatureBrush=QBrush(QColor(100,100,50,200))
+        self.drawEntities(creatures,creaturePen,creatureBrush,True)
         
         # draw anthills
         anthills=self.world.getAnthills()

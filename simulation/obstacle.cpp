@@ -3,14 +3,14 @@
 #include <iostream>
 
 Obstacle::Obstacle(World* world, Point pos) :
-	Entity(world, pos),
-	Visitable(world)
+	Visitable(world),
+	Entity(world, pos)
 {
 }
 
 Obstacle::Obstacle(World* world) :
-	Entity(world),
-	Visitable(world)
+	Visitable(world),
+	Entity(world)
 {
 }
 

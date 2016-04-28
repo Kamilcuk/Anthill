@@ -20,6 +20,14 @@
 #include "creature.hpp"
 #include "pheromoneMap.hpp"
 
+
+/**
+ * We have a hierarchy of classes, but hold pointers to base classes.
+ * In order for boost::serialization to recognize that derived classes
+ * also need to be exported, we need to use BOOST_CLASS_EXPORT macro for them.
+ */
+BOOST_CLASS_EXPORT(Ant)
+
 /**
  * Many objects require pointer to World object in their constructors.
  * There is no simple way to pass it as an argument to load_construct_data
@@ -81,6 +89,5 @@ namespace boost
         }
     }
 }
-
 
 #endif // SERIALIZATION_CUSTOM_H
