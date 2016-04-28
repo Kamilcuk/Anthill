@@ -52,8 +52,8 @@ class MainWindow(QMainWindow):
         self.world = anthill.World();
         self.world.setDimensions(self.worldWidth, self.worldHeight)
         self.world.setSimulationFramerate(self.simulationFramerate)
-        
-        self.maxPheromone=1        
+
+        self.maxPheromone=1
         self.paused = True
 
     def __exit__(self):
@@ -104,7 +104,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def refresh(self):
-    
+
         if self.paused:
             return
 
@@ -149,13 +149,13 @@ class MainWindow(QMainWindow):
         creaturePen=QPen(QBrush(QColor()),0)
         creatureBrush=QBrush(QColor(100,100,50,200))
         self.drawEntities(creatures,creaturePen,creatureBrush,True)
-        
+
         # draw anthills
         anthills=self.world.getAnthills()
         anthillPen=QPen(QBrush(QColor()),0)
         anthillBrush=QBrush(QColor(200,20,20,150))
         self.drawEntities(anthills,anthillPen,anthillBrush)
-        
+
         # update statistics
         stats = self.world.getStatistics()
         if stats:
@@ -169,7 +169,7 @@ class MainWindow(QMainWindow):
         self.refreshTimer=QTimer(self)
         self.refreshTimer.timeout.connect(self.refresh)
         self.refreshTimer.start(1000/self.simulationFramerate)
-        
+
 
     def on_startSimulationButton_released(self):
         _translate = QtCore.QCoreApplication.translate
@@ -179,20 +179,20 @@ class MainWindow(QMainWindow):
 
                 # todo: some dialog asking for params?
                 obstaclesParams = anthill.ObstaclesParams()
-                anthill.WorldGenerator.placeObstacles(self.world, 
+                anthill.WorldGenerator.placeObstacles(self.world,
                     obstaclesParams)
-                
+
                 foodsParams = anthill.FoodsParams()
                 anthill.WorldGenerator.placeFoods(self.world, foodsParams)
-                
+
                 anthillParams = anthill.AnthillParams()
                 anthill.WorldGenerator.placeAnthill(self.world, anthillParams)
-                
+
                 antsParams = anthill.AntsParams()
                 anthill.WorldGenerator.placeAnts(self.world, antsParams)
 
                 self.world.startSimulation()
-                
+
             self.ui.startSimulationButton.setText(_translate(
                 "MainWindow", "Pause Simulation"))
             self.paused = False
@@ -207,14 +207,14 @@ class MainWindow(QMainWindow):
             self.ui.startSimulationButton.setText(_translate(
                 "MainWindow", "Start Simulation"))
             self.paused = True
-            
+
             self.refresh()
 
             self.refreshTimer.stop()
             self.refreshTimer=None
 
             self.world.stopSimulation()
-            
+
 
     def on_saveStateButton_released(self):
         self.paused = True
@@ -225,7 +225,7 @@ class MainWindow(QMainWindow):
         if(path and path!=''):
             self.world.saveState(path)
         self.paused = False
-        
+
     def on_loadStateButton_released(self):
         self.paused = True
         self.world.stopSimulation()

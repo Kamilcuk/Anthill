@@ -97,6 +97,9 @@ void AntMandibles::accept(Visitor &v) const
 void AntWorkerAbdomen::dropToFoodPheromones(){
     dropType=PheromoneMap::Type::ToFood;
 }
+void AntWorkerAbdomen::dropFromFoodPheromones(){
+    dropType=PheromoneMap::Type::FromFood;
+}
 
 void AntWorkerAbdomen::step(int deltaTime){
     if(deltaTime<=0)

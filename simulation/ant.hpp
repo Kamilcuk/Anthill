@@ -14,6 +14,7 @@
 #include "world.hpp"
 #include "creature.hpp"
 #include "visitable.hpp"
+#include "controller.hpp"
 
 class World;
 class AntLegs;
@@ -25,14 +26,7 @@ class AntWorkerAbdomen;
 extern Creature* g_current_owner;
 
 class Ant : public Creature, virtual Visitable {
-	int speed_ = 1;
-	int visibility_ = 4;
-	
-    // vectors of body parts
-    std::vector<boost::shared_ptr<AntLegs> > antLegs;
-    std::vector<boost::shared_ptr<AntMandibles> > antMandibles;
-    std::vector<boost::shared_ptr<AntSensor> > antSensors;
-    std::vector<boost::shared_ptr<AntWorkerAbdomen> > antWorkerAbdomens;
+
 public:
 	Ant(World* world, Point pos);
 	Ant(World* world);
@@ -56,6 +50,17 @@ private:
         ar & antSensors;
         ar & antWorkerAbdomens;
 	}
+};
+
+//class AntQueen : public Ant{
+//public:
+//    AntQueen(World*,Point);
+//};
+
+class AntWorker : public Ant, virtual Visitable{
+public:
+    AntWorker(World*,Point);
+    AntWorker(World*);
 };
 
 #endif /* ANT_H_ */

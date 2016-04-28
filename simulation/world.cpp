@@ -64,6 +64,9 @@ void World::startSimulation()
     pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::FromFood, 
             width, height, 0.1));
+    pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::Anthill, 
+            width, height, 0.1));
 }
 
 void World::stopSimulation()
