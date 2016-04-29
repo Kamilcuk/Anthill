@@ -49,18 +49,18 @@ private:
 //    AntQueen(World*,Point);
 //};
 
-class AntWorker : public Ant, virtual Visitable{
-public:
-    AntWorker(World*,Point);
-    AntWorker(World*);
-
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive& ar, const unsigned int version)
-	{
-        ar & boost::serialization::base_object<Ant>(*this);
-	}
-};
+//class AntWorker : public Ant, virtual Visitable{
+//public:
+//    AntWorker(World*,Point);
+//    AntWorker(World*);
+//
+//private:
+//	friend class boost::serialization::access;
+//	template<class Archive>
+//	void serialize(Archive& ar, const unsigned int version)
+//	{
+//        ar & boost::serialization::base_object<Ant>(*this);
+//	}
+//};
 
 #endif /* ANT_H_ */

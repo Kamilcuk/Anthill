@@ -27,6 +27,7 @@
  * also need to be exported, we need to use BOOST_CLASS_EXPORT macro for them.
  */
 BOOST_CLASS_EXPORT(Ant)
+//BOOST_CLASS_EXPORT(AntWorker)
 
 /**
  * Many objects require pointer to World object in their constructors.
@@ -72,9 +73,13 @@ namespace boost
         LOAD_PTR_WORLD(Obstacle);
         LOAD_PTR_WORLD(Food);
         LOAD_PTR_WORLD(Anthill);
+        //LOAD_PTR_WORLD(AntWorker);
         LOAD_PTR_WORLD(Ant);
         LOAD_PTR_WORLD(Creature);
         LOAD_PTR_WORLD(PheromoneMap);
+
+        //LOAD_PTR_WORLD(Controller);
+        //LOAD_PTR_WORLD(AntWorkerAI);
         
         LOAD_PTR_WORLD_AND_OWNER(AntLegs);
         LOAD_PTR_WORLD_AND_OWNER(AntMandibles);

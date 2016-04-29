@@ -56,7 +56,7 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
             continue;
             
         world->addSimulationObject<Creature>(
-            boost::make_shared<AntWorker>(world, pos));
+            boost::make_shared<Ant>(world, pos));
 
         // all correct
         num_spawned++;

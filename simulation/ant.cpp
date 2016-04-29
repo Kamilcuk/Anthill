@@ -25,6 +25,9 @@ Ant::Ant(World* world, Point pos) :
 	antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
     antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
     antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
+        this));
+    controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
 }
 
 Ant::Ant(World* world) :
@@ -34,6 +37,9 @@ Ant::Ant(World* world) :
     antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
     antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
     antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
+        this));
+    controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
 }
 
 Ant::~Ant()
@@ -65,19 +71,19 @@ void Ant::accept(Visitor& v) const {
 //    // TODO: antQueenAbdomen, AntQueenController
 //}
 
-AntWorker::AntWorker(World* world, Point pos):
-    Visitable(world),
-    Ant(world,pos)
-{
-    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-        this));
-    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
-}
-AntWorker::AntWorker(World* world):
-    Visitable(world),
-    Ant(world)
-{
-    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-        this));
-    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
-}
+//AntWorker::AntWorker(World* world, Point pos):
+//    Visitable(world),
+//    Ant(world,pos)
+//{
+//    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
+//        this));
+//    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+//}
+//AntWorker::AntWorker(World* world):
+//    Visitable(world),
+//    Ant(world)
+//{
+//    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
+//        this));
+//    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+//}
