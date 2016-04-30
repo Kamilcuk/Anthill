@@ -39,6 +39,7 @@ public:
     AntLegs(const AntLegs& o) :
         BodyPart(o) {}
     void goToPos(const Point& p);
+    void goRandom();
     void step(int);
     int getTimeNotMoving(){ return timeNotMoving_; }
     

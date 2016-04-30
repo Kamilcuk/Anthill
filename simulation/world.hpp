@@ -18,6 +18,8 @@
 #include "visitor.hpp"
 #include "statistics.hpp"
 
+#include "point.hpp"
+
 class Food;
 class Obstacle;
 class Creature;
@@ -67,6 +69,7 @@ public:
     ~World();
 
 	void setDimensions(int x, int y);
+	Point getDimensions();
     void setSimulationFramerate(float frames_per_sec);
 
     /// Sets up simulation.

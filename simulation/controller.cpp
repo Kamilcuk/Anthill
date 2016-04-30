@@ -3,7 +3,8 @@
 #include "bodyParts.hpp"
 
 AntWorkerAI::AntWorkerAI(Creature* owner):
-    Controller(owner){
+    Controller(owner),
+    panicTimeLeft_(0){
 }
 
 void AntWorkerAI::step(int deltatime){
@@ -33,6 +34,13 @@ void AntWorkerAI::step(int deltatime){
     auto ma = antMandibles[0];
     auto sensor = antSensors[0];
     auto abd = antWorkerAbdomens[0];
+
+    // ant starts to panic when is probably deadlocked with other ants
+    if(panicTimeLeft_>0){
+        legs->goRandom();
+        --panicTimeLeft_;
+        return;
+    }
     
     bool targetPosChanged=0;
     Point targetPos=Point(rand()%40+1,rand()%40+1);
@@ -64,8 +72,9 @@ void AntWorkerAI::step(int deltatime){
         legs->goToPos(Point(0,0));
     }
 
-    if(legs->getTimeNotMoving()>2){
-        legs->goToPos(Point(rand(),rand()));
+    if(legs->getTimeNotMoving()>3){
+        panicTimeLeft_=5;
+        legs->goRandom();
     }
 
 }

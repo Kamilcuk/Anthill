@@ -6,6 +6,7 @@
 #include "world.hpp"
 #include "pheromoneMap.hpp"
 #include "obstacle.hpp"
+#include "point.hpp"
 
 
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
@@ -16,6 +17,11 @@ AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 
 void AntLegs::goToPos(const Point& p){
     targetPos_=p;
+}
+
+void AntLegs::goRandom(){
+    Point dim=world_->getDimensions();
+    targetPos_=Point(rand()%dim.posX(),rand()%dim.posY());
 }
 
 void AntLegs::step(int deltatime){
@@ -62,6 +68,7 @@ void AntLegs::step(int deltatime){
                     break;
                 }
             }
+
             if(ok){
                 owner_->setPos(Point(x,y));
                 timeNotMoving_=0;
@@ -116,6 +123,7 @@ bool AntMandibles::grab(boost::weak_ptr<Entity> e){
     grab_from.insert(my_pos + Point(-1, 0));
     grab_from.insert(my_pos + Point(0, 1));
     grab_from.insert(my_pos + Point(0, -1));
+    grab_from.insert(my_pos + Point(0, 0));
     
     for (const auto& pos : grab_from)
     {

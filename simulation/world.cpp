@@ -47,6 +47,11 @@ void World::setDimensions(int X, int Y)
 	height = Y;
 }
 
+Point World::getDimensions()
+{
+    return Point(width,height);
+}
+
 void World::setSimulationFramerate(float)
 {
 }
