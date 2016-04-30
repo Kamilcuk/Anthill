@@ -12,6 +12,7 @@ void AntWorkerAI::step(int deltatime){
     auto& antMandibles=owner_->getAntMandibles();
     auto& antSensors=owner_->getAntSensors();
     auto& antWorkerAbdomens=owner_->getAntWorkerAbdomens();
+    auto& antQueenAbdomens=owner_->getAntQueenAbdomens();
 
     if(antLegs.empty()){
         std::cout<<"Nie mam sensorow\n";
@@ -27,6 +28,15 @@ void AntWorkerAI::step(int deltatime){
     }
     if(antWorkerAbdomens.empty()){
         std::cout<<"Nie mam kaloryfera\n";
+        return;
+    }
+
+    if((antLegs.size()>1) ||
+        (antMandibles.size()>1) ||
+        (antSensors.size()>1) ||
+        (antQueenAbdomens.size()>0) ||
+        (antWorkerAbdomens.size()>1)){
+        std::cout<<"radiation";
         return;
     }
     
@@ -77,4 +87,53 @@ void AntWorkerAI::step(int deltatime){
         legs->goRandom();
     }
 
+}
+
+AntQueenAI::AntQueenAI(Creature* owner):
+    Controller(owner){
+}
+
+void AntQueenAI::step(int deltatime){
+    auto& antLegs=owner_->getAntLegs();
+    auto& antMandibles=owner_->getAntMandibles();
+    auto& antSensors=owner_->getAntSensors();
+    auto& antWorkerAbdomens=owner_->getAntWorkerAbdomens();
+    auto& antQueenAbdomens=owner_->getAntQueenAbdomens();
+
+    if(antLegs.empty()){
+        std::cout<<"Nie mam sensorow\n";
+        return;
+    }
+    if(antMandibles.empty()){
+        std::cout<<"Nie mam rzujek\n";
+        return;
+    }
+    if(antSensors.empty()){
+        std::cout<<"Nie mam nog\n";
+        return;
+    }
+    if(antQueenAbdomens.empty()){
+        std::cout<<"Nie mam kaloryfera\n";
+        return;
+    }
+
+    if((antLegs.size()>1) ||
+        (antMandibles.size()>1) ||
+        (antSensors.size()>1) ||
+        (antWorkerAbdomens.size()>0) ||
+        (antQueenAbdomens.size()>1)){
+        std::cout<<"radiation";
+        return;
+    }
+
+    auto legs = antLegs[0];
+    auto ma = antMandibles[0];
+    auto sensor = antSensors[0];
+    auto abd = antQueenAbdomens[0];
+
+
+    // just leave anthill pheromones so that 
+    // ants know they are at home
+    //
+    abd->dropAnthillPheromones();
 }

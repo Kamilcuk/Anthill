@@ -35,6 +35,21 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Controller>(*this);
+		ar & panicTimeLeft_;;
+	}
+};
+
+class AntQueenAI : public Controller{
+public:
+    AntQueenAI(Creature* owner);
+    void step(int deltaTime);
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+    {
+        ar & boost::serialization::base_object<Controller>(*this);
 	}
 };
 

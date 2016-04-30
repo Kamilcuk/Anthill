@@ -26,6 +26,7 @@ protected:
     std::vector<boost::shared_ptr<AntMandibles> > antMandibles;
     std::vector<boost::shared_ptr<AntSensor> > antSensors;
     std::vector<boost::shared_ptr<AntWorkerAbdomen> > antWorkerAbdomens;
+    std::vector<boost::shared_ptr<AntQueenAbdomen> > antQueenAbdomens;
 
 public:
 
@@ -40,6 +41,9 @@ public:
     }
     std::vector<boost::shared_ptr<AntWorkerAbdomen> >& getAntWorkerAbdomens(){
         return antWorkerAbdomens;
+    }
+    std::vector<boost::shared_ptr<AntQueenAbdomen> >& getAntQueenAbdomens(){
+        return antQueenAbdomens;
     }
 
     Creature(World* world, Point pos):
@@ -64,6 +68,7 @@ private:
         ar & antMandibles;
         ar & antSensors;
         ar & antWorkerAbdomens;
+        ar & antQueenAbdomens;
     }
 };
 

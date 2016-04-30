@@ -176,3 +176,22 @@ void AntWorkerAbdomen::step(int deltaTime){
 }
 
 
+// AntQueenAbdomen
+void AntQueenAbdomen::dropAnthillPheromones(){
+    dropType=PheromoneMap::Type::Anthill;
+}
+
+void AntQueenAbdomen::step(int deltaTime){
+    if(deltaTime<=0)
+        return;
+    if(dropType == PheromoneMap::Type::None)
+        return;
+    for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType()==dropType){
+            pm->createBlob(owner_->getPos(), 5, 100);
+            return;
+        }
+    }
+
+    dropType = PheromoneMap::Type::None;
+}

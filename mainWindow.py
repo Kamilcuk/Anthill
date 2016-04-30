@@ -126,11 +126,13 @@ class MainWindow(QMainWindow):
         s=self.pixelSize
 
         # draw pheromone map
+        pheromoneColors=[ (50,50,155),
+                 (255,50,50),
+                 (0,255,0)]
         pMaps=self.world.getPheromoneMaps()
         pMaps=[pMaps[p] for p in range(len(pMaps))]
         for i,m in enumerate(pMaps):
-            self.drawPheromoneMap(m,baseRGB=(
-                    255*(i%2), 20, 200*((i+1)%2)))
+            self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
 
         # draw obstacles
         obstacles=self.world.getObstacles()

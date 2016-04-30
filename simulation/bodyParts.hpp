@@ -131,5 +131,24 @@ private:
 	}
 };
 
+class AntQueenAbdomen : public BodyPart{
+	PheromoneMap::Type dropType;
+public:
+    AntQueenAbdomen(World* w, Creature* owner):
+        BodyPart(w,owner),
+        dropType(PheromoneMap::Type::None) // don't drop
+    {};
+    void dropAnthillPheromones();
+    void step(int);
+    
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & dropType;
+	}
+};
+
 
 #endif // BODY_PARTS_H

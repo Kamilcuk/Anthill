@@ -85,6 +85,7 @@ namespace boost
         LOAD_PTR_WORLD_AND_OWNER(AntMandibles);
         LOAD_PTR_WORLD_AND_OWNER(AntSensor);
         LOAD_PTR_WORLD_AND_OWNER(AntWorkerAbdomen);
+        LOAD_PTR_WORLD_AND_OWNER(AntQueenAbdomen);
         
         // Followiong is serialization of PheromoneMap::Type enum class
         template<class Archive>

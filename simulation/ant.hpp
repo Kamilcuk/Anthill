@@ -21,6 +21,7 @@ class AntLegs;
 class AntMandibles;
 class AntSensor;
 class AntWorkerAbdomen;
+class AntQueenAbdomen;
 
 class Ant : public Creature, virtual Visitable {
 
@@ -48,7 +49,7 @@ private:
 //    AntQueen(World*,Point);
 //};
 
-//class AntWorker : public Ant{
+//class AntWorker : public Ant{//, virtual Visitable{
 //public:
 //    AntWorker(World*,Point);
 //    AntWorker(World*);
