@@ -22,12 +22,6 @@ void Point::setPosY(int posY)
 	posY_ = posY;
 }
 
-Point Point::move(int addX, int addY) {
-	posX_ += addX;
-	posY_ += addY;
-	return *this;
-}
-
 void Point::printPosition()
 {
 	std::cout << "PosX: " << posX() << " posY: " << posY() << std::endl;
@@ -60,8 +54,17 @@ Point::Point(const Point &pos)
 	posY_ = pos.posY();
 }
 
-Point& Point::operator=(const Point& p){
-    posX_=p.posX_;
-    posY_=p.posY_;
-    return *this;
+std::string Point::toString() const
+{
+	std::string s;
+	s += std::to_string(posX_);
+	s += ",";
+	s += std::to_string(posY_);
+	return s;
+}
+
+std::ostream& operator<<(std::ostream &os, const Point& rhs)
+{
+	os << rhs.toString();
+	return os;
 }
