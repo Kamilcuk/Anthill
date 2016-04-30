@@ -31,6 +31,8 @@ public:
 };
 
 class AntLegs : public BodyPart{
+    // how much time ant is standing in one place
+    int timeNotMoving_;
     Point targetPos_;
 public:
     AntLegs(World* w, Creature* owner);
@@ -38,6 +40,7 @@ public:
         BodyPart(o) {}
     void goToPos(const Point& p);
     void step(int);
+    int getTimeNotMoving(){ return timeNotMoving_; }
     
 private:
 	friend class boost::serialization::access;

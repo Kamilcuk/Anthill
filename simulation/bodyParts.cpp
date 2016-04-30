@@ -2,11 +2,12 @@
 #include "creature.hpp"
 #include "world.hpp"
 #include "pheromoneMap.hpp"
-#include "ant.hpp"
+#include "obstacle.hpp"
 
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
     targetPos_=owner->getPos();
+    timeNotMoving_=0;
 }
 
 void AntLegs::goToPos(const Point& p){
@@ -16,22 +17,54 @@ void AntLegs::goToPos(const Point& p){
 void AntLegs::step(int deltatime){
     while((deltatime--)>0){
         Point curPos=owner_->getPos();
-        int x=curPos.posX();
-        int y=curPos.posY();
-        if(curPos.posX() != targetPos_.posX())
-            x+= (curPos.posX() < targetPos_.posX()) ? 1 : -1;
-        if(curPos.posY() != targetPos_.posY())
-            y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
         // check if this position is free (there is no other creature)
         // (detect collision)
-        for(auto a : world_->getSimulationObjects<Creature>()){
-            if(a->getPos() == Point(x,y)){
-                // collision detected
+
+        for(int i=0;i<=2;++i){
+            // try to move by both axes, then single axes if not possible
+            bool dx,dy;
+            if(i==0){
+                dx=1;
+                dy=1;
+            }else if(i==1){
+                dx=1;
+                dy=0;
+            }else if(i==2){
+                dx=0;
+                dy=1;
+            }
+
+            int x=curPos.posX();
+            int y=curPos.posY();
+
+            if(dx && curPos.posX() != targetPos_.posX())
+                x+= (curPos.posX() < targetPos_.posX()) ? 1 : -1;
+            if(dy && curPos.posY() != targetPos_.posY())
+                y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
+
+            bool ok=true;
+            for(auto a : world_->getSimulationObjects<Creature>()){
+                if(a->getPos() == Point(x,y)){
+                    // collision detected
+                    ok=false;
+                    break;
+                }
+            }
+            for(auto a : world_->getSimulationObjects<Obstacle>()){
+                if(a->getPos() == Point(x,y)){
+                    // collision detected
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok){
+                owner_->setPos(Point(x,y));
+                timeNotMoving_=0;
                 return;
             }
         }
-        owner_->setPos(Point(x,y));
+        ++timeNotMoving_;
     }
 }
 

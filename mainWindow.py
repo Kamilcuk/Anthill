@@ -37,11 +37,11 @@ class MainWindow(QMainWindow):
         #self.showMaximized()
 
         # world/simulation parameters - hardcoded - test
-        self.worldWidth=200
-        self.worldHeight=150
+        self.worldWidth=100
+        self.worldHeight=50
         self.simulationFramerate=10
 
-        self.pixelSize=3
+        self.pixelSize=5
         w=self.worldWidth * self.pixelSize
         h=self.worldHeight * self.pixelSize
 

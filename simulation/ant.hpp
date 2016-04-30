@@ -40,7 +40,6 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
 	{
         ar & boost::serialization::base_object<Creature>(*this);
-        // for explanation of this line see serializationCustom.hpp
 	}
 };
 
@@ -49,7 +48,7 @@ private:
 //    AntQueen(World*,Point);
 //};
 
-//class AntWorker : public Ant, virtual Visitable{
+//class AntWorker : public Ant{
 //public:
 //    AntWorker(World*,Point);
 //    AntWorker(World*);

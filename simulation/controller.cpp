@@ -56,13 +56,16 @@ void AntWorkerAI::step(int deltatime){
 
     if(!ma->isHolding()){
         abd->dropToFoodPheromones();
+        legs->goToPos(targetPos);
     }else{
         abd->dropFromFoodPheromones();
         //TODO: return somewhere
         // example - point (0,0)
         legs->goToPos(Point(0,0));
-        return;
     }
 
-    legs->goToPos(targetPos);
+    if(legs->getTimeNotMoving()>2){
+        legs->goToPos(Point(rand(),rand()));
+    }
+
 }

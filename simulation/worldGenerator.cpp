@@ -54,6 +54,18 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         // check map bounds
         if (!pos.isInBounds(world->width, world->height))
             continue;
+
+        // check if no obstacle there
+        bool ok=true;
+        for(auto a : world->getSimulationObjects<Obstacle>()){
+            if(a->getPos() == pos){
+                // collision detected
+                ok=false;
+                break;
+            }
+        }
+        if(!ok)
+            continue;
             
         world->addSimulationObject<Creature>(
             boost::make_shared<Ant>(world, pos));

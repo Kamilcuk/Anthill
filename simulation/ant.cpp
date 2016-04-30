@@ -56,6 +56,8 @@ void Ant::step(int deltaTime) {
 
     if(controller_ != nullptr){
         controller_->step(deltaTime);
+    }else{
+        std::cout<<"Don't have controller"<<std::endl;
     }
 }
 
@@ -72,15 +74,16 @@ void Ant::accept(Visitor& v) const {
 //}
 
 //AntWorker::AntWorker(World* world, Point pos):
-//    Visitable(world),
+//    //Visitable(world),
 //    Ant(world,pos)
 //{
 //    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
 //        this));
 //    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
 //}
+//
 //AntWorker::AntWorker(World* world):
-//    Visitable(world),
+//    //Visitable(world),
 //    Ant(world)
 //{
 //    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 

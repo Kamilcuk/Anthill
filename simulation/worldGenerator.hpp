@@ -111,7 +111,7 @@ struct AntsParams
 struct ObstaclesParams
 {
     BlobParams blob;
-    int quantity = 80;
+    int quantity = 20;
 };
 
 struct FoodsParams
