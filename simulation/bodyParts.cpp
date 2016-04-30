@@ -1,8 +1,12 @@
 #include "bodyParts.hpp"
+
+#include <set>
+
 #include "creature.hpp"
 #include "world.hpp"
 #include "pheromoneMap.hpp"
 #include "obstacle.hpp"
+
 
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
@@ -101,13 +105,27 @@ boost::weak_ptr<Entity> AntMandibles::getHoldingObject() const
 }
 
 bool AntMandibles::grab(boost::weak_ptr<Entity> e){
-	if(owner_->getPos()!=e.lock()->getPos())
-        return 0;
-    if(isHolding()){
-        return 0;
+    
+    if(isHolding())
+        return false;
+    
+    // can grab from adjecent positions
+    std::set<Point> grab_from;
+    const auto& my_pos = owner_->getPos();
+    grab_from.insert(my_pos + Point(1, 0));
+    grab_from.insert(my_pos + Point(-1, 0));
+    grab_from.insert(my_pos + Point(0, 1));
+    grab_from.insert(my_pos + Point(0, -1));
+    
+    for (const auto& pos : grab_from)
+    {
+        if (pos == e.lock()->getPos())
+        {
+            holdingObject_ = e;
+            break;
+        }
     }
-    holdingObject_=e;
-    return 1;
+    return true;
 }
 
 bool AntMandibles::grab(AntSensor::Observation o){
