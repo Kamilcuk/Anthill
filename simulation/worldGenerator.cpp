@@ -40,9 +40,10 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
     if(world->getSimulationObjects<Anthill>().size() == 0) 
         throw std::runtime_error("No anthill!");
         
-    int delta = params.max_dist_from_anthill - params.min_dist_from_anthill;
+    const int delta = params.max_dist_from_anthill - 
+        params.min_dist_from_anthill;
     
-    // todo: more anthills
+    // todo: handle more anthills
     auto anthill_pos = world->getSimulationObjects<Anthill>()[0]->getPos();
     
     int num_spawned = 0;
@@ -51,20 +52,19 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         Point pos(anthill_pos.posX() + rand() % delta * randSign(),
             anthill_pos.posY() + rand() % delta * randSign());
         
-        // check map bounds
         if (!pos.isInBounds(world->width, world->height))
             continue;
 
-        // check if no obstacle there
-        bool ok=true;
-        for(auto a : world->getSimulationObjects<Obstacle>()){
-            if(a->getPos() == pos){
-                // collision detected
-                ok=false;
+        bool collision_detected = false;
+        for(const auto& obstacle : world->getSimulationObjects<Obstacle>())
+        {
+            if(obstacle->getPos() == pos)
+            {
+                collision_detected = true;
                 break;
             }
         }
-        if(!ok)
+        if(collision_detected)
             continue;
             
         world->addSimulationObject<Creature>(
@@ -83,7 +83,7 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
     int num_spawned = 0;
     while(num_spawned < params.quantity)
     {       
-        for(auto point : generateBlob<Obstacle>(params.blob, 
+        for(const auto& point : generateBlob<Obstacle>(params.blob, 
                 world->width, world->height))
         {
             if(!point.isInBounds(world->width, world->height))
@@ -106,7 +106,7 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
     int num_spawned = 0;
     while(num_spawned < params.quantity)
     {       
-        for(auto point : generateBlob<Food>(params.blob, 
+        for(const auto& point : generateBlob<Food>(params.blob, 
                 world->width, world->height))
         {
             if(!point.isInBounds(world->width, world->height))

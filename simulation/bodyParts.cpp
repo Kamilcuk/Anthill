@@ -53,23 +53,26 @@ void AntLegs::step(int deltatime){
             if(dy && curPos.posY() != targetPos_.posY())
                 y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
-            bool ok=true;
-            for(auto a : world_->getSimulationObjects<Creature>()){
-                if(a->getPos() == Point(x,y)){
-                    // collision detected
-                    ok=false;
+            bool collision_detected = false;
+            for(const auto& creature : world_->getSimulationObjects<Creature>())
+            {
+                if(creature->getPos() == Point(x,y))
+                {
+                    collision_detected = true;
                     break;
                 }
             }
-            for(auto a : world_->getSimulationObjects<Obstacle>()){
-                if(a->getPos() == Point(x,y)){
-                    // collision detected
-                    ok=false;
+            for(const auto& obstacle : world_->getSimulationObjects<Obstacle>())
+            {
+                if(obstacle->getPos() == Point(x,y))
+                {
+                    collision_detected = true;
                     break;
                 }
             }
 
-            if(ok){
+            if(!collision_detected)
+            {
                 owner_->setPos(Point(x,y));
                 timeNotMoving_=0;
                 return;
@@ -91,7 +94,7 @@ int AntSensor::Observation::getSmell()const{
 std::vector<AntSensor::Observation> AntSensor::getEntities(){
     std::vector<Observation> ret;
     
-    for(auto& a : world_->getEntityPtrs()){
+    for(const auto& a : world_->getEntityPtrs()){
         if(a.lock()->getPos().getDistance(owner_->getPos()) <= 4)
             ret.push_back(Observation(a));
     }
@@ -165,7 +168,7 @@ void AntWorkerAbdomen::step(int deltaTime){
         return;
     if(dropType == PheromoneMap::Type::None)
         return;
-    for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
+    for(const auto& pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
             pm->createBlob(owner_->getPos(), 2, 100);
             return;
