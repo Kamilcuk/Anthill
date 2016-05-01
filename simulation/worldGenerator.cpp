@@ -24,7 +24,7 @@ void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
 {
     for(int i = 0; i < params.quantity; i++)
     {
-        Point pos(rand() % world->width, rand() % (world->height));
+        Point pos(rand() % world->width_, rand() % (world->height_));
             
         world->addSimulationObject<Anthill>(
             boost::make_shared<Anthill>(world, pos));
@@ -52,7 +52,7 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         Point pos(anthill_pos.posX() + rand() % delta * randSign(),
             anthill_pos.posY() + rand() % delta * randSign());
         
-        if (!pos.isInBounds(world->width, world->height))
+        if (!pos.isInBounds(world->width_, world->height_))
             continue;
 
         bool collision_detected = false;
@@ -84,9 +84,9 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
     while(num_spawned < params.quantity)
     {       
         for(const auto& point : generateBlob<Obstacle>(params.blob, 
-                world->width, world->height))
+                world->width_, world->height_))
         {
-            if(!point.isInBounds(world->width, world->height))
+            if(!point.isInBounds(world->width_, world->height_))
                 continue;
                 
             world->addSimulationObject<Obstacle>(
@@ -107,9 +107,9 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
     while(num_spawned < params.quantity)
     {       
         for(const auto& point : generateBlob<Food>(params.blob, 
-                world->width, world->height))
+                world->width_, world->height_))
         {
-            if(!point.isInBounds(world->width, world->height))
+            if(!point.isInBounds(world->width_, world->height_))
                 continue;
 
             world->addSimulationObject<Food>(
