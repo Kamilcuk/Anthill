@@ -70,7 +70,6 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         world->addSimulationObject<Creature>(
             boost::make_shared<Ant>(world, pos));
 
-        // all correct
         num_spawned++;
     }   
 }
@@ -93,7 +92,6 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
                 boost::make_shared<Obstacle>(world, point));
         }
     
-        // all correct
         num_spawned++;
     }  
 }
@@ -116,7 +114,6 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
                 boost::make_shared<Food>(world, point));
         }
                     
-        // all correct
         num_spawned++;
     }  
 
