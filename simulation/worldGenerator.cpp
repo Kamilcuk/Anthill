@@ -24,7 +24,7 @@ void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
 {
     for(int i = 0; i < params.quantity; i++)
     {
-        Point pos(rand() % world->width, rand() % (world->height));
+        Point pos(rand() % world->width_, rand() % (world->height_));
             
         world->addSimulationObject<Anthill>(
             boost::make_shared<Anthill>(world, pos));
@@ -40,9 +40,10 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
     if(world->getSimulationObjects<Anthill>().size() == 0) 
         throw std::runtime_error("No anthill!");
         
-    int delta = params.max_dist_from_anthill - params.min_dist_from_anthill;
+    const int delta = params.max_dist_from_anthill - 
+        params.min_dist_from_anthill;
     
-    // todo: more anthills
+    // todo: handle more anthills
     auto anthill_pos = world->getSimulationObjects<Anthill>()[0]->getPos();
     
     int num_spawned = 0;
@@ -51,26 +52,24 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         Point pos(anthill_pos.posX() + rand() % delta * randSign(),
             anthill_pos.posY() + rand() % delta * randSign());
         
-        // check map bounds
-        if (!pos.isInBounds(world->width, world->height))
+        if (!pos.isInBounds(world->width_, world->height_))
             continue;
 
-        // check if no obstacle there
-        bool ok=true;
-        for(auto a : world->getSimulationObjects<Obstacle>()){
-            if(a->getPos() == pos){
-                // collision detected
-                ok=false;
+        bool collision_detected = false;
+        for(const auto& obstacle : world->getSimulationObjects<Obstacle>())
+        {
+            if(obstacle->getPos() == pos)
+            {
+                collision_detected = true;
                 break;
             }
         }
-        if(!ok)
+        if(collision_detected)
             continue;
             
         world->addSimulationObject<Creature>(
             boost::make_shared<Ant>(world, pos));
 
-        // all correct
         num_spawned++;
     }   
 }
@@ -83,17 +82,16 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
     int num_spawned = 0;
     while(num_spawned < params.quantity)
     {       
-        for(auto point : generateBlob<Obstacle>(params.blob, 
-                world->width, world->height))
+        for(const auto& point : generateBlob<Obstacle>(params.blob, 
+                world->width_, world->height_))
         {
-            if(!point.isInBounds(world->width, world->height))
+            if(!point.isInBounds(world->width_, world->height_))
                 continue;
                 
             world->addSimulationObject<Obstacle>(
                 boost::make_shared<Obstacle>(world, point));
         }
     
-        // all correct
         num_spawned++;
     }  
 }
@@ -106,17 +104,16 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
     int num_spawned = 0;
     while(num_spawned < params.quantity)
     {       
-        for(auto point : generateBlob<Food>(params.blob, 
-                world->width, world->height))
+        for(const auto& point : generateBlob<Food>(params.blob, 
+                world->width_, world->height_))
         {
-            if(!point.isInBounds(world->width, world->height))
+            if(!point.isInBounds(world->width_, world->height_))
                 continue;
 
             world->addSimulationObject<Food>(
                 boost::make_shared<Food>(world, point));
         }
                     
-        // all correct
         num_spawned++;
     }  
 

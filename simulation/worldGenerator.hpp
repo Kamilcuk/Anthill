@@ -36,16 +36,20 @@ struct BlobParams
 
 
 /**
- * Responsible for randomly generating simulation world.
+ * Utility class responsible for randomly generating simulation world.
  */
 class WorldGenerator
 {
 public:
+
+    // structs holding default params for generating specific types of objects.
     static AnthillParams default_anthill_params;
     static AntsParams default_ants_params;
     static ObstaclesParams default_obstacles_params;
     static FoodsParams default_food_params;
 
+    // Following methods will modify world state by adding new objects to 
+    // simulation state.
     static void placeAnthill(World* world, 
         AnthillParams& params = WorldGenerator::default_anthill_params);
     static void placeAnts(World* world, 
@@ -61,6 +65,9 @@ private:
         return (rand() % 2 ? 1 : -1);
     }
     
+    // Randomly generates a set of points in a shape of a line or a circle,
+    // depending on supplied params. Also, clips resulting set of points
+    // to provided size_x, size_y params.
     template<class C>
     static std::set<Point> generateBlob(BlobParams params, int size_x, 
         int size_y)

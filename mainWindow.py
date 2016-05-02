@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QCursor, QMouseEvent
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 #from PyQt5.QtCore import pyqtSignal
@@ -19,6 +21,7 @@ import anthill
 #from timer import Timer
 
 class MainWindow(QMainWindow):
+
     def __init__(self,path=''):
         super(MainWindow, self).__init__()
 
@@ -47,11 +50,43 @@ class MainWindow(QMainWindow):
 
 
         self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
+        
+        
+        # mouse event handlers for painting on simulation map:
+        self.lastMousePos = None
+        self.drawOnMap = anthill.Painter.drawObstacles # current painting function
+        
+        def handleMousePress(event):
+            self.lastMousePos = None
+            self.handlePainterOption()
+            self.ui.graphicsView.setMouseTracking(True)
+        
+        def handleMouseRelease(event):
+            self.lastMousePos = None
+            self.ui.graphicsView.setMouseTracking(False)
+        
+        def handleMouseMove(event):
+            mouse_in_map_coords = (
+                self.ui.graphicsView.mapToScene(
+                    self.ui.graphicsView.mapFromGlobal(QCursor.pos())))
+            coords = list( map(lambda p: int(p / self.pixelSize), 
+                [mouse_in_map_coords.x(), mouse_in_map_coords.y()]))
+            coords[1] -= 1 # fix misalignment
+            if self.lastMousePos is None: self.lastMousePos = coords
+            
+            self.drawOnMap(self.world, self.lastMousePos[0], 
+                self.lastMousePos[1], coords[0], coords[1])
+            self.lastMousePos = coords
+                
+        self.ui.graphicsView.mousePressEvent = handleMousePress
+        self.ui.graphicsView.mouseReleaseEvent = handleMouseRelease
+        self.ui.graphicsView.mouseMoveEvent = handleMouseMove
+                        
+        
 
         # configure world
         self.world = anthill.World();
         self.world.setDimensions(self.worldWidth, self.worldHeight)
-        self.world.setSimulationFramerate(self.simulationFramerate)
 
         self.maxPheromone=1
         self.paused = True
@@ -101,6 +136,15 @@ class MainWindow(QMainWindow):
             else:
                 scene.addRect(x*s,y*s,s,s,pen=qpen,brush=qbrush)
 
+    def handlePainterOption(self):
+        if self.ui.painterOptionsGroup.checkedId() == 1: 
+            self.drawOnMap = anthill.Painter.drawFoods
+        elif self.ui.painterOptionsGroup.checkedId() == 2: 
+            self.drawOnMap = anthill.Painter.drawObstacles
+        elif self.ui.painterOptionsGroup.checkedId() == 3: 
+           self.drawOnMap = anthill.Painter.drawPheromoneToFood
+        elif self.ui.painterOptionsGroup.checkedId() == 4: 
+           self.drawOnMap = anthill.Painter.drawPheromoneFromFood
 
     @pyqtSlot()
     def refresh(self):

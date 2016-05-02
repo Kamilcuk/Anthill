@@ -39,8 +39,7 @@ class World {
     friend class WorldGenerator;
 
     // world properties
-    int width, height;
-    float framerate;
+    int width_, height_;
     
     // Pointers to stuff that is automatically updated in simualtion loop.
     // We're using an observer pattern here, so raw pointers are appropriate.
@@ -52,14 +51,20 @@ class World {
     std::vector<Visitable*> visitable_ptrs_;
 
     // Simulation objects.
-    std::vector<boost::shared_ptr<Food> > foods_;
-    std::vector<boost::shared_ptr<Obstacle> > obstacles_;
-    std::vector<boost::shared_ptr<Creature> > creatures_;
-    std::vector<boost::shared_ptr<Anthill> > anthills_;
-    std::vector<boost::shared_ptr<PheromoneMap> > pheromone_maps_;
+    template<class T>
+    using VectorOfSharedPtrs = std::vector<boost::shared_ptr<T> >;
+    VectorOfSharedPtrs<Food> foods_;
+    VectorOfSharedPtrs<Obstacle> obstacles_;
+    VectorOfSharedPtrs<Creature> creatures_;
+    VectorOfSharedPtrs<Anthill> anthills_;
+    VectorOfSharedPtrs<PheromoneMap> pheromone_maps_;
     
-    // Stores pointers to every simulation object.
-    std::vector<boost::weak_ptr<Entity> > entity_ptrs_;
+    // Stores weak pointers to every simulation object, that has been tracked
+    // using trackEntity() method. This is to ensure efficient retreival of
+    // handles to all entities in the simulation.
+    template<class T>
+    using VectorOfWeakPtrs = std::vector<boost::weak_ptr<T> >;
+    VectorOfWeakPtrs<Entity> entity_ptrs_;
 
     // Stats object.
     boost::shared_ptr<Statistics> statistics_;
@@ -70,11 +75,10 @@ public:
 
 	void setDimensions(int x, int y);
 	Point getDimensions();
-    void setSimulationFramerate(float frames_per_sec);
 
     /// Sets up simulation.
     void startSimulation();
-    /// Clears all simulation state and stops simulation.
+    /// Clears (deletes) all simulation state and stops simulation.
     void stopSimulation();
     /// Executed for every simulation step.
     void simulationStep();
@@ -87,7 +91,7 @@ public:
     /// Returns reference to vector of specific simulation objects, for example
     /// of type Creature or Food. 
     template<class C>
-    std::vector<boost::shared_ptr<C> >& getSimulationObjects();
+    VectorOfSharedPtrs<C>& getSimulationObjects();
     
     /// Adds an object into a specific storage vector for specified type of 
     /// object (for example, adds to foods_ vector if specified type is Food).
@@ -139,7 +143,7 @@ public:
     { return statistics_; }
     
     /// Removes expired pointers and returns a vector of weak_ptrs of entities.
-    std::vector<boost::weak_ptr<Entity> >& getEntityPtrs();
+    VectorOfWeakPtrs<Entity>& getEntityPtrs();
     
 private:
     // using friends here because we want following methods below to be called 
@@ -165,22 +169,19 @@ private:
     /// Checks if specified shared_ptr is valid and adds a weak_ptr created from
     /// it to to entity_ptrs_ vector.
     void trackEntity(boost::shared_ptr<Entity> e);
-    /// Invalidates list of entities, so that it is updated on the next call to
-    /// getEntityPtrs(). Should be called in Entity destructor.
+    /// Invalidates list of entities, so that getEntityPtrs() knows to remove 
+    /// expired pointers when it's called. This method should be called when
+    /// an Entity is destructed or removed from simulation state.
     void invalidateEntities();
     bool invalid_entities_ = true;
-    
-    // /// Removes flagged to remove objects of specific type from simulation.
-    // template<class C>
-    // void removeFlaggedObjects();
-    
+       
 private:
     friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
 	{
-		ar & width;
-		ar & height;
+		ar & width_;
+		ar & height_;
 	}
 };
 

@@ -43,17 +43,13 @@ World::~World()
 
 void World::setDimensions(int X, int Y)
 {
-	width = X;
-	height = Y;
+	width_ = X;
+	height_ = Y;
 }
 
 Point World::getDimensions()
 {
-    return Point(width,height);
-}
-
-void World::setSimulationFramerate(float)
-{
+    return Point(width_, height_);
 }
 
 void World::startSimulation()
@@ -65,13 +61,13 @@ void World::startSimulation()
 
     pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::ToFood, 
-            width, height, 0.1));
+            width_, height_, 0.1));
     pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::FromFood, 
-            width, height, 0.1));
+            width_, height_, 0.1));
     pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::Anthill, 
-            width, height, 0.1));
+            width_, height_, 0.1));
 }
 
 void World::stopSimulation()
@@ -150,7 +146,7 @@ void World::loadState(std::string filename)
     std::cout << "Finished loading" << std::endl;
 }
 
-std::vector<boost::weak_ptr<Entity> >& World::getEntityPtrs()
+World::VectorOfWeakPtrs<Entity>& World::getEntityPtrs()
 { 
     if(invalid_entities_)
     {
@@ -205,26 +201,26 @@ void World::invalidateEntities()
 // pre-defined set of storage vectors.
 
 template<>
-std::vector<boost::shared_ptr<Food> >& 
+World::VectorOfSharedPtrs<Food>& 
     World::getSimulationObjects<Food>()
 { return foods_; }
 
 template<>
-std::vector<boost::shared_ptr<Obstacle> >& 
+World::VectorOfSharedPtrs<Obstacle>& 
     World::getSimulationObjects<Obstacle>()
 { return obstacles_; }
 
 template<>
-std::vector<boost::shared_ptr<Creature> >& 
+World::VectorOfSharedPtrs<Creature>& 
     World::getSimulationObjects<Creature>()
 { return creatures_; }
 
 template<>
-std::vector<boost::shared_ptr<Anthill> >& 
+World::VectorOfSharedPtrs<Anthill>& 
     World::getSimulationObjects<Anthill>()
 { return anthills_; }
 
 template<>
-std::vector<boost::shared_ptr<PheromoneMap> >& 
+World::VectorOfSharedPtrs<PheromoneMap>& 
     World::getSimulationObjects<PheromoneMap>()
 { return pheromone_maps_; }
