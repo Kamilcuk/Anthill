@@ -20,8 +20,7 @@ void AntLegs::goToPos(const Point& p){
 }
 
 void AntLegs::goRandom(){
-    Point dim=world_->getDimensions();
-    targetPos_=Point(rand()%dim.posX(),rand()%dim.posY());
+    targetPos_=Point(rand()-RAND_MAX/2, rand()-RAND_MAX/2);
 }
 
 void AntLegs::step(int deltatime){
@@ -53,6 +52,9 @@ void AntLegs::step(int deltatime){
             if(dy && curPos.posY() != targetPos_.posY())
                 y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
+            if(!Point(x,y).isInBounds(world_->getDimensions()))
+                continue;
+
             bool collision_detected = false;
             for(const auto& creature : world_->getSimulationObjects<Creature>())
             {
@@ -83,6 +85,9 @@ void AntLegs::step(int deltatime){
 }
 
 // AntSensor
+
+const float AntSensor::pheromoneRange=5.5;
+
 Point AntSensor::Observation::getPos()const{ 
     return ent_.lock()->getPos(); 
 }
@@ -108,6 +113,62 @@ std::vector<AntSensor::Observation> AntSensor::getEntities(){
     return ret;
 }
 
+Point AntSensor::getClosestAnthillPheromone(float distance){
+    float range=pheromoneRange;
+    int r=int(range+1);
+    Point ownPos=owner_->getPos();
+
+    Point bestFit=Point(INT_MAX,INT_MAX);
+
+    for(const auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType() != PheromoneMap::Type::Anthill)
+            continue;
+
+        for(int dx=-r; dx<=r; ++dx){
+            for(int dy=-r; dy<=r; ++dy){
+
+                int x=ownPos.posX()+dx;
+                int y=ownPos.posY()+dy;
+                Point pos=Point(x,y);
+
+                if(!pos.isInBounds(world_->getDimensions())) 
+                    continue;
+
+                if(pos.getDistance(ownPos)<distance)
+                    continue;
+
+                if(pm->getStrengthAtPosition(pos)<0.1)
+                    continue;
+
+                if(pos.getDistance(ownPos) < bestFit.getDistance(ownPos)){
+                    bestFit=pos;
+                }
+            }
+        }
+    }
+
+    return bestFit;
+}
+
+Point AntSensor::getFarthestAnthillPheromone(float distance){
+    //TODO: implement
+    assert(0);
+    return Point(0,0);
+}
+
+float AntSensor::getAnthillPheromoneStrength(Point pos){
+    for(const auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType() != PheromoneMap::Type::Anthill)
+            continue;
+        if(owner_->getPos().getDistance(pos)<=pheromoneRange)
+            return pm->getStrengthAtPosition(pos);
+        else 
+            return 0;
+    }
+    throw std::runtime_error("AntSensor::getAntillPheromoneStrength: no AnthillPheromone map");
+    return 0;
+}
+
 // AntMandibles
 boost::weak_ptr<Entity> AntMandibles::getHoldingObject() const
 {
@@ -119,6 +180,7 @@ bool AntMandibles::grab(boost::weak_ptr<Entity> e){
     if(isHolding())
         return false;
     
+    // TODO:
     // can grab from adjecent positions
     std::set<Point> grab_from;
     const auto& my_pos = owner_->getPos();
@@ -142,6 +204,15 @@ bool AntMandibles::grab(boost::weak_ptr<Entity> e){
 bool AntMandibles::grab(AntSensor::Observation o){
     grab(o.ent_);
     return 1;
+}
+
+bool AntMandibles::drop(){
+    if(holdingObject_.expired())
+        return false;
+    else{
+        holdingObject_=boost::weak_ptr<Entity>();
+        return true;
+    }
 }
 
 void AntMandibles::step(int deltaTime){
@@ -191,7 +262,7 @@ void AntQueenAbdomen::step(int deltaTime){
         return;
     for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
-            pm->createBlob(owner_->getPos(), 5, 100);
+            pm->createBlob(owner_->getPos(), 6, 200);
             return;
         }
     }

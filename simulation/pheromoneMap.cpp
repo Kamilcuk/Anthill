@@ -105,7 +105,7 @@ float PheromoneMap::getStrengthAtPosition(const Point& p_pos)
 {
 	if((unsigned)p_pos.posX() > map_.size() || (unsigned)p_pos.posY() >
 		map_[0].size())
-		throw std::runtime_error("Specified position exceeds pheromone map.");
+		throw std::runtime_error("getStrength: Specified position exceeds pheromone map.");
 	return map_[(unsigned)p_pos.posX()][(unsigned)p_pos.posY()];
 }
 
@@ -137,7 +137,7 @@ void PheromoneMap::createBlob(const Point& p_pos, const float p_radius,
 	if((unsigned)p_pos.posX() > map_.size() || 
 			(unsigned)p_pos.posY() > map_[0].size() ||
 			(unsigned)p_pos.posX() < 0 || (unsigned)p_pos.posY() < 0)
-		throw std::runtime_error("Specified position exceeds pheromone map.");
+		throw std::runtime_error("createBlob: Specified position exceeds pheromone map.");
 	
 	// consider each cell in a square
 	for(unsigned x = p_pos.posX() - p_radius; x < p_pos.posX() + p_radius; x++)

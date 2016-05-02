@@ -18,28 +18,32 @@
 #include "bodyParts.hpp"
 
 
-Ant::Ant(World* world, Point pos) :
+Ant::Ant(World* world, Point pos,Type type) :
 	Visitable(world),
 	Creature(world, pos)
 {
-	antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
     antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
     antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
-    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-        this));
-    controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+
+    if(type==Type::Worker){
+        antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
+        controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+    }else if(type==Type::Queen){
+        antQueenAbdomens.emplace_back(boost::make_shared<AntQueenAbdomen>(world,this));
+        controller_=boost::shared_ptr<Controller>(new AntQueenAI(static_cast<Creature*>(this)));
+    }
 }
 
 Ant::Ant(World* world) :
     Visitable(world),
     Creature(world)
 {
-    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
-    antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
-    antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
-    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-        this));
-    controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+    //antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+    //antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+    //antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+    //antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, this));
+    //controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
 }
 
 Ant::~Ant()
@@ -65,28 +69,3 @@ void Ant::accept(Visitor& v) const {
     v.visit(*this);
 }
 
-
-// AntQueen
-//AntQueen::AntQueen(World* world, Point pos):
-//    Ant(world,pos)
-//{
-//    // TODO: antQueenAbdomen, AntQueenController
-//}
-
-//AntWorker::AntWorker(World* world, Point pos):
-//    //Visitable(world),
-//    Ant(world,pos)
-//{
-//    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-//        this));
-//    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
-//}
-//
-//AntWorker::AntWorker(World* world):
-//    //Visitable(world),
-//    Ant(world)
-//{
-//    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-//        this));
-//    controller_=shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
-//}

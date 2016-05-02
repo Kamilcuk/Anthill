@@ -67,8 +67,13 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         if(collision_detected)
             continue;
             
-        world->addSimulationObject<Creature>(
-            boost::make_shared<Ant>(world, pos));
+        if(num_spawned == 0){
+            world->addSimulationObject<Creature>(
+                boost::make_shared<Ant>(world, pos,Ant::Type::Queen));
+        }else{
+            world->addSimulationObject<Creature>(
+                boost::make_shared<Ant>(world, pos,Ant::Type::Worker));
+        }
 
         num_spawned++;
     }   

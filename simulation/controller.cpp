@@ -36,7 +36,7 @@ void AntWorkerAI::step(int deltatime){
         (antSensors.size()>1) ||
         (antQueenAbdomens.size()>0) ||
         (antWorkerAbdomens.size()>1)){
-        std::cout<<"radiation";
+        std::cout<<"radiation\n";
         return;
     }
     
@@ -51,35 +51,48 @@ void AntWorkerAI::step(int deltatime){
         --panicTimeLeft_;
         return;
     }
-    
-    bool targetPosChanged=0;
-    Point targetPos=Point(rand()%40+1,rand()%40+1);
-        
-    auto observations = sensor->getEntities();
-    for(auto o : observations){
-        // smell of food (enum ?)
-        if((o.getSmell()==100) && !ma->isHolding()){
-            if(o.getPos() != owner_->getPos()){
-                if(!targetPosChanged){
-                    targetPos=o.getPos();
-                    targetPosChanged=1;
-                }
-                continue;
-            }
-            ma->grab(o);
-            std::cout<<"grabbed\n";
-            break;
-        }
-    }
 
     if(!ma->isHolding()){
+        bool targetPosChanged=0;
+        Point targetPos=Point(rand()%40+1,rand()%40+1);
+            
+        auto observations = sensor->getEntities();
+        for(auto o : observations){
+            if(sensor->getAnthillPheromoneStrength(o.getPos())>0.05)
+                // this food is already in Anthill
+                continue;
+
+            // smell of food (enum ?)
+            if((o.getSmell()==100) && !ma->isHolding()){
+                if(o.getPos() != owner_->getPos()){
+                    if(!targetPosChanged){
+                        targetPos=o.getPos();
+                        targetPosChanged=1; }
+                    continue;
+                }
+                ma->grab(o);
+                std::cout<<"grabbed\n";
+                break;
+            }
+        }
+
         abd->dropToFoodPheromones();
         legs->goToPos(targetPos);
     }else{
         abd->dropFromFoodPheromones();
-        //TODO: return somewhere
-        // example - point (0,0)
-        legs->goToPos(Point(0,0));
+
+        Point target=sensor->getClosestAnthillPheromone(0);
+
+        if(target!=Point(INT_MAX,INT_MAX)){
+            if(target==owner_->getPos()){
+                ma->drop();
+            }else{
+                legs->goToPos(target);
+            }
+        }else{
+            // search Anthill
+            legs->goRandom();
+        }
     }
 
     if(legs->getTimeNotMoving()>3){
@@ -122,7 +135,7 @@ void AntQueenAI::step(int deltatime){
         (antSensors.size()>1) ||
         (antWorkerAbdomens.size()>0) ||
         (antQueenAbdomens.size()>1)){
-        std::cout<<"radiation";
+        std::cout<<"radiation\n";
         return;
     }
 
@@ -132,8 +145,9 @@ void AntQueenAI::step(int deltatime){
     auto abd = antQueenAbdomens[0];
 
 
-    // just leave anthill pheromones so that 
+    // simply leave anthill pheromones so that 
     // ants know they are at home
-    //
-    abd->dropAnthillPheromones();
+    if(sensor->getAnthillPheromoneStrength(owner_->getPos()) < 2){
+        abd->dropAnthillPheromones();
+    }
 }

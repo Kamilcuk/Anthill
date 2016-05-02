@@ -26,7 +26,13 @@ class AntQueenAbdomen;
 class Ant : public Creature, virtual Visitable {
 
 public:
-	Ant(World* world, Point pos);
+	enum class Type 
+	{
+        Worker,
+        Queen
+	};
+
+	Ant(World* world, Point pos,Type type=Type::Worker);
 	Ant(World* world);
 	virtual ~Ant();
 	
@@ -44,23 +50,4 @@ private:
 	}
 };
 
-//class AntQueen : public Ant{
-//public:
-//    AntQueen(World*,Point);
-//};
-
-//class AntWorker : public Ant{//, virtual Visitable{
-//public:
-//    AntWorker(World*,Point);
-//    AntWorker(World*);
-//
-//private:
-//	friend class boost::serialization::access;
-//	template<class Archive>
-//	void serialize(Archive& ar, const unsigned int version)
-//	{
-//        ar & boost::serialization::base_object<Ant>(*this);
-//	}
-//};
-
-#endif /* ANT_H_ */
+#endif //ANT_H_

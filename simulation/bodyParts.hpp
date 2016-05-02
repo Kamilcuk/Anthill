@@ -56,6 +56,10 @@ class AntMandibles;
 
 class AntSensor : public BodyPart{
 public:
+    // how far pheromones can be from owner to be detected 
+    // and recognized
+    const static float pheromoneRange;
+
     class Observation {
         boost::weak_ptr<Entity> ent_;
     public:
@@ -72,10 +76,25 @@ public:
         // so,
         friend AntMandibles;
     };
+
     AntSensor(World* w, Creature* owner):
         BodyPart(w,owner){}
 
     std::vector<Observation> getEntities();
+
+    // retruns closest pheromone 'entity' position whose 
+    // distance from owner_ is >= distance
+    // if don't exist returns Point(INF,INF)
+    // visibility is clamped to an constant
+    Point getClosestAnthillPheromone(float distance=0);
+
+    // returns farthest pheromone 'entity' position whose 
+    // distance from owner_ is <= distance
+    // if don't exist returns Point(INF,INF)
+    // visibility is clamped to an constant
+    Point getFarthestAnthillPheromone(float distance);
+
+    float getAnthillPheromoneStrength(Point);
     
 private:
 	friend class boost::serialization::access;
@@ -94,6 +113,7 @@ public:
     {}
     bool grab(boost::weak_ptr<Entity> e);
     bool grab(AntSensor::Observation o);
+    bool drop();
     void step(int);
 	bool isHolding() const { return !holdingObject_.expired(); }
     

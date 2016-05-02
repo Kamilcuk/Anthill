@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
         # draw foods
         foods=self.world.getFoods()
         foodPen=QPen(QBrush(QColor()),0)
-        foodBrush=QBrush(QColor(200,200,200,150))
+        foodBrush=QBrush(QColor(200,200,200,70))
         self.drawEntities(foods,foodPen,foodBrush)
 
         # draw creatures
