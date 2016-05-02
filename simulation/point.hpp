@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <string>
+#include <algorithm>
 
 #include "serialization.hpp"
 
@@ -78,6 +79,22 @@ public:
         return posX() >= 0 && posX() < size_x && posY() >= 0 && posY() < size_y;
     }
 	
+    constexpr inline bool isInBounds(const Point& p) const
+    {
+        return isInBounds(p.posX(), p.posY());
+    }
+	
+    constexpr inline bool isInBounds(const Point& p1, const Point& p2) const
+    {
+		// WTF?!?!: getting error: call to non-constexpr function std::min
+		// if first line of return statement utilizes (like the other 3 lines)
+		// the std::min function. 
+		return posX() >= (p1.posX() < p2.posX() ? p1.posX() : p2.posX()) && 
+			posX() <= std::max(p1.posX(), p2.posX()) && 
+			posY() >= std::min(p1.posY(), p2.posY()) &&
+			posY() <= std::max(p1.posY(), p2.posY());
+    }
+	
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -89,6 +106,7 @@ private:
 };
 
 extern std::ostream& operator<<(std::ostream &os, const Point& rhs);
+
 
 
 #endif // POINT_H
