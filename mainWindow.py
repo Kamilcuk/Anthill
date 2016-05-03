@@ -137,13 +137,13 @@ class MainWindow(QMainWindow):
                 scene.addRect(x*s,y*s,s,s,pen=qpen,brush=qbrush)
 
     def handlePainterOption(self):
-        if self.ui.painterOptionsGroup.checkedId() == 1:
+        if self.ui.painterButtonGroup.checkedId() == 1:
             self.drawOnMap = anthill.Painter.drawFoods
-        elif self.ui.painterOptionsGroup.checkedId() == 2:
+        elif self.ui.painterButtonGroup.checkedId() == 2:
             self.drawOnMap = anthill.Painter.drawObstacles
-        elif self.ui.painterOptionsGroup.checkedId() == 3:
+        elif self.ui.painterButtonGroup.checkedId() == 3:
            self.drawOnMap = anthill.Painter.drawPheromoneToFood
-        elif self.ui.painterOptionsGroup.checkedId() == 4:
+        elif self.ui.painterButtonGroup.checkedId() == 4:
            self.drawOnMap = anthill.Painter.drawPheromoneFromFood
 
     @pyqtSlot()
@@ -206,7 +206,7 @@ class MainWindow(QMainWindow):
         stats = self.world.getStatistics()
         if stats:
             _translate = QtCore.QCoreApplication.translate
-            self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
+            self.ui.stats_label.setText(_translate("MainWindow", stats.print()))
 
     def restartTimer(self):
         self.refresh()
