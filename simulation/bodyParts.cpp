@@ -8,7 +8,6 @@
 #include "obstacle.hpp"
 #include "point.hpp"
 
-
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
     targetPos_=owner->getPos();

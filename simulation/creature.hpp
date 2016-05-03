@@ -64,6 +64,7 @@ private:
         ar & boost::serialization::base_object<Entity>(*this);
         // for explanation of this line see serializationCustom.hpp
         g_current_owner = this; 
+        ar & controller_;
 		ar & antLegs;
         ar & antMandibles;
         ar & antSensors;
