@@ -60,6 +60,9 @@ public:
     // and recognized
     const static float pheromoneRange;
 
+    // how far entities can be to be observed by owner
+    const static float seeingRange;
+
     class Observation {
         boost::weak_ptr<Entity> ent_;
     public:
@@ -80,19 +83,21 @@ public:
     AntSensor(World* w, Creature* owner):
         BodyPart(w,owner){}
 
-    std::vector<Observation> getEntities();
+    std::vector<Observation> getObservations();
+
+    bool isAccessible(const Observation&);
 
     // retruns closest pheromone 'entity' position whose 
     // distance from owner_ is >= distance
     // if don't exist returns Point(INF,INF)
     // visibility is clamped to an constant
-    Point getClosestAnthillPheromone(float distance=0);
+    Point getClosestPheromone(PheromoneMap::Type,float distance=0);
 
     // returns farthest pheromone 'entity' position whose 
     // distance from owner_ is <= distance
     // if don't exist returns Point(INF,INF)
     // visibility is clamped to an constant
-    Point getFarthestAnthillPheromone(float distance);
+    Point getFarthestPheromone(PheromoneMap::Type,float distance=1000000);
 
     float getAnthillPheromoneStrength(Point);
     

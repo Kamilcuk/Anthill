@@ -1,6 +1,7 @@
 #include "controller.hpp"
 #include "creature.hpp"
 #include "bodyParts.hpp"
+#include "pheromoneMap.hpp"
 
 AntWorkerAI::AntWorkerAI(Creature* owner):
     Controller(owner),
@@ -56,7 +57,7 @@ void AntWorkerAI::step(int deltatime){
         bool targetPosChanged=0;
         Point targetPos=Point(rand()%40+1,rand()%40+1);
             
-        auto observations = sensor->getEntities();
+        auto observations = sensor->getObservations();
         for(auto o : observations){
             if(sensor->getAnthillPheromoneStrength(o.getPos())>0.05)
                 // this food is already in Anthill
@@ -64,15 +65,20 @@ void AntWorkerAI::step(int deltatime){
 
             // smell of food (enum ?)
             if((o.getSmell()==100) && !ma->isHolding()){
-                if(o.getPos() != owner_->getPos()){
+                if(o.getPos() != owner_->getPos()){ 
                     if(!targetPosChanged){
+                        if(!sensor->isAccessible(o))
+                            // this food is probably carried by another Ant, or it is on obstacle,
+                            // so don't set it as a destination
+                            continue;
+
                         targetPos=o.getPos();
-                        targetPosChanged=1; }
-                    continue;
+                        targetPosChanged=1; 
+                    }
+                }else{
+                    ma->grab(o);
+                    break;
                 }
-                ma->grab(o);
-                std::cout<<"grabbed\n";
-                break;
             }
         }
 
@@ -81,7 +87,7 @@ void AntWorkerAI::step(int deltatime){
     }else{
         abd->dropFromFoodPheromones();
 
-        Point target=sensor->getClosestAnthillPheromone(0);
+        Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill,0);
 
         if(target!=Point(INT_MAX,INT_MAX)){
             if(target==owner_->getPos()){
