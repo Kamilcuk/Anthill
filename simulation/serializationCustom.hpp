@@ -27,6 +27,8 @@
  * also need to be exported, we need to use BOOST_CLASS_EXPORT macro for them.
  */
 BOOST_CLASS_EXPORT(Ant)
+BOOST_CLASS_EXPORT(AntWorkerAI)
+BOOST_CLASS_EXPORT(AntQueenAI)
 
 /**
  * Many objects require pointer to World object in their constructors.
@@ -57,6 +59,13 @@ Creature* g_current_owner;
         Archive & ar, my_class * t, const unsigned int file_version) \
     { ::new(t)my_class(g_world); } 
     
+/// helper macro for loading classess that have constructor(Creature*)
+#define LOAD_PTR_OWNER(my_class) \
+    template<class Archive> \
+    inline void load_construct_data( \
+        Archive & ar, my_class * t, const unsigned int file_version) \
+    { ::new(t)my_class(g_current_owner); } 
+    
 /// helper macro for loading classess that have constructor(World*,Creature*)
 #define LOAD_PTR_WORLD_AND_OWNER(my_class) \
     template<class Archive> \
@@ -75,6 +84,9 @@ namespace boost
         LOAD_PTR_WORLD(Ant);
         LOAD_PTR_WORLD(Creature);
         LOAD_PTR_WORLD(PheromoneMap);
+        
+        LOAD_PTR_OWNER(AntWorkerAI);
+        LOAD_PTR_OWNER(AntQueenAI);
         
         LOAD_PTR_WORLD_AND_OWNER(AntLegs);
         LOAD_PTR_WORLD_AND_OWNER(AntMandibles);
