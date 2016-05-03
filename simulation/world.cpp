@@ -54,20 +54,9 @@ Point World::getDimensions()
 
 void World::startSimulation()
 {
-	// init random seed
 	srand (time(NULL));
 
 	statistics_ = boost::make_shared<Statistics>();
-
-    pheromone_maps_.emplace_back(
-        boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::ToFood, 
-            width_, height_, 0.1));
-    pheromone_maps_.emplace_back(
-        boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::FromFood, 
-            width_, height_, 0.1));
-    pheromone_maps_.emplace_back(
-        boost::make_shared<PheromoneMap>(this, PheromoneMap::Type::Anthill, 
-            width_, height_, 0.1));
 }
 
 void World::stopSimulation()

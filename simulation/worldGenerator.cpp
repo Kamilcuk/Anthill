@@ -121,5 +121,18 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
                     
         num_spawned++;
     }  
+}
 
+void WorldGenerator::initPheromoneMaps(World* world, float to_food_decay_rate,
+    float from_food_decay_rate, float anthill_decay_rate)
+{
+    world->pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::ToFood, 
+            world->width_, world->height_, to_food_decay_rate));
+    world->pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::FromFood, 
+            world->width_, world->height_, from_food_decay_rate));
+    world->pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::Anthill, 
+            world->width_, world->height_, anthill_decay_rate));
 }

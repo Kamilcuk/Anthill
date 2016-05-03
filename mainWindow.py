@@ -176,10 +176,6 @@ class MainWindow(QMainWindow):
         pMaps=self.world.getPheromoneMaps()
         pMaps=[pMaps[p] for p in range(len(pMaps))]
         for i,m in enumerate(pMaps):
-            # to many pheromone maps on load (6, not 3)
-            if(i>2):
-                #print("pheromoneMapsSize:",len(pMaps))
-                continue
             self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
 
         # draw obstacles
@@ -240,6 +236,10 @@ class MainWindow(QMainWindow):
 
                 antsParams = anthill.AntsParams()
                 anthill.WorldGenerator.placeAnts(self.world, antsParams)
+                
+                # todo: ask for pheromone decay rates
+                anthill.WorldGenerator.initPheromoneMaps(self.world,
+                    0.1, 0.1, 0.1)
 
                 self.world.startSimulation()
 

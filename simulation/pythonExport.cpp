@@ -105,6 +105,7 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_METHOD(WorldGenerator, placeAnts)
         REGISTER_METHOD(WorldGenerator, placeObstacles)
         REGISTER_METHOD(WorldGenerator, placeFoods)
+        REGISTER_METHOD(WorldGenerator, initPheromoneMaps)
     ;
     REGISTER_CLASS(AnthillParams);
     REGISTER_CLASS(AntsParams);

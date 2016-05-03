@@ -59,6 +59,11 @@ public:
     static void placeFoods(World* world, 
         FoodsParams& params = WorldGenerator::default_food_params);
         
+    /// Initializes pheromone maps with specified pheromone decay rates.
+    /// Number and types of pheromone maps is hardcoded.
+    static void initPheromoneMaps(World* world, float to_food_decay_rate,
+        float from_food_decay_rate, float anthill_decay_rate);
+        
 private:
     inline static int randSign()
     {
