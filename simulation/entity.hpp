@@ -24,6 +24,11 @@ class Entity : public Updatable, public boost::enable_shared_from_this<Entity>
 	Point pos_;
 
 public:
+    enum class Smell{
+        Food,
+        None
+    };
+    
 	Entity(World *world, Point pos);
 	Entity(World *world);
 	virtual ~Entity();
@@ -59,7 +64,8 @@ public:
 	/** return lenght of a straight line betweej this and the other entity */
     float getDistance(Entity * const e) const;
 
-    virtual int getSmell(){ return 0;}
+    // physics
+    virtual Smell getSmell(){ return Smell::None;}
     virtual int getColorR(){return 0;}
     virtual int getColorG(){return 0;}
     virtual int getColorB(){return 0;}

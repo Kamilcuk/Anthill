@@ -88,12 +88,16 @@ void PheromoneMap::addStrength(unsigned p_x, unsigned p_y, float p_strength)
 
 void PheromoneMap::step(int p_delta_time)
 {
-    if(!p_delta_time)
+    if(!p_delta_time){
         return;
-	for(auto& row : map_) for(auto& cell : row)
-	{
-		cell = decay(cell);
-	}
+    }
+
+	for(auto& row : map_){
+        for(auto& cell : row)
+        {
+            cell = decay(cell);
+        }
+    }
 }
 
 const PheromoneMap::Grid2D& PheromoneMap::getMap()

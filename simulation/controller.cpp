@@ -63,8 +63,7 @@ void AntWorkerAI::step(int deltatime){
                 // this food is already in Anthill
                 continue;
 
-            // smell of food (enum ?)
-            if((o.getSmell()==100) && !ma->isHolding()){
+            if((o.getSmell()==Entity::Smell::Food) && !ma->isHolding()){
                 if(o.getPos() != owner_->getPos()){ 
                     if(!targetPosChanged){
                         if(!sensor->isAccessible(o))

@@ -18,7 +18,7 @@
 #include "pheromoneMap.hpp"
 #include "visitable.hpp"
 
-class Entity;
+#include "entity.hpp"
 class Creature;
 
 class BodyPart : public Updatable{
@@ -69,7 +69,7 @@ public:
         Observation(boost::weak_ptr<Entity> e) : ent_(e)
         { }
         Point getPos()const;
-        int getSmell()const;
+        Entity::Smell getSmell()const;
 
         // All body parts implements whole physics.
         // AntMandibles must know more about this object
@@ -100,6 +100,8 @@ public:
     Point getFarthestPheromone(PheromoneMap::Type,float distance=1000000);
 
     float getAnthillPheromoneStrength(Point);
+
+    Point findAdjecentPos(Point p);
     
 private:
 	friend class boost::serialization::access;

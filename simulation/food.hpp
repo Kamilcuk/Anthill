@@ -26,7 +26,8 @@ public:
 	bool getUsed() const;
 	void setUsed(bool value);
 
-    int getSmell(){return 100;}
+    /// physics
+    Entity::Smell getSmell(){return Entity::Smell::Food;}
 
 	/// serialization
 private:

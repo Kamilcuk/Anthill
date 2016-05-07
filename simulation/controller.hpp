@@ -25,6 +25,7 @@ private:
 class AntWorkerAI : public Controller{
     // ant starts to panic when is probably deadlocked with other ants
     int panicTimeLeft_;
+
 public:
     AntWorkerAI(Creature* owner);
     void step(int deltaTime);

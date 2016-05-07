@@ -92,7 +92,7 @@ Point AntSensor::Observation::getPos()const{
     return ent_.lock()->getPos(); 
 }
 
-int AntSensor::Observation::getSmell()const{
+Entity::Smell AntSensor::Observation::getSmell()const{
     return ent_.lock()->getSmell(); 
 }
 
@@ -220,6 +220,20 @@ float AntSensor::getAnthillPheromoneStrength(Point pos){
     }
     throw std::runtime_error("AntSensor::getAntillPheromoneStrength: no AnthillPheromone map");
     return 0;
+}
+
+Point AntSensor::findAdjecentPos(Point p){
+    //for(int dx=-1; dx<=1; ++dx){
+    //    for(int dy=-1; dy<=1; ++dy){
+    //        if(dx==0 xor dy==0){
+    //            Point adjP=Point(p.x+dx,p.y+dy);
+    //            if(isAccesible(adjP)){
+    //                return adjP;
+    //            }
+    //        }
+    //    }
+    //}
+    return Point(INT_MAX,INT_MAX);
 }
 
 // AntMandibles
