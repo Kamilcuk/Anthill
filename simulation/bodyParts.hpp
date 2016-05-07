@@ -55,6 +55,9 @@ private:
 class AntMandibles;
 
 class AntSensor : public BodyPart{
+    // Controller can ask only for Observation
+    bool isAccessible(const Point&);
+
 public:
     // how far pheromones can be from owner to be detected 
     // and recognized

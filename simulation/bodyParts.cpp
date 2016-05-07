@@ -85,6 +85,25 @@ void AntLegs::step(int deltatime){
 
 // AntSensor
 
+bool AntSensor::isAccessible(const Point& p){
+    bool collision_detected = false;
+    for(const auto& creature : world_->getSimulationObjects<Creature>()){
+        if(creature->getPos() == p){
+            collision_detected = true;
+            break;
+        }
+    }
+    if(collision_detected)
+        return false;
+    for(const auto& obstacle : world_->getSimulationObjects<Obstacle>()){
+        if(obstacle->getPos() == p){
+            collision_detected = true;
+            break;
+        }
+    }
+    return !collision_detected;
+}
+
 const float AntSensor::pheromoneRange=7.5;
 const float AntSensor::seeingRange=5.5;
 
@@ -114,26 +133,7 @@ std::vector<AntSensor::Observation> AntSensor::getObservations(){
 }
 
 bool AntSensor::isAccessible(const Observation& o){
-    bool collision_detected = false;
-    for(const auto& creature : world_->getSimulationObjects<Creature>())
-    {
-        if(creature->getPos() == o.getPos())
-        {
-            collision_detected = true;
-            break;
-        }
-    }
-    if(collision_detected)
-        return false;
-    for(const auto& obstacle : world_->getSimulationObjects<Obstacle>())
-    {
-        if(obstacle->getPos() == o.getPos())
-        {
-            collision_detected = true;
-            break;
-        }
-    }
-    return !collision_detected;
+    return isAccessible(o.getPos());
 }
 
 
@@ -223,16 +223,16 @@ float AntSensor::getAnthillPheromoneStrength(Point pos){
 }
 
 Point AntSensor::findAdjecentPos(Point p){
-    //for(int dx=-1; dx<=1; ++dx){
-    //    for(int dy=-1; dy<=1; ++dy){
-    //        if(dx==0 xor dy==0){
-    //            Point adjP=Point(p.x+dx,p.y+dy);
-    //            if(isAccesible(adjP)){
-    //                return adjP;
-    //            }
-    //        }
-    //    }
-    //}
+    for(int dx=-1; dx<=1; ++dx){
+        for(int dy=-1; dy<=1; ++dy){
+            if((dx==0) xor (dy==0)){
+                Point adjP=Point(p.posX()+dx,p.posY()+dy);
+                if(isAccessible(adjP)){
+                    return adjP;
+                }
+            }
+        }
+    }
     return Point(INT_MAX,INT_MAX);
 }
 
@@ -247,24 +247,10 @@ bool AntMandibles::grab(boost::weak_ptr<Entity> e){
     if(isHolding())
         return false;
     
-    // TODO:
-    // can grab from adjecent positions
-    std::set<Point> grab_from;
-    const auto& my_pos = owner_->getPos();
-    grab_from.insert(my_pos + Point(1, 0));
-    grab_from.insert(my_pos + Point(-1, 0));
-    grab_from.insert(my_pos + Point(0, 1));
-    grab_from.insert(my_pos + Point(0, -1));
-    grab_from.insert(my_pos + Point(0, 0));
-    
-    for (const auto& pos : grab_from)
-    {
-        if (pos == e.lock()->getPos())
-        {
-            holdingObject_ = e;
-            break;
-        }
+    if (owner_->getPos()== e.lock()->getPos()){
+        holdingObject_ = e;
     }
+
     return true;
 }
 
