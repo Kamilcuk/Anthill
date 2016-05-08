@@ -36,6 +36,7 @@ public:
 class AntLegs : public BodyPart{
     // how much time ant is standing in one place
     int timeNotMoving_;
+    int timeGoingRandom_;
     Point targetPos_;
 public:
     AntLegs(World* w, Creature* owner);
@@ -51,6 +52,8 @@ private:
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
     {
+		ar & timeNotMoving_;
+		ar & timeGoingRandom_;
 		ar & targetPos_;
 	}
 };
@@ -103,9 +106,9 @@ public:
 
     // returns farthest pheromone 'entity' position whose 
     // distance from owner_ is <= distance
-    // if don't exist returns Point(INF,INF)
+    // if don't exist returns owner position
     // visibility is clamped to an constant
-    Point getFarthestPheromone(PheromoneMap::Type,float distance=1000000);
+    Point getFarthestPheromone(PheromoneMap::Type,float maxDistance=1000000);
 
     float getPheromoneStrength(PheromoneMap::Type,Point);
 

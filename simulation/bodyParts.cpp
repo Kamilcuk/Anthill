@@ -37,14 +37,21 @@ AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
     targetPos_=owner->getPos();
     timeNotMoving_=0;
+    timeGoingRandom_=0;
 }
 
 void AntLegs::goToPos(const Point& p){
+    timeGoingRandom_=0;
     targetPos_=p;
 }
 
 void AntLegs::goRandom(){
-    targetPos_=Point(rand()-RAND_MAX/2, rand()-RAND_MAX/2);
+    ++timeGoingRandom_;
+    if(timeGoingRandom_>10 || timeGoingRandom_==1){
+        targetPos_=Point(rand()-RAND_MAX/2, rand()-RAND_MAX/2);
+        if(timeGoingRandom_>10)
+            timeGoingRandom_=0;
+    }
 }
 
 void AntLegs::step(int deltatime){
@@ -139,6 +146,9 @@ Point AntSensor::getClosestPheromone(PheromoneMap::Type pType, float distance){
                 int y=ownPos.posY()+dy;
                 Point pos=Point(x,y);
 
+                if(pos.getDistance(ownPos)>range)
+                    continue;
+
                 if(!pos.isInBounds(world_->getDimensions())) 
                     continue;
 
@@ -158,7 +168,7 @@ Point AntSensor::getClosestPheromone(PheromoneMap::Type pType, float distance){
     return bestFit;
 }
 
-Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float distance){
+Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float maxDistance){
     float range=pheromoneRange;
     int r=int(range+1);
     Point ownPos=owner_->getPos();
@@ -175,29 +185,37 @@ Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float distance){
                 int y=ownPos.posY()+dy;
                 Point pos=Point(x,y);
 
+                if(pos.getDistance(ownPos)>range)
+                    continue;
+
                 if(!pos.isInBounds(world_->getDimensions())) 
                     continue;
 
-                if(pos.getDistance(ownPos)>distance)
+                if(pos.getDistance(ownPos)>maxDistance)
                     continue;
 
                 if(pm->getStrengthAtPosition(pos)<0.1)
                     continue;
 
-                if(pos.getDistance(ownPos) > bestFit.getDistance(ownPos)){
+                const float epsilon=1.1;
+                if(pos.getDistance(ownPos)-epsilon > bestFit.getDistance(ownPos)){
+                    // is much larger
                     bestFit=pos;
+                    continue;
                 }
 
-                const float epsilon=1.8;
-                if(pos.getDistance(ownPos)+epsilon > bestFit.getDistance(ownPos)){
+                const float epsilon2=0.5;
+                if(pos.getDistance(ownPos) + epsilon2 > bestFit.getDistance(ownPos)){
+                    // is weakly(with epsilon) larger
                     // prefer pos that is closer to lastSensedPheromonePos
                     if(    pos.getDistance(lastSensedPheromonePos_) <
-                       bestFit.getDistance(lastSensedPheromonePos_)){
+                        bestFit.getDistance(lastSensedPheromonePos_)){
                         bestFit=pos;
                     }
                 }
             }
         }
+        break;
     }
     lastSensedPheromonePos_=bestFit;
     return bestFit;

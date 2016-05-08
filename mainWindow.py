@@ -114,10 +114,10 @@ class MainWindow(QMainWindow):
                     # too weak to be sensed
                     continue
 
-                alpha=70+b*10
-                if(alpha>180):
+                alpha=40+b*10
+                if(alpha>100):
                     # clamp
-                    alpha=180
+                    alpha=100
 
                 pbrush=QBrush(QColor(baseRGB[0],baseRGB[1],baseRGB[2], alpha))
                 ppen=QPen(QBrush(QColor(baseRGB2[0],baseRGB2[1],baseRGB2[2], alpha)),0)
@@ -182,8 +182,6 @@ class MainWindow(QMainWindow):
         pMaps=self.world.getPheromoneMaps()
         pMaps=[pMaps[p] for p in range(len(pMaps))]
         for i,m in enumerate(pMaps):
-            if(i==1):
-                continue
             self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
 
         # draw obstacles
@@ -247,7 +245,7 @@ class MainWindow(QMainWindow):
 
                 # todo: ask for pheromone decay rates
                 anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    0.08, 0.08, 0.08)
+                    0.07, 0.07, 0.07)
 
                 self.world.startSimulation()
 
