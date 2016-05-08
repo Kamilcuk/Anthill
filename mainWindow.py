@@ -88,7 +88,6 @@ class MainWindow(QMainWindow):
         self.world = anthill.World();
         self.world.setDimensions(self.worldWidth, self.worldHeight)
 
-        self.maxPheromone=1
         self.paused = True
 
     def __exit__(self):
@@ -111,18 +110,20 @@ class MainWindow(QMainWindow):
             for y,b in enumerate(a):
                 if(y>self.worldHeight):
                     break
-                alpha=255*b/self.maxPheromone
-                self.maxPheromone=max(self.maxPheromone,b)
-                if(alpha<0.001):
+                if(b<0.1):
+                    # too weak to be sensed
                     continue
-                if(alpha>255):
-                    alpha=255
+
+                alpha=70+b*10
+                if(alpha>180):
+                    # clamp
+                    alpha=180
 
                 pbrush=QBrush(QColor(baseRGB[0],baseRGB[1],baseRGB[2], alpha))
                 ppen=QPen(QBrush(QColor(baseRGB2[0],baseRGB2[1],baseRGB2[2], alpha)),0)
                 scene.addRect(x*s,y*s,s,s,pen=ppen,brush=pbrush)
 
-    def drawEntities(self,ents,qpen,qbrush,ellipse=False):
+    def drawEntities(self,ents,qpen,qbrush,ellipse=False,drawRange=None):
         ents=[ents[a] for a in range(len(ents))]
 
         s=self.pixelSize
@@ -135,6 +136,13 @@ class MainWindow(QMainWindow):
                 scene.addEllipse(x*s,y*s,s,s,pen=qpen,brush=qbrush)
             else:
                 scene.addRect(x*s,y*s,s,s,pen=qpen,brush=qbrush)
+
+            if(drawRange!=None):
+                rangeBrush=QBrush(QColor(255,255,255,30))
+                scene.addEllipse((x-drawRange)*s, (y-drawRange)*s,
+                                 drawRange*2*s,drawRange*2*s,
+                                 brush=rangeBrush)
+
 
     def handlePainterOption(self):
         if self.ui.painterButtonGroup.checkedId() == 1:
@@ -163,8 +171,6 @@ class MainWindow(QMainWindow):
         bgPen=QPen(QBrush(QColor()),0)
         scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
 
-        # symulacja tak? Kamil
-        # na razie może być, później się zrobi wątek w c++. ms
         self.world.simulationStep()
 
         s=self.pixelSize
@@ -176,6 +182,8 @@ class MainWindow(QMainWindow):
         pMaps=self.world.getPheromoneMaps()
         pMaps=[pMaps[p] for p in range(len(pMaps))]
         for i,m in enumerate(pMaps):
+            if(i==1):
+                continue
             self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
 
         # draw obstacles
@@ -194,7 +202,7 @@ class MainWindow(QMainWindow):
         creatures=self.world.getCreatures()
         creaturePen=QPen(QBrush(QColor()),0)
         creatureBrush=QBrush(QColor(100,100,50,200))
-        self.drawEntities(creatures,creaturePen,creatureBrush,True)
+        self.drawEntities(creatures,creaturePen,creatureBrush,True,7)
 
         # draw anthills
         anthills=self.world.getAnthills()
@@ -239,7 +247,7 @@ class MainWindow(QMainWindow):
 
                 # todo: ask for pheromone decay rates
                 anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    0.03, 0.03, 0.03)
+                    0.08, 0.08, 0.08)
 
                 self.world.startSimulation()
 

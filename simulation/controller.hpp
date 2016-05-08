@@ -2,6 +2,7 @@
 #define CONTROLLER_H_
 
 #include "serialization.hpp"
+#include "point.hpp"
 
 class Creature;
 

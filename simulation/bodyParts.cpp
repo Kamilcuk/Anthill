@@ -88,8 +88,8 @@ void AntLegs::step(int deltatime){
 
 // AntSensor
 
-const float AntSensor::pheromoneRange=7.5;
-const float AntSensor::seeingRange=5.5;
+const float AntSensor::pheromoneRange=7.0;
+const float AntSensor::seeingRange=5.0;
 
 Point AntSensor::Observation::getPos()const{ 
     return ent_.lock()->getPos(); 
@@ -187,9 +187,19 @@ Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float distance){
                 if(pos.getDistance(ownPos) > bestFit.getDistance(ownPos)){
                     bestFit=pos;
                 }
+
+                const float epsilon=1.8;
+                if(pos.getDistance(ownPos)+epsilon > bestFit.getDistance(ownPos)){
+                    // prefer pos that is closer to lastSensedPheromonePos
+                    if(    pos.getDistance(lastSensedPheromonePos_) <
+                       bestFit.getDistance(lastSensedPheromonePos_)){
+                        bestFit=pos;
+                    }
+                }
             }
         }
     }
+    lastSensedPheromonePos_=bestFit;
     return bestFit;
 }
 

@@ -8,6 +8,7 @@ AntWorkerAI::AntWorkerAI(Creature* owner):
     panicTimeLeft_(0){
 }
 
+
 void AntWorkerAI::step(int deltatime){
     auto& antLegs=owner_->getAntLegs();
     auto& antMandibles=owner_->getAntMandibles();
@@ -54,8 +55,9 @@ void AntWorkerAI::step(int deltatime){
     }
 
     if(!ma->isHolding()){
-        bool targetPosChanged=0;
-        Point targetPos=Point(rand()%40+1,rand()%40+1);
+        // search food
+        
+        legs->goRandom();
             
         auto observations = sensor->getObservations();
         for(auto o : observations){
@@ -65,14 +67,9 @@ void AntWorkerAI::step(int deltatime){
 
             if((o.getSmell()==Entity::Smell::Food) && !ma->isHolding()){
                 if(o.getPos() != owner_->getPos()){ 
-                    if(!targetPosChanged){
-                        if(!sensor->isAccessible(o))
-                            // this food is probably carried by another Ant, or it is on obstacle,
-                            // so don't set it as a destination
-                            continue;
-
-                        targetPos=o.getPos();
-                        targetPosChanged=1; 
+                    if(sensor->isAccessible(o)){
+                        legs->goToPos(o.getPos());
+                        break;
                     }
                 }else{
                     ma->grab(o);
@@ -82,13 +79,15 @@ void AntWorkerAI::step(int deltatime){
         }
 
         abd->dropToFoodPheromones();
-        legs->goToPos(targetPos);
     }else{
+        // take food to Anthill
+        
         abd->dropFromFoodPheromones();
 
-        Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill,0);
+        Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill);
 
         if(target!=Point(INT_MAX,INT_MAX)){
+            // sensed Anthill
             if(target==owner_->getPos()){
                 ma->drop();
             }else{
@@ -96,7 +95,13 @@ void AntWorkerAI::step(int deltatime){
             }
         }else{
             // search Anthill
-            legs->goRandom();
+            target=sensor->getFarthestPheromone(PheromoneMap::Type::ToFood);
+            if(target!=owner_->getPos())
+                legs->goToPos(target);
+            else{
+                // lost trace
+                legs->goRandom();
+            }
         }
     }
 

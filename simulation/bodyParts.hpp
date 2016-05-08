@@ -68,6 +68,7 @@ public:
 
     class Observation {
         boost::weak_ptr<Entity> ent_;
+
     public:
         Observation(boost::weak_ptr<Entity> e) : ent_(e)
         { }
@@ -82,6 +83,10 @@ public:
         // so,
         friend AntMandibles;
     };
+
+    // when sensing pheromone, 
+    // these closer to last are prefered
+    Point lastSensedPheromonePos_;
 
     AntSensor(World* w, Creature* owner):
         BodyPart(w,owner){}
@@ -111,6 +116,7 @@ private:
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
     {
+        ar & lastSensedPheromonePos_;
 	}
 };
 
