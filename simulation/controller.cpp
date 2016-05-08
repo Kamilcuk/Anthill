@@ -59,7 +59,7 @@ void AntWorkerAI::step(int deltatime){
             
         auto observations = sensor->getObservations();
         for(auto o : observations){
-            if(sensor->getAnthillPheromoneStrength(o.getPos())>0.05)
+            if(sensor->getPheromoneStrength(PheromoneMap::Type::Anthill,o.getPos())>0.05)
                 // this food is already in Anthill
                 continue;
 
@@ -152,7 +152,7 @@ void AntQueenAI::step(int deltatime){
 
     // simply leave anthill pheromones so that 
     // ants know they are at home
-    if(sensor->getAnthillPheromoneStrength(owner_->getPos()) < 2){
+    if(sensor->getPheromoneStrength(PheromoneMap::Type::Anthill,owner_->getPos()) < 2){
         abd->dropAnthillPheromones();
     }
 }

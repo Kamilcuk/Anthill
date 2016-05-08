@@ -14,12 +14,9 @@ extern Creature* g_current_owner;
 class Creature : public Entity
 {
 protected:
-    boost::shared_ptr<Controller> controller_;
+    bool hasCollision_;
 
-    // these variablles should be in body parts(e.g. AntBody,AntLegs,...)
-    // Ant doesn't implement physics
-	int speed_ = 1;
-	int visibility_ = 4;
+    boost::shared_ptr<Controller> controller_;
 	
     // vectors of body parts
     std::vector<boost::shared_ptr<AntLegs> > antLegs;
@@ -29,6 +26,10 @@ protected:
     std::vector<boost::shared_ptr<AntQueenAbdomen> > antQueenAbdomens;
 
 public:
+
+    bool hasCollision(){
+        return hasCollision_;
+    }
 
     std::vector<boost::shared_ptr<AntLegs> >& getAntLegs(){
         return antLegs;
@@ -47,7 +48,8 @@ public:
     }
 
     Creature(World* world, Point pos):
-        Entity(world, pos) {}
+        Entity(world, pos),
+        hasCollision_(true) {}
     Creature(World* world):
         Entity(world) {}
         
@@ -64,6 +66,7 @@ private:
         ar & boost::serialization::base_object<Entity>(*this);
         // for explanation of this line see serializationCustom.hpp
         g_current_owner = this; 
+        ar & hasCollision_;
         ar & controller_;
 		ar & antLegs;
         ar & antMandibles;
@@ -71,6 +74,9 @@ private:
         ar & antWorkerAbdomens;
         ar & antQueenAbdomens;
     }
+
+    // body parts can for example add or remove other body parts
+    friend BodyPart;
 };
 
 #endif // CREATURE_H

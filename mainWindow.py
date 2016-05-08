@@ -236,10 +236,10 @@ class MainWindow(QMainWindow):
 
                 antsParams = anthill.AntsParams()
                 anthill.WorldGenerator.placeAnts(self.world, antsParams)
-                
+
                 # todo: ask for pheromone decay rates
                 anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    0.1, 0.1, 0.1)
+                    0.03, 0.03, 0.03)
 
                 self.world.startSimulation()
 

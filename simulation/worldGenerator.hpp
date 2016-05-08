@@ -115,7 +115,7 @@ struct AnthillParams
 
 struct AntsParams
 {
-    int quantity = 25;
+    int quantity = 3;
     int min_dist_from_anthill = 5;
     int max_dist_from_anthill = 15;
 };

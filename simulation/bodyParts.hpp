@@ -24,6 +24,9 @@ class Creature;
 class BodyPart : public Updatable{
 protected:
     Creature* owner_;
+
+    // 'global' methods for derived body parts
+    bool isAccessible(Point);
 public:
     BodyPart(World* w, Creature* c):
         Updatable(w), owner_(c){}
@@ -55,9 +58,6 @@ private:
 class AntMandibles;
 
 class AntSensor : public BodyPart{
-    // Controller can ask only for Observation
-    bool isAccessible(const Point&);
-
 public:
     // how far pheromones can be from owner to be detected 
     // and recognized
@@ -102,7 +102,7 @@ public:
     // visibility is clamped to an constant
     Point getFarthestPheromone(PheromoneMap::Type,float distance=1000000);
 
-    float getAnthillPheromoneStrength(Point);
+    float getPheromoneStrength(PheromoneMap::Type,Point);
 
     Point findAdjecentPos(Point p);
     
@@ -178,6 +178,14 @@ private:
 	{
 		ar & dropType;
 	}
+};
+
+class AntLarvaBody : public BodyPart{
+public:
+    AntLarvaBody(World* w, Creature* owner):
+        BodyPart(w,owner)
+    {}
+    void step(int);
 };
 
 

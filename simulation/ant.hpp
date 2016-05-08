@@ -29,7 +29,8 @@ public:
 	enum class Type 
 	{
         Worker,
-        Queen
+        Queen,
+        Larva
 	};
 
 	Ant(World* world, Point pos,Type type=Type::Worker);

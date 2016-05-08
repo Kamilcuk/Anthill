@@ -22,16 +22,21 @@ Ant::Ant(World* world, Point pos,Type type) :
 	Visitable(world),
 	Creature(world, pos)
 {
-    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
-    antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
-    antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
-
     if(type==Type::Worker){
+        antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+        antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+        antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
         controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
     }else if(type==Type::Queen){
+        antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+        antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+        antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antQueenAbdomens.emplace_back(boost::make_shared<AntQueenAbdomen>(world,this));
         controller_=boost::shared_ptr<Controller>(new AntQueenAI(static_cast<Creature*>(this)));
+    }else if(type==Type::Larva){
+        hasCollision_=false;
+        // no controller
     }
 }
 
@@ -39,11 +44,6 @@ Ant::Ant(World* world) :
     Visitable(world),
     Creature(world)
 {
-    //antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
-    //antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
-    //antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
-    //antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, this));
-    //controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
 }
 
 Ant::~Ant()

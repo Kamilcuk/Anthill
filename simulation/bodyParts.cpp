@@ -8,6 +8,31 @@
 #include "obstacle.hpp"
 #include "point.hpp"
 
+// BodyPart
+bool BodyPart::isAccessible(Point p){
+    if(!p.isInBounds(world_->getDimensions()))
+        return false;
+
+    bool collision_detected = false;
+    for(const auto& creature : world_->getSimulationObjects<Creature>()){
+        if(creature->getPos() == p && creature->hasCollision()){
+            collision_detected = true;
+            break;
+        }
+    }
+    if(collision_detected)
+        return false;
+    for(const auto& obstacle : world_->getSimulationObjects<Obstacle>()){
+        if(obstacle->getPos() == p){
+            collision_detected = true;
+            break;
+        }
+    }
+    return !collision_detected;
+}
+
+
+// AntLegs
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
     targetPos_=owner->getPos();
@@ -51,29 +76,7 @@ void AntLegs::step(int deltatime){
             if(dy && curPos.posY() != targetPos_.posY())
                 y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
-            if(!Point(x,y).isInBounds(world_->getDimensions()))
-                continue;
-
-            bool collision_detected = false;
-            for(const auto& creature : world_->getSimulationObjects<Creature>())
-            {
-                if(creature->getPos() == Point(x,y))
-                {
-                    collision_detected = true;
-                    break;
-                }
-            }
-            for(const auto& obstacle : world_->getSimulationObjects<Obstacle>())
-            {
-                if(obstacle->getPos() == Point(x,y))
-                {
-                    collision_detected = true;
-                    break;
-                }
-            }
-
-            if(!collision_detected)
-            {
+            if(BodyPart::isAccessible(Point(x,y))){
                 owner_->setPos(Point(x,y));
                 timeNotMoving_=0;
                 return;
@@ -84,25 +87,6 @@ void AntLegs::step(int deltatime){
 }
 
 // AntSensor
-
-bool AntSensor::isAccessible(const Point& p){
-    bool collision_detected = false;
-    for(const auto& creature : world_->getSimulationObjects<Creature>()){
-        if(creature->getPos() == p){
-            collision_detected = true;
-            break;
-        }
-    }
-    if(collision_detected)
-        return false;
-    for(const auto& obstacle : world_->getSimulationObjects<Obstacle>()){
-        if(obstacle->getPos() == p){
-            collision_detected = true;
-            break;
-        }
-    }
-    return !collision_detected;
-}
 
 const float AntSensor::pheromoneRange=7.5;
 const float AntSensor::seeingRange=5.5;
@@ -133,7 +117,7 @@ std::vector<AntSensor::Observation> AntSensor::getObservations(){
 }
 
 bool AntSensor::isAccessible(const Observation& o){
-    return isAccessible(o.getPos());
+    return BodyPart::isAccessible(o.getPos());
 }
 
 
@@ -209,16 +193,15 @@ Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float distance){
     return bestFit;
 }
 
-float AntSensor::getAnthillPheromoneStrength(Point pos){
+float AntSensor::getPheromoneStrength(PheromoneMap::Type type, Point pos){
     for(const auto pm : world_->getSimulationObjects<PheromoneMap>()){
-        if(pm->getType() != PheromoneMap::Type::Anthill)
+        if(pm->getType() != type)
             continue;
         if(owner_->getPos().getDistance(pos)<=pheromoneRange)
             return pm->getStrengthAtPosition(pos);
         else 
             return 0;
     }
-    throw std::runtime_error("AntSensor::getAntillPheromoneStrength: no AnthillPheromone map");
     return 0;
 }
 
@@ -227,7 +210,7 @@ Point AntSensor::findAdjecentPos(Point p){
         for(int dy=-1; dy<=1; ++dy){
             if((dx==0) xor (dy==0)){
                 Point adjP=Point(p.posX()+dx,p.posY()+dy);
-                if(isAccessible(adjP)){
+                if(BodyPart::isAccessible(adjP)){
                     return adjP;
                 }
             }
@@ -321,4 +304,9 @@ void AntQueenAbdomen::step(int deltaTime){
     }
 
     dropType = PheromoneMap::Type::None;
+}
+
+void AntLarvaBody::step(int deltaTime){
+    // TODO
+    assert(0);
 }
