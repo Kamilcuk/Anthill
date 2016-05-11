@@ -92,6 +92,7 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_TEMPLATE_METHOD_REF(World, getSimulationObjects, PheromoneMap, "getPheromoneMaps")
         REGISTER_METHOD(World, getStatistics)
         REGISTER_METHOD(World, setDimensions)
+        REGISTER_METHOD(World, getDimensions)
         REGISTER_METHOD(World, startSimulation)
         REGISTER_METHOD(World, stopSimulation)
         REGISTER_METHOD(World, simulationStep)
@@ -108,9 +109,16 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_METHOD(WorldGenerator, initPheromoneMaps)
     ;
     REGISTER_CLASS(AnthillParams);
-    REGISTER_CLASS(AntsParams);
-    REGISTER_CLASS(ObstaclesParams);
-    REGISTER_CLASS(FoodsParams);
+
+    REGISTER_CLASS(AntsParams)        
+        REGISTER_METHOD(AntsParams, applyNumAnts)
+    ;        
+    REGISTER_CLASS(ObstaclesParams)
+        REGISTER_METHOD(ObstaclesParams, applyObstacleFrequency)
+    ;    
+    REGISTER_CLASS(FoodsParams)
+        REGISTER_METHOD(FoodsParams, applyFoodGenerosity)
+    ;    
     
     REGISTER_CLASS_NOINIT(Painter)
         REGISTER_TEMPLATE_METHOD(Painter, drawEntitiesWrapper, Food, "drawFoods")

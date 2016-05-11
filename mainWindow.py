@@ -15,6 +15,8 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from Ui_MainWindow import Ui_MainWindow
+from WorldGeneratorParamsDialog import WorldGeneratorParamsDialog
+
 import ctypes
 
 import anthill
@@ -39,18 +41,7 @@ class MainWindow(QMainWindow):
         #self.on_tab_currentChanged(self.ui.tab.currentIndex())
         #self.showMaximized()
 
-        # world/simulation parameters - hardcoded - test
-        self.worldWidth=100
-        self.worldHeight=50
         self.simulationFramerate=10
-
-        self.pixelSize=5
-        w=self.worldWidth * self.pixelSize
-        h=self.worldHeight * self.pixelSize
-
-
-        self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
-
 
         # mouse event handlers for painting on simulation map:
         self.lastMousePos = None
@@ -86,7 +77,6 @@ class MainWindow(QMainWindow):
 
         # configure world
         self.world = anthill.World();
-        self.world.setDimensions(self.worldWidth, self.worldHeight)
 
         self.paused = True
 
@@ -105,10 +95,10 @@ class MainWindow(QMainWindow):
         scene=self.ui.graphicsView.scene()
 
         for x,a in enumerate(data):
-            if(x>self.worldWidth):
+            if(x > self.world.getDimensions().posX()):
                 break
             for y,b in enumerate(a):
-                if(y>self.worldHeight):
+                if(y > self.world.getDimensions().posY()):
                     break
                 if(b<0.1):
                     # too weak to be sensed
@@ -160,12 +150,17 @@ class MainWindow(QMainWindow):
         if self.paused:
             return
 
-        scene=self.ui.graphicsView.scene()
+        self.pixelSize=2
+        w = self.world.getDimensions().posX() * self.pixelSize
+        h = self.world.getDimensions().posY() * self.pixelSize
+        
+        if self.ui.graphicsView.scene() is None:
+            self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
+        scene = self.ui.graphicsView.scene()
         scene.clear()
         #self.graphicsItems={}
 
-        w=self.worldWidth * self.pixelSize
-        h=self.worldHeight * self.pixelSize
+        
 
         bgBrush=QBrush(QColor(50,120,50,255))
         bgPen=QPen(QBrush(QColor()),0)
@@ -229,23 +224,28 @@ class MainWindow(QMainWindow):
             if self.refreshTimer is None:
                 self.restartTimer()
 
-                # todo: some dialog asking for params?
-                obstaclesParams = anthill.ObstaclesParams()
+                # ask user for world generation params
+                dialog = WorldGeneratorParamsDialog(self)
+                
+                if not dialog.exec_(): 
+                    # if user clicked CANCEL
+                    return
+                
+                dialog.processResults()
+                self.world.setDimensions(dialog.worldWidth, dialog.worldHeight)
+                
                 anthill.WorldGenerator.placeObstacles(self.world,
-                    obstaclesParams)
-
-                foodsParams = anthill.FoodsParams()
-                anthill.WorldGenerator.placeFoods(self.world, foodsParams)
-
-                anthillParams = anthill.AnthillParams()
-                anthill.WorldGenerator.placeAnthill(self.world, anthillParams)
-
-                antsParams = anthill.AntsParams()
-                anthill.WorldGenerator.placeAnts(self.world, antsParams)
-
-                # todo: ask for pheromone decay rates
+                    dialog.obstaclesParams)
+                anthill.WorldGenerator.placeFoods(self.world, 
+                    dialog.foodsParams)
+                anthill.WorldGenerator.placeAnthill(self.world, 
+                    dialog.anthillParams)
+                anthill.WorldGenerator.placeAnts(self.world, 
+                    dialog.antsParams)               
                 anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    0.07, 0.07, 0.07)
+                    dialog.pheroToFoodCoef, 
+                    dialog.pheroFromFoodCoef, 
+                    dialog.pheroAnthillCoef)
 
                 self.world.startSimulation()
 

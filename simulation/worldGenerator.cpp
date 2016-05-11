@@ -67,12 +67,16 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         if(collision_detected)
             continue;
             
-        if(num_spawned == 0){
+        if(num_spawned == 0)
+        {
+            // spawn one queen
             world->addSimulationObject<Creature>(
-                boost::make_shared<Ant>(world, pos,Ant::Type::Queen));
-        }else{
+                boost::make_shared<Ant>(world, pos, Ant::Type::Queen));
+        }
+        else
+        {
             world->addSimulationObject<Creature>(
-                boost::make_shared<Ant>(world, pos,Ant::Type::Worker));
+                boost::make_shared<Ant>(world, pos, Ant::Type::Worker));
         }
 
         num_spawned++;
@@ -81,13 +85,16 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
 
 void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
 {
-    if(params.quantity < 0) 
-        throw std::runtime_error("Invalid quantity of obstacles");
+    if(params.quantity_per_100_by_100 < 0) 
+        throw std::runtime_error("Invalid quantity per 100 by 100 of obstacles");
+        
+    const int num_to_spawn = params.quantity_per_100_by_100 * 
+        world->width_ * world->height_ / 10000.0;
         
     int num_spawned = 0;
-    while(num_spawned < params.quantity)
+    while(num_spawned < num_to_spawn)
     {       
-        for(const auto& point : generateBlob<Obstacle>(params.blob, 
+        for(const auto& point : params.blob.generate( 
                 world->width_, world->height_))
         {
             if(!point.isInBounds(world->width_, world->height_))
@@ -103,13 +110,16 @@ void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
 
 void WorldGenerator::placeFoods(World* world, FoodsParams& params)
 {
-    if(params.quantity < 0) 
-        throw std::runtime_error("Invalid quantity of foods");
+    if(params.quantity_per_100_by_100 < 0) 
+        throw std::runtime_error("Invalid quantity per 100 by 100 of foods");
+        
+    const int num_to_spawn = params.quantity_per_100_by_100 * 
+        world->width_ * world->height_ / 10000.0;
         
     int num_spawned = 0;
-    while(num_spawned < params.quantity)
+    while(num_spawned < num_to_spawn)
     {       
-        for(const auto& point : generateBlob<Food>(params.blob, 
+        for(const auto& point : params.blob.generate( 
                 world->width_, world->height_))
         {
             if(!point.isInBounds(world->width_, world->height_))
