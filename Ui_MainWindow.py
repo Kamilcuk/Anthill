@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Tue May  3 15:09:58 2016
+# Created: Thu May 12 01:19:28 2016
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,9 +34,9 @@ class Ui_MainWindow(object):
         self.loadStateButton = QtWidgets.QPushButton(self.OptionsGroupBox)
         self.loadStateButton.setObjectName("loadStateButton")
         self.verticalLayout.addWidget(self.loadStateButton)
-        self.label_2 = QtWidgets.QLabel(self.OptionsGroupBox)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
+        self.label_4 = QtWidgets.QLabel(self.OptionsGroupBox)
+        self.label_4.setObjectName("label_4")
+        self.verticalLayout.addWidget(self.label_4)
         self.framerateBox = QtWidgets.QDoubleSpinBox(self.OptionsGroupBox)
         self.framerateBox.setMaximum(200.0)
         self.framerateBox.setProperty("value", 10.0)
@@ -45,11 +45,11 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.OptionsGroupBox)
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.label_3)
-        self.painterButtonGroup = QtWidgets.QButtonGroup(MainWindow)
-        self.painterButtonGroup.setObjectName("painterButtonGroup")
         self.radioButton = QtWidgets.QRadioButton(self.OptionsGroupBox)
         self.radioButton.setChecked(True)
         self.radioButton.setObjectName("radioButton")
+        self.painterButtonGroup = QtWidgets.QButtonGroup(MainWindow)
+        self.painterButtonGroup.setObjectName("painterButtonGroup")
         self.painterButtonGroup.addButton(self.radioButton, 1)
         self.verticalLayout.addWidget(self.radioButton)
         self.radioButton_2 = QtWidgets.QRadioButton(self.OptionsGroupBox)
@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         self.stopSimulationButton.setText(_translate("MainWindow", "Stop Simulation"))
         self.saveStateButton.setText(_translate("MainWindow", "Save state"))
         self.loadStateButton.setText(_translate("MainWindow", "Load state"))
-        self.label_2.setText(_translate("MainWindow", "Framerate:"))
+        self.label_4.setText(_translate("MainWindow", "Framerate:"))
         self.label_3.setText(_translate("MainWindow", "Paint:"))
         self.radioButton.setText(_translate("MainWindow", "Foods"))
         self.radioButton_2.setText(_translate("MainWindow", "Obstacles"))

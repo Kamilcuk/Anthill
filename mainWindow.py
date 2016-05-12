@@ -36,7 +36,7 @@ class MainWindow(QMainWindow):
             QGraphicsView.DontAdjustForAntialiasing
             | QGraphicsView.DontClipPainter
             | QGraphicsView.DontSavePainterState)
-        #self.ui.graphics.setTransformationAnchor(self.ui.graphics.NoAnchor)
+        
         #self.ui.graphics.setResizeAnchor(self.ui.graphics.NoAnchor)
         #self.on_tab_currentChanged(self.ui.tab.currentIndex())
         #self.showMaximized()
@@ -44,35 +44,74 @@ class MainWindow(QMainWindow):
         self.simulationFramerate=10
 
         # mouse event handlers for painting on simulation map:
-        self.lastMousePos = None
+        self.lastMousePosOnMap = None
         self.drawOnMap = anthill.Painter.drawObstacles # current painting function
-
+        self.drawingStuff = False
+        
+        # flag for moving the camera around
+        self.draggingCamera = False
+        self.lastMousePosGlobal = None
+        
         def handleMousePress(event):
-            self.lastMousePos = None
-            self.handlePainterOption()
-            self.ui.graphicsView.setMouseTracking(True)
+            if event.button() == QtCore.Qt.LeftButton:
+                self.drawingStuff = True
+                self.lastMousePosOnMap = None
+                self.handlePainterOption()
+                self.ui.graphicsView.setMouseTracking(True)
+            elif event.button() == QtCore.Qt.RightButton:
+                self.draggingCamera = True
+                self.lastMousePosGlobal = None
+                self.ui.graphicsView.setDragMode(
+                    self.ui.graphicsView.ScrollHandDrag)
+                self.ui.graphicsView.setMouseTracking(True)
 
         def handleMouseRelease(event):
-            self.lastMousePos = None
+            self.lastMousePosOnMap = None
+            self.drawingStuff = False
+            self.lastMousePosGlobal = None
+            self.draggingCamera = False
             self.ui.graphicsView.setMouseTracking(False)
+            self.ui.graphicsView.setDragMode(self.ui.graphicsView.NoDrag)
 
         def handleMouseMove(event):
-            mouse_in_map_coords = (
-                self.ui.graphicsView.mapToScene(
-                    self.ui.graphicsView.mapFromGlobal(QCursor.pos())))
-            coords = list( map(lambda p: int(p / self.pixelSize),
-                [mouse_in_map_coords.x(), mouse_in_map_coords.y()]))
-            coords[1] -= 1 # fix misalignment
-            if self.lastMousePos is None: self.lastMousePos = coords
+            if self.drawingStuff:
+                mouse_in_map_coords = (
+                    self.ui.graphicsView.mapToScene(
+                        self.ui.graphicsView.mapFromGlobal(QCursor.pos())))
+                coords = list( map(lambda p: int(p),
+                    [mouse_in_map_coords.x(), mouse_in_map_coords.y()]))
+                coords[1] -= 1 # fix misalignment
+                if self.lastMousePosOnMap is None: 
+                    self.lastMousePosOnMap = coords
 
-            self.drawOnMap(self.world, self.lastMousePos[0],
-                self.lastMousePos[1], coords[0], coords[1])
-            self.lastMousePos = coords
+                self.drawOnMap(self.world, self.lastMousePosOnMap[0],
+                    self.lastMousePosOnMap[1], coords[0], coords[1])
+                self.lastMousePosOnMap = coords
+                
+            if self.draggingCamera:
+                if self.lastMousePosGlobal is None:
+                    self.lastMousePosGlobal = QCursor.pos()
+                delta = QCursor.pos() - self.lastMousePosGlobal
+                self.ui.graphicsView.setTransformationAnchor(
+                    self.ui.graphicsView.NoAnchor)
+                self.ui.graphicsView.translate(delta.x(), delta.y())
+                self.lastMousePosGlobal = QCursor.pos()
+
 
         self.ui.graphicsView.mousePressEvent = handleMousePress
         self.ui.graphicsView.mouseReleaseEvent = handleMouseRelease
         self.ui.graphicsView.mouseMoveEvent = handleMouseMove
 
+
+        def handleWheelEvent(event):
+            self.ui.graphicsView.setTransformationAnchor(
+                self.ui.graphicsView.AnchorViewCenter)
+            scaleFactor = 1.15
+            if event.angleDelta().y() < 0:
+                scaleFactor = 1.0 / scaleFactor
+            self.ui.graphicsView.scale(scaleFactor, scaleFactor)
+
+        self.ui.graphicsView.wheelEvent = handleWheelEvent
 
 
         # configure world
@@ -90,8 +129,6 @@ class MainWindow(QMainWindow):
 
         data=map.getMap()
         data=list(data)
-
-        s=self.pixelSize
         scene=self.ui.graphicsView.scene()
 
         for x,a in enumerate(data):
@@ -104,34 +141,34 @@ class MainWindow(QMainWindow):
                     # too weak to be sensed
                     continue
 
-                alpha=40+b*10
-                if(alpha>100):
+                alpha=b
+                if(alpha>255):
                     # clamp
-                    alpha=100
+                    alpha=255
 
                 pbrush=QBrush(QColor(baseRGB[0],baseRGB[1],baseRGB[2], alpha))
                 ppen=QPen(QBrush(QColor(baseRGB2[0],baseRGB2[1],baseRGB2[2], alpha)),0)
-                scene.addRect(x*s,y*s,s,s,pen=ppen,brush=pbrush)
+                scene.addRect(x,y,1,1,pen=ppen,brush=pbrush)
 
     def drawEntities(self,ents,qpen,qbrush,ellipse=False,drawRange=None):
         ents=[ents[a] for a in range(len(ents))]
 
-        s=self.pixelSize
         scene=self.ui.graphicsView.scene()
 
         for ent in ents:
             x=ent.getPos().posX()
             y=ent.getPos().posY()
             if(ellipse):
-                scene.addEllipse(x*s,y*s,s,s,pen=qpen,brush=qbrush)
+                scene.addEllipse(x,y,1,1,pen=qpen,brush=qbrush)
             else:
-                scene.addRect(x*s,y*s,s,s,pen=qpen,brush=qbrush)
-
+                scene.addRect(x,y,1,1,pen=qpen,brush=qbrush)
+            
             if(drawRange!=None):
-                rangeBrush=QBrush(QColor(255,255,255,30))
-                scene.addEllipse((x-drawRange)*s, (y-drawRange)*s,
-                                 drawRange*2*s,drawRange*2*s,
-                                 brush=rangeBrush)
+                rangepen=QPen(QBrush(QColor(0,0,0,30)),0)
+                rangeBrush=QBrush(QColor(255,255,255,10))
+                scene.addEllipse((x-drawRange), (y-drawRange),
+                                 drawRange*2,drawRange*2,
+                                 brush=rangeBrush, pen=rangepen)
 
 
     def handlePainterOption(self):
@@ -150,25 +187,19 @@ class MainWindow(QMainWindow):
         if self.paused:
             return
 
-        self.pixelSize=2
-        w = self.world.getDimensions().posX() * self.pixelSize
-        h = self.world.getDimensions().posY() * self.pixelSize
+        w = self.world.getDimensions().posX()
+        h = self.world.getDimensions().posY()
         
         if self.ui.graphicsView.scene() is None:
             self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
         scene = self.ui.graphicsView.scene()
         scene.clear()
-        #self.graphicsItems={}
-
-        
 
         bgBrush=QBrush(QColor(50,120,50,255))
         bgPen=QPen(QBrush(QColor()),0)
         scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
 
         self.world.simulationStep()
-
-        s=self.pixelSize
 
         # draw pheromone map
         pheromoneColors=[ (50,50,155),
