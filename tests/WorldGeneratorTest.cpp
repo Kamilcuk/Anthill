@@ -51,7 +51,7 @@ BOOST_FIXTURE_TEST_CASE(test_placeObstacles_shouldBeObstacles, Fixture)
 {
     BOOST_CHECK_EQUAL(world.getSimulationObjects<Obstacle>().size(), 0);    
     ObstaclesParams params;
-    params.quantity = 5;
+    params.quantity_per_100_by_100 = 5;
     WorldGenerator::placeObstacles(&world, params);
     BOOST_CHECK(world.getSimulationObjects<Obstacle>().size() > 0);
     BOOST_CHECK(world.getEntityPtrs().size() > 0);
@@ -61,7 +61,7 @@ BOOST_FIXTURE_TEST_CASE(test_placeFoods_shouldBeFoods, Fixture)
 {
     BOOST_CHECK_EQUAL(world.getSimulationObjects<Food>().size(), 0);    
     FoodsParams params;
-    params.quantity = 5;
+    params.quantity_per_100_by_100 = 5;
     WorldGenerator::placeFoods(&world, params);
     BOOST_CHECK(world.getSimulationObjects<Food>().size() > 0);
     BOOST_CHECK(world.getEntityPtrs().size() > 0);
