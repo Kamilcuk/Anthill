@@ -47,8 +47,6 @@ void AntWorkerAI::step(int deltatime){
     auto sensor = antSensors[0];
     auto abd = antWorkerAbdomens[0];
 
-    std::cout<<"---------------"<<std::endl;
-
     // ant starts to panic when is probably deadlocked with other ants
     if(panicTimeLeft_>0){
         legs->goRandom();
@@ -96,7 +94,6 @@ void AntWorkerAI::step(int deltatime){
                 legs->goToPos(target);
             }
         }else{
-            std::cout<<"don't see Anthill"<<std::endl;
             // search Anthill
             target=sensor->getFarthestPheromone(PheromoneMap::Type::ToFood);
             if(target!=owner_->getPos())

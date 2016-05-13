@@ -36,7 +36,7 @@ class MainWindow(QMainWindow):
             QGraphicsView.DontAdjustForAntialiasing
             | QGraphicsView.DontClipPainter
             | QGraphicsView.DontSavePainterState)
-        
+
         #self.ui.graphics.setResizeAnchor(self.ui.graphics.NoAnchor)
         #self.on_tab_currentChanged(self.ui.tab.currentIndex())
         #self.showMaximized()
@@ -47,11 +47,11 @@ class MainWindow(QMainWindow):
         self.lastMousePosOnMap = None
         self.drawOnMap = anthill.Painter.drawObstacles # current painting function
         self.drawingStuff = False
-        
+
         # flag for moving the camera around
         self.draggingCamera = False
         self.lastMousePosGlobal = None
-        
+
         def handleMousePress(event):
             if event.button() == QtCore.Qt.LeftButton:
                 self.drawingStuff = True
@@ -81,13 +81,13 @@ class MainWindow(QMainWindow):
                 coords = list( map(lambda p: int(p),
                     [mouse_in_map_coords.x(), mouse_in_map_coords.y()]))
                 coords[1] -= 1 # fix misalignment
-                if self.lastMousePosOnMap is None: 
+                if self.lastMousePosOnMap is None:
                     self.lastMousePosOnMap = coords
 
                 self.drawOnMap(self.world, self.lastMousePosOnMap[0],
                     self.lastMousePosOnMap[1], coords[0], coords[1])
                 self.lastMousePosOnMap = coords
-                
+
             if self.draggingCamera:
                 if self.lastMousePosGlobal is None:
                     self.lastMousePosGlobal = QCursor.pos()
@@ -141,10 +141,10 @@ class MainWindow(QMainWindow):
                     # too weak to be sensed
                     continue
 
-                alpha=b
-                if(alpha>255):
+                alpha=30+b*8
+                if(alpha>100):
                     # clamp
-                    alpha=255
+                    alpha=100
 
                 pbrush=QBrush(QColor(baseRGB[0],baseRGB[1],baseRGB[2], alpha))
                 ppen=QPen(QBrush(QColor(baseRGB2[0],baseRGB2[1],baseRGB2[2], alpha)),0)
@@ -162,7 +162,7 @@ class MainWindow(QMainWindow):
                 scene.addEllipse(x,y,1,1,pen=qpen,brush=qbrush)
             else:
                 scene.addRect(x,y,1,1,pen=qpen,brush=qbrush)
-            
+
             if(drawRange!=None):
                 rangepen=QPen(QBrush(QColor(0,0,0,30)),0)
                 rangeBrush=QBrush(QColor(255,255,255,10))
@@ -189,7 +189,7 @@ class MainWindow(QMainWindow):
 
         w = self.world.getDimensions().posX()
         h = self.world.getDimensions().posY()
-        
+
         if self.ui.graphicsView.scene() is None:
             self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
         scene = self.ui.graphicsView.scene()
@@ -257,25 +257,25 @@ class MainWindow(QMainWindow):
 
                 # ask user for world generation params
                 dialog = WorldGeneratorParamsDialog(self)
-                
-                if not dialog.exec_(): 
+
+                if not dialog.exec_():
                     # if user clicked CANCEL
                     return
-                
+
                 dialog.processResults()
                 self.world.setDimensions(dialog.worldWidth, dialog.worldHeight)
-                
+
                 anthill.WorldGenerator.placeObstacles(self.world,
                     dialog.obstaclesParams)
-                anthill.WorldGenerator.placeFoods(self.world, 
+                anthill.WorldGenerator.placeFoods(self.world,
                     dialog.foodsParams)
-                anthill.WorldGenerator.placeAnthill(self.world, 
+                anthill.WorldGenerator.placeAnthill(self.world,
                     dialog.anthillParams)
-                anthill.WorldGenerator.placeAnts(self.world, 
-                    dialog.antsParams)               
+                anthill.WorldGenerator.placeAnts(self.world,
+                    dialog.antsParams)
                 anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    dialog.pheroToFoodCoef, 
-                    dialog.pheroFromFoodCoef, 
+                    dialog.pheroToFoodCoef,
+                    dialog.pheroFromFoodCoef,
                     dialog.pheroAnthillCoef)
 
                 self.world.startSimulation()

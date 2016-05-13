@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'worldgen.ui'
 #
-# Created: Thu May 12 00:16:46 2016
-#      by: PyQt5 UI code generator 5.3.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -28,7 +27,6 @@ class Ui_WorldGenDialog(object):
         self.horizontalLayout.setContentsMargins(5, 5, 5, 5)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.label_14 = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
@@ -120,12 +118,12 @@ class Ui_WorldGenDialog(object):
         sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
         self.label_11.setSizePolicy(sizePolicy)
         self.label_11.setObjectName("label_11")
-        self.verticalLayout_3.addWidget(self.label_11, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_3.addWidget(self.label_11, 0, QtCore.Qt.AlignHCenter)
         self.toFoodCoef = QtWidgets.QDial(self.centralwidget)
         self.toFoodCoef.setMaximumSize(QtCore.QSize(50, 50))
-        self.toFoodCoef.setProperty("value", 25)
+        self.toFoodCoef.setProperty("value", 50)
         self.toFoodCoef.setObjectName("toFoodCoef")
-        self.verticalLayout_3.addWidget(self.toFoodCoef, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_3.addWidget(self.toFoodCoef, 0, QtCore.Qt.AlignHCenter)
         self.horizontalLayout_4.addLayout(self.verticalLayout_3)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
@@ -136,12 +134,12 @@ class Ui_WorldGenDialog(object):
         sizePolicy.setHeightForWidth(self.label_12.sizePolicy().hasHeightForWidth())
         self.label_12.setSizePolicy(sizePolicy)
         self.label_12.setObjectName("label_12")
-        self.verticalLayout_5.addWidget(self.label_12, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_5.addWidget(self.label_12, 0, QtCore.Qt.AlignHCenter)
         self.fromFoodCoef = QtWidgets.QDial(self.centralwidget)
         self.fromFoodCoef.setMaximumSize(QtCore.QSize(50, 50))
-        self.fromFoodCoef.setProperty("value", 24)
+        self.fromFoodCoef.setProperty("value", 50)
         self.fromFoodCoef.setObjectName("fromFoodCoef")
-        self.verticalLayout_5.addWidget(self.fromFoodCoef, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_5.addWidget(self.fromFoodCoef, 0, QtCore.Qt.AlignHCenter)
         self.horizontalLayout_4.addLayout(self.verticalLayout_5)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -152,12 +150,12 @@ class Ui_WorldGenDialog(object):
         sizePolicy.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
         self.label_13.setSizePolicy(sizePolicy)
         self.label_13.setObjectName("label_13")
-        self.verticalLayout_4.addWidget(self.label_13, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_4.addWidget(self.label_13, 0, QtCore.Qt.AlignHCenter)
         self.anthillCoef = QtWidgets.QDial(self.centralwidget)
         self.anthillCoef.setMaximumSize(QtCore.QSize(50, 50))
-        self.anthillCoef.setProperty("value", 8)
+        self.anthillCoef.setProperty("value", 50)
         self.anthillCoef.setObjectName("anthillCoef")
-        self.verticalLayout_4.addWidget(self.anthillCoef, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_4.addWidget(self.anthillCoef, 0, QtCore.Qt.AlignHCenter)
         self.horizontalLayout_4.addLayout(self.verticalLayout_4)
         self.formLayout.setLayout(7, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_4)
         self.verticalLayout_2.addLayout(self.formLayout)
@@ -172,7 +170,7 @@ class Ui_WorldGenDialog(object):
         self.buttonBox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.verticalLayout_2.addWidget(self.buttonBox, QtCore.Qt.AlignHCenter)
+        self.verticalLayout_2.addWidget(self.buttonBox, 0, QtCore.Qt.AlignHCenter)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.actionExit = QtWidgets.QAction(WorldGenDialog)
         self.actionExit.setObjectName("actionExit")

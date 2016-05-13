@@ -13,9 +13,9 @@ import anthill
 class WorldGeneratorParamsDialog(QDialog):
     def __init__(self, parent = None):
         super(WorldGeneratorParamsDialog, self).__init__(parent)
-        
+
         self.ui = Ui_WorldGenDialog()
-        self.ui.setupUi(self) 
+        self.ui.setupUi(self)
 
         self.prepareDefaultParams()
 
@@ -26,11 +26,13 @@ class WorldGeneratorParamsDialog(QDialog):
         self.antsParams = anthill.AntsParams()
         self.worldWidth = 200
         self.worldHeight = 200
-        
+
     def processResults(self):
-        self.pheroToFoodCoef = self.ui.toFoodCoef.value() / 100.0
-        self.pheroFromFoodCoef = self.ui.fromFoodCoef.value() / 100.0
-        self.pheroAnthillCoef = self.ui.toFoodCoef.value() / 100.0
+        self.pheroToFoodCoef = self.ui.toFoodCoef.value() / (10*100.0)
+        self.pheroFromFoodCoef = self.ui.fromFoodCoef.value() / (10*100.0)
+        self.pheroAnthillCoef = self.ui.toFoodCoef.value() / (10*100.0)
         self.obstaclesParams.applyObstacleFrequency(self.ui.obstacleFreq.value())
         self.foodsParams.applyFoodGenerosity(self.ui.foodGenerosity.value())
         self.antsParams.applyNumAnts(self.ui.numAnts.value())
+        self.worldWidth = self.ui.worldHeight.value()
+        self.worldHeight = self.ui.worldHeight.value()
