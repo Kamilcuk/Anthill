@@ -28,9 +28,9 @@ class WorldGeneratorParamsDialog(QDialog):
         self.worldHeight = 200
 
     def processResults(self):
-        self.pheroToFoodCoef = self.ui.toFoodCoef.value() / (10*100.0)
-        self.pheroFromFoodCoef = self.ui.fromFoodCoef.value() / (10*100.0)
-        self.pheroAnthillCoef = self.ui.toFoodCoef.value() / (10*100.0)
+        self.pheroToFoodCoef = self.ui.toFoodCoef.value() / (15*100.0)
+        self.pheroFromFoodCoef = self.ui.fromFoodCoef.value() / (15*100.0)
+        self.pheroAnthillCoef = self.ui.toFoodCoef.value() / (15*100.0)
         self.obstaclesParams.applyObstacleFrequency(self.ui.obstacleFreq.value())
         self.foodsParams.applyFoodGenerosity(self.ui.foodGenerosity.value())
         self.antsParams.applyNumAnts(self.ui.numAnts.value())

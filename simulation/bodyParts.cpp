@@ -96,7 +96,7 @@ void AntLegs::step(int deltatime){
 // AntSensor
 
 const float AntSensor::pheromoneRange=7.0;
-const float AntSensor::seeingRange=5.0;
+const float AntSensor::seeingRange=7.0;
 
 Point AntSensor::Observation::getPos()const{ 
     return ent_.lock()->getPos(); 

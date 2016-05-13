@@ -26,6 +26,7 @@ private:
 class AntWorkerAI : public Controller{
     // ant starts to panic when is probably deadlocked with other ants
     int panicTimeLeft_;
+    int timeSearchingWithFromFoodPheromones_;
 
 public:
     AntWorkerAI(Creature* owner);
@@ -38,6 +39,7 @@ private:
     {
         ar & boost::serialization::base_object<Controller>(*this);
 		ar & panicTimeLeft_;;
+        ar & timeSearchingWithFromFoodPheromones_;
 	}
 };
 

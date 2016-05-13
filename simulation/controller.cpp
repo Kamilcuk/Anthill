@@ -5,7 +5,8 @@
 
 AntWorkerAI::AntWorkerAI(Creature* owner):
     Controller(owner),
-    panicTimeLeft_(0){
+    panicTimeLeft_(0),
+    timeSearchingWithFromFoodPheromones_(0){
 }
 
 
@@ -57,7 +58,13 @@ void AntWorkerAI::step(int deltatime){
     if(!ma->isHolding()){
         // search food
         
-        legs->goRandom();
+        Point target=sensor->getFarthestPheromone(PheromoneMap::Type::FromFood);
+        if(target==owner_->getPos() || timeSearchingWithFromFoodPheromones_>70){
+            legs->goRandom();
+        }else{
+            legs->goToPos(target);
+            ++timeSearchingWithFromFoodPheromones_;
+        }
             
         auto observations = sensor->getObservations();
         for(auto o : observations){
@@ -68,6 +75,7 @@ void AntWorkerAI::step(int deltatime){
             if((o.getSmell()==Entity::Smell::Food) && !ma->isHolding()){
                 if(o.getPos() != owner_->getPos()){ 
                     if(sensor->isAccessible(o)){
+                        timeSearchingWithFromFoodPheromones_=0;
                         legs->goToPos(o.getPos());
                         break;
                     }
