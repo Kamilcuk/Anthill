@@ -38,7 +38,7 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Controller>(*this);
-		ar & panicTimeLeft_;;
+		ar & panicTimeLeft_;
         ar & timeSearchingWithFromFoodPheromones_;
 	}
 };
@@ -54,6 +54,30 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
     {
         ar & boost::serialization::base_object<Controller>(*this);
+	}
+};
+
+class AntScoutAI : public Controller{
+    // ant starts to panic when is probably deadlocked with other ants
+    int panicTimeLeft_;
+    enum class Activity{
+        ScanningArea,
+        MarkingPathToFood
+    };
+    Activity currentActivity_;
+
+public:
+    AntScoutAI(Creature* owner);
+    void step(int deltaTime);
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+    {
+        ar & boost::serialization::base_object<Controller>(*this);
+		ar & panicTimeLeft_;
+        ar & currentActivity_;
 	}
 };
 

@@ -197,7 +197,7 @@ Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float maxDistance
                 if(pm->getStrengthAtPosition(pos)<0.1)
                     continue;
 
-                const float epsilon=1.1;
+                const float epsilon=1.5;
                 if(pos.getDistance(ownPos)-epsilon > bestFit.getDistance(ownPos)){
                     // is much larger
                     bestFit=pos;
@@ -305,11 +305,13 @@ void AntWorkerAbdomen::step(int deltaTime){
         return;
     for(const auto& pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
-            pm->createBlob(owner_->getPos(), 2, 100);
+            pm->createBlob(owner_->getPos(), 1.5, 100);
+            dropType = PheromoneMap::Type::None;
             return;
         }
     }
 
+    throw std::runtime_error("AntWorkerAbdomen::step, no such pheromone map");
     dropType = PheromoneMap::Type::None;
 }
 
@@ -327,11 +329,11 @@ void AntQueenAbdomen::step(int deltaTime){
     for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
             pm->createBlob(owner_->getPos(), 6, 200);
+            dropType = PheromoneMap::Type::None;
             return;
         }
     }
 
-    dropType = PheromoneMap::Type::None;
 }
 
 void AntLarvaBody::step(int deltaTime){

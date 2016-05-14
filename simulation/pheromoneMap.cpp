@@ -138,15 +138,20 @@ Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 void PheromoneMap::createBlob(const Point& p_pos, const float p_radius, 
 	float p_initial_strength)
 {
-	if((unsigned)p_pos.posX() > map_.size() || 
-			(unsigned)p_pos.posY() > map_[0].size() ||
-			(unsigned)p_pos.posX() < 0 || (unsigned)p_pos.posY() < 0)
-		throw std::runtime_error("createBlob: Specified position exceeds pheromone map.");
-	
+    int sizeX=map_.size();
+    int sizeY=map_[0].size();
+
+    if(!p_pos.isInBounds(sizeX,sizeY))
+	    throw std::runtime_error("createBlob: Specified position exceeds pheromone map.");
+
 	// consider each cell in a square
-	for(unsigned x = p_pos.posX() - p_radius; x < p_pos.posX() + p_radius; x++)
-		for(unsigned y = p_pos.posY() - p_radius; y < p_pos.posY() + p_radius;
-			y++)
+    const int x1 = std::max(int((p_pos.posX() - p_radius)),0);
+    const int x2 = std::min(int((p_pos.posX() + p_radius)),sizeX-1);
+	for(int x = x1; x <= x2 ; ++x)
+    {
+		int y1 = std::max(int(p_pos.posY() - p_radius), 0); 
+        int y2 = std::min(int(p_pos.posY() + p_radius), sizeY-1);
+		for(int y = y1; y <= y2 ; ++y)
 		{			
 			// strength falls off linearly with distance from center
 			const float dist_from_center = sqrt((p_pos.posX() - x) * 
@@ -159,4 +164,5 @@ void PheromoneMap::createBlob(const Point& p_pos, const float p_radius,
 				addStrengthClipping(x, y, local_strength);
 			}
 		}
+    }
 }

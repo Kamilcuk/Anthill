@@ -28,12 +28,19 @@ Ant::Ant(World* world, Point pos,Type type) :
         antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
         controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+        controller_=boost::make_shared<AntWorkerAI>(static_cast<Creature*>(this));
     }else if(type==Type::Queen){
         antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
         antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
         antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antQueenAbdomens.emplace_back(boost::make_shared<AntQueenAbdomen>(world,this));
-        controller_=boost::shared_ptr<Controller>(new AntQueenAI(static_cast<Creature*>(this)));
+        controller_=boost::make_shared<AntQueenAI>(static_cast<Creature*>(this));
+    }else if(type==Type::Scout){
+        antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+        antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+        antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+        antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
+        controller_=boost::make_shared<AntScoutAI>(static_cast<Creature*>(this));
     }else if(type==Type::Larva){
         hasCollision_=false;
         // no controller

@@ -47,6 +47,12 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
     auto anthill_pos = world->getSimulationObjects<Anthill>()[0]->getPos();
     
     int num_spawned = 0;
+    int scouts_count = int((params.quantity-1)*0.1);
+    if (scouts_count==0 && params.quantity>1){
+        // at least 1 scout
+        scouts_count=1;
+    }
+
     while(num_spawned < params.quantity)
     {
         Point pos(anthill_pos.posX() + rand() % delta * randSign(),
@@ -73,8 +79,11 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
             world->addSimulationObject<Creature>(
                 boost::make_shared<Ant>(world, pos, Ant::Type::Queen));
         }
-        else
+        else if(num_spawned <= scouts_count)
         {
+            world->addSimulationObject<Creature>(
+                boost::make_shared<Ant>(world, pos, Ant::Type::Scout));
+        }else{
             world->addSimulationObject<Creature>(
                 boost::make_shared<Ant>(world, pos, Ant::Type::Worker));
         }

@@ -30,6 +30,7 @@ public:
 	{
         Worker,
         Queen,
+        Scout,
         Larva
 	};
 
