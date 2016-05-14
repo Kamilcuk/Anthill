@@ -31,6 +31,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.refreshTimer=None
+        self.frameSkippingCounter=0
 
         self.ui.graphicsView.setOptimizationFlags(
             QGraphicsView.DontAdjustForAntialiasing
@@ -190,55 +191,60 @@ class MainWindow(QMainWindow):
         w = self.world.getDimensions().posX()
         h = self.world.getDimensions().posY()
 
-        if self.ui.graphicsView.scene() is None:
-            self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
-        scene = self.ui.graphicsView.scene()
-        scene.clear()
-
-        bgBrush=QBrush(QColor(50,120,50,255))
-        bgPen=QPen(QBrush(QColor()),0)
-        scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
-
         self.world.simulationStep()
-
-        # draw pheromone map
-        pheromoneColors=[ (50,50,155),
-                 (255,50,50),
-                 (0,255,0)]
-        pMaps=self.world.getPheromoneMaps()
-        pMaps=[pMaps[p] for p in range(len(pMaps))]
-        for i,m in enumerate(pMaps):
-            self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
-
-        # draw obstacles
-        obstacles=self.world.getObstacles()
-        obstaclePen=QPen(QBrush(QColor()),0)
-        obstacleBrush=QBrush(QColor(50,50,50,255))
-        self.drawEntities(obstacles,obstaclePen,obstacleBrush)
-
-        # draw foods
-        foods=self.world.getFoods()
-        foodPen=QPen(QBrush(QColor()),0)
-        foodBrush=QBrush(QColor(200,200,200,70))
-        self.drawEntities(foods,foodPen,foodBrush)
-
-        # draw creatures
-        creatures=self.world.getCreatures()
-        creaturePen=QPen(QBrush(QColor()),0)
-        creatureBrush=QBrush(QColor(100,100,50,200))
-        self.drawEntities(creatures,creaturePen,creatureBrush,True,7)
-
-        # draw anthills
-        anthills=self.world.getAnthills()
-        anthillPen=QPen(QBrush(QColor()),0)
-        anthillBrush=QBrush(QColor(200,20,20,150))
-        self.drawEntities(anthills,anthillPen,anthillBrush)
 
         # update statistics
         stats = self.world.getStatistics()
         if stats:
             _translate = QtCore.QCoreApplication.translate
             self.ui.stats_label.setText(_translate("MainWindow", stats.print()))
+
+        self.frameSkippingCounter+=1
+        if self.frameSkippingCounter > self.ui.frameSkipping.value():
+            self.frameSkippingCounter=0
+
+            if self.ui.graphicsView.scene() is None:
+                self.ui.graphicsView.setScene(QGraphicsScene(0,0,w,h))
+            scene = self.ui.graphicsView.scene()
+            scene.clear()
+
+            bgBrush=QBrush(QColor(50,120,50,255))
+            bgPen=QPen(QBrush(QColor()),0)
+            scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
+
+            # draw pheromone map
+            pheromoneColors=[ (50,50,155),
+                    (255,50,50),
+                    (0,255,0)]
+            pMaps=self.world.getPheromoneMaps()
+            pMaps=[pMaps[p] for p in range(len(pMaps))]
+            for i,m in enumerate(pMaps):
+                self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
+
+            # draw obstacles
+            obstacles=self.world.getObstacles()
+            obstaclePen=QPen(QBrush(QColor()),0)
+            obstacleBrush=QBrush(QColor(50,50,50,255))
+            self.drawEntities(obstacles,obstaclePen,obstacleBrush)
+
+            # draw foods
+            foods=self.world.getFoods()
+            foodPen=QPen(QBrush(QColor()),0)
+            foodBrush=QBrush(QColor(200,200,200,70))
+            self.drawEntities(foods,foodPen,foodBrush)
+
+            # draw creatures
+            creatures=self.world.getCreatures()
+            creaturePen=QPen(QBrush(QColor()),0)
+            creatureBrush=QBrush(QColor(100,100,50,200))
+            self.drawEntities(creatures,creaturePen,creatureBrush,True,7)
+
+            # draw anthills
+            anthills=self.world.getAnthills()
+            anthillPen=QPen(QBrush(QColor()),0)
+            anthillBrush=QBrush(QColor(200,20,20,150))
+            self.drawEntities(anthills,anthillPen,anthillBrush)
+
 
     def restartTimer(self):
         self.refresh()
@@ -326,7 +332,7 @@ class MainWindow(QMainWindow):
         self.paused = False
 
     def on_framerateBox_valueChanged(self):
-        self.simulationFramerate=self.ui.framerateBox.value()
+        self.simulationFramerate=max(self.ui.framerateBox.value(),1)
         if(self.refreshTimer):
             self.refreshTimer.stop()
             self.refreshTimer.start(1000/self.simulationFramerate)

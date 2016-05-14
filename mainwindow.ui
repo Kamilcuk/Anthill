@@ -65,10 +65,24 @@
        <item>
         <widget class="QDoubleSpinBox" name="framerateBox">
          <property name="maximum">
-          <double>200.000000000000000</double>
+          <double>1000000.000000000000000</double>
          </property>
          <property name="value">
           <double>10.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Frame skipping</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="frameSkipping">
+         <property name="maximum">
+          <number>1000000</number>
          </property>
         </widget>
        </item>
@@ -183,7 +197,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>27</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -259,7 +259,7 @@ void AntScoutAI::step(int deltatime){
         
 
         Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill);
-        //bool lostTrace=true;
+        bool lostTrace=false;
 
         if(target!=Point(INT_MAX,INT_MAX)){
             // sensed Anthill
@@ -276,13 +276,14 @@ void AntScoutAI::step(int deltatime){
             if(target!=owner_->getPos()){
                 legs->goToPos(target);
             }else{
-                //lostTrace=true;
+                lostTrace=true;
                 // lost trace
                 legs->goRandom();
             }
         }
 
-        abd->dropFromFoodPheromones();
+        if(!lostTrace)
+            abd->dropFromFoodPheromones();
     }else{
         std::cout<<"No activity"<<std::endl;
     }

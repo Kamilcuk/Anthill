@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Thu May 12 01:19:28 2016
-#      by: PyQt5 UI code generator 5.3.2
+# Created by: PyQt5 UI code generator 5.5.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -38,10 +37,17 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
         self.verticalLayout.addWidget(self.label_4)
         self.framerateBox = QtWidgets.QDoubleSpinBox(self.OptionsGroupBox)
-        self.framerateBox.setMaximum(200.0)
+        self.framerateBox.setMaximum(1000000.0)
         self.framerateBox.setProperty("value", 10.0)
         self.framerateBox.setObjectName("framerateBox")
         self.verticalLayout.addWidget(self.framerateBox)
+        self.label = QtWidgets.QLabel(self.OptionsGroupBox)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        self.frameSkipping = QtWidgets.QSpinBox(self.OptionsGroupBox)
+        self.frameSkipping.setMaximum(1000000)
+        self.frameSkipping.setObjectName("frameSkipping")
+        self.verticalLayout.addWidget(self.frameSkipping)
         self.label_3 = QtWidgets.QLabel(self.OptionsGroupBox)
         self.label_3.setObjectName("label_3")
         self.verticalLayout.addWidget(self.label_3)
@@ -50,19 +56,19 @@ class Ui_MainWindow(object):
         self.radioButton.setObjectName("radioButton")
         self.painterButtonGroup = QtWidgets.QButtonGroup(MainWindow)
         self.painterButtonGroup.setObjectName("painterButtonGroup")
-        self.painterButtonGroup.addButton(self.radioButton, 1)
+        self.painterButtonGroup.addButton(self.radioButton)
         self.verticalLayout.addWidget(self.radioButton)
         self.radioButton_2 = QtWidgets.QRadioButton(self.OptionsGroupBox)
         self.radioButton_2.setObjectName("radioButton_2")
-        self.painterButtonGroup.addButton(self.radioButton_2, 2)
+        self.painterButtonGroup.addButton(self.radioButton_2)
         self.verticalLayout.addWidget(self.radioButton_2)
         self.radioButton_3 = QtWidgets.QRadioButton(self.OptionsGroupBox)
         self.radioButton_3.setObjectName("radioButton_3")
-        self.painterButtonGroup.addButton(self.radioButton_3, 3)
+        self.painterButtonGroup.addButton(self.radioButton_3)
         self.verticalLayout.addWidget(self.radioButton_3)
         self.radioButton_4 = QtWidgets.QRadioButton(self.OptionsGroupBox)
         self.radioButton_4.setObjectName("radioButton_4")
-        self.painterButtonGroup.addButton(self.radioButton_4, 4)
+        self.painterButtonGroup.addButton(self.radioButton_4)
         self.verticalLayout.addWidget(self.radioButton_4)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
@@ -89,7 +95,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 924, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 924, 19))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -121,6 +127,7 @@ class Ui_MainWindow(object):
         self.saveStateButton.setText(_translate("MainWindow", "Save state"))
         self.loadStateButton.setText(_translate("MainWindow", "Load state"))
         self.label_4.setText(_translate("MainWindow", "Framerate:"))
+        self.label.setText(_translate("MainWindow", "Frame skipping"))
         self.label_3.setText(_translate("MainWindow", "Paint:"))
         self.radioButton.setText(_translate("MainWindow", "Foods"))
         self.radioButton_2.setText(_translate("MainWindow", "Obstacles"))
