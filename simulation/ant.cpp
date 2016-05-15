@@ -83,7 +83,7 @@ void Ant::step(int deltaTime) {
     if(controller_ != nullptr){
         controller_->step(deltaTime);
     }else{
-        std::cout<<"Don't have controller"<<std::endl;
+        //std::cout<<"Don't have controller"<<std::endl;
     }
 
     energy_-=0.1;

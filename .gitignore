@@ -38,3 +38,10 @@
 # Vim
 .*.swp
 *.vim
+
+# Profiling info
+*.gcno
+*.gcda
+
+# Test report output
+test_results/*
