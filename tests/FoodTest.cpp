@@ -8,6 +8,9 @@
 #include "../simulation/food.hpp"
 #include "../simulation/world.hpp"
 
+namespace FoodTest
+{
+
 BOOST_AUTO_TEST_CASE( testUsed )
 {
     {
@@ -34,3 +37,4 @@ BOOST_AUTO_TEST_CASE( testUsed )
     
 }
 
+} // namespace FoodTest
