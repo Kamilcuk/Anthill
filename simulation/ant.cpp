@@ -22,27 +22,43 @@ Ant::Ant(World* world, Point pos,Type type) :
 	Visitable(world),
 	Creature(world, pos)
 {
+    // Descriptions of Ant types (factory pattern implemented in constructor)
     if(type==Type::Worker){
         antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
         antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
         antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
-        controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+
         controller_=boost::make_shared<AntWorkerAI>(static_cast<Creature*>(this));
+
+        maxEnergy_=100;
+        energy_=maxEnergy_;
+
     }else if(type==Type::Queen){
         antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
         antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
         antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antQueenAbdomens.emplace_back(boost::make_shared<AntQueenAbdomen>(world,this));
+
         controller_=boost::make_shared<AntQueenAI>(static_cast<Creature*>(this));
+
+        maxEnergy_=500;
+        energy_=maxEnergy_;
+
     }else if(type==Type::Scout){
         antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
         antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
         antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
         antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
+
         controller_=boost::make_shared<AntScoutAI>(static_cast<Creature*>(this));
+
+        maxEnergy_=120;
+        energy_=maxEnergy_;
+
     }else if(type==Type::Larva){
         hasCollision_=false;
+        energy_=10;
         // no controller
     }
 }
@@ -61,14 +77,22 @@ using boost::shared_ptr;
 using boost::weak_ptr;
 
 void Ant::step(int deltaTime) {
-    
     if(!deltaTime)
         return;
 
     if(controller_ != nullptr){
         controller_->step(deltaTime);
     }else{
-        std::cout<<"Don't have controller"<<std::endl;
+        //std::cout<<"Don't have controller"<<std::endl;
+    }
+
+    energy_-=0.1;
+    energy_=std::min(energy_,maxEnergy_);
+
+    energy_=std::max(energy_,-10.0f);
+
+    if(energy_<=0){
+        flagToRemove();
     }
 }
 

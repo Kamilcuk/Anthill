@@ -33,6 +33,7 @@ public:
     virtual void step(int deltaTime){};
 };
 
+
 class AntLegs : public BodyPart{
     // how much time ant is standing in one place
     int timeNotMoving_;
@@ -57,6 +58,7 @@ private:
 		ar & targetPos_;
 	}
 };
+
 
 class AntMandibles;
 
@@ -123,8 +125,11 @@ private:
 	}
 };
 
+
 class AntMandibles : public BodyPart, virtual Visitable {
     boost::weak_ptr<Entity> holdingObject_;
+    boost::weak_ptr<Entity> bittingTarget_;
+
 public:
     AntMandibles(World* w, Creature* owner):
 		Visitable(w),
@@ -132,6 +137,7 @@ public:
     {}
     bool grab(boost::weak_ptr<Entity> e);
     bool grab(AntSensor::Observation o);
+    bool bite(AntSensor::Observation o);
     bool drop();
     void step(int);
 	bool isHolding() const { return !holdingObject_.expired(); }
@@ -149,6 +155,7 @@ public:
 	void accept(Visitor &v) const;
 	boost::weak_ptr<Entity> getHoldingObject() const;
 };
+
 
 class AntWorkerAbdomen : public BodyPart{
 	PheromoneMap::Type dropType;
@@ -170,6 +177,7 @@ private:
 	}
 };
 
+
 class AntQueenAbdomen : public BodyPart{
 	PheromoneMap::Type dropType;
 public:
@@ -188,6 +196,7 @@ private:
 		ar & dropType;
 	}
 };
+
 
 class AntLarvaBody : public BodyPart{
 public:

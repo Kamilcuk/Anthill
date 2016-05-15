@@ -9,6 +9,7 @@
 #include "point.hpp"
 
 // BodyPart
+
 bool BodyPart::isAccessible(Point p){
     if(!p.isInBounds(world_->getDimensions()))
         return false;
@@ -16,6 +17,8 @@ bool BodyPart::isAccessible(Point p){
     bool collision_detected = false;
     for(const auto& creature : world_->getSimulationObjects<Creature>()){
         if(creature->getPos() == p && creature->hasCollision()){
+            //if(creature.get() == owner_)
+            //    continue;
             collision_detected = true;
             break;
         }
@@ -33,6 +36,7 @@ bool BodyPart::isAccessible(Point p){
 
 
 // AntLegs
+
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
     targetPos_=owner->getPos();
@@ -84,6 +88,7 @@ void AntLegs::step(int deltatime){
                 y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
             if(BodyPart::isAccessible(Point(x,y))){
+                owner_->energy_-=0.1;
                 owner_->setPos(Point(x,y));
                 timeNotMoving_=0;
                 return;
@@ -92,6 +97,7 @@ void AntLegs::step(int deltatime){
         ++timeNotMoving_;
     }
 }
+
 
 // AntSensor
 
@@ -247,7 +253,9 @@ Point AntSensor::findAdjecentPos(Point p){
     return Point(INT_MAX,INT_MAX);
 }
 
+
 // AntMandibles
+
 boost::weak_ptr<Entity> AntMandibles::getHoldingObject() const
 {
 	return holdingObject_;
@@ -270,6 +278,14 @@ bool AntMandibles::grab(AntSensor::Observation o){
     return 1;
 }
 
+bool AntMandibles::bite(AntSensor::Observation o){
+    if(!o.ent_.expired() && o.getPos().isAdjacent(owner_->getPos())){
+        bittingTarget_=o.ent_;
+        return 1;
+    }
+    return 0;
+}
+
 bool AntMandibles::drop(){
     if(holdingObject_.expired())
         return false;
@@ -281,8 +297,16 @@ bool AntMandibles::drop(){
 
 void AntMandibles::step(int deltaTime){
     if(isHolding()){
+        if(deltaTime>0)
+            owner_->energy_-=0.1;
         holdingObject_.lock()->setPos(owner_->getPos());
-	}
+    }
+    if(deltaTime>0 && !bittingTarget_.expired()){
+        float en=bittingTarget_.lock()->bite(1);
+        owner_->energy_-=0.1;
+        owner_->energy_+=en;
+        bittingTarget_=boost::weak_ptr<Entity>();
+    }
 }
 
 void AntMandibles::accept(Visitor &v) const
@@ -290,7 +314,9 @@ void AntMandibles::accept(Visitor &v) const
 	v.visit(*this);
 }
 
+
 // AntWorkerAbdomen
+
 void AntWorkerAbdomen::dropToFoodPheromones(){
     dropType=PheromoneMap::Type::ToFood;
 }
@@ -306,6 +332,7 @@ void AntWorkerAbdomen::step(int deltaTime){
     for(const auto& pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
             pm->createBlob(owner_->getPos(), 1.5, 100);
+            owner_->energy_-=0.2;
             dropType = PheromoneMap::Type::None;
             return;
         }
@@ -317,6 +344,7 @@ void AntWorkerAbdomen::step(int deltaTime){
 
 
 // AntQueenAbdomen
+
 void AntQueenAbdomen::dropAnthillPheromones(){
     dropType=PheromoneMap::Type::Anthill;
 }
@@ -329,12 +357,15 @@ void AntQueenAbdomen::step(int deltaTime){
     for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
             pm->createBlob(owner_->getPos(), 6, 200);
+            owner_->energy_-=0.6;
             dropType = PheromoneMap::Type::None;
             return;
         }
     }
-
 }
+
+
+// AntLarvaBody
 
 void AntLarvaBody::step(int deltaTime){
     // TODO

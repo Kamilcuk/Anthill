@@ -8,6 +8,9 @@
 #include "../simulation/ant.hpp"
 #include "../simulation/world.hpp"
 
+namespace AntTest
+{
+
 BOOST_AUTO_TEST_CASE( testAntNoTeleportation )
 {
     World w;
@@ -27,3 +30,5 @@ BOOST_AUTO_TEST_CASE( testAntNoTeleportation )
         w.simulationStep();
     }
 }
+
+} // namespace AntTest

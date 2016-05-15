@@ -73,6 +73,12 @@ public:
 			std::pow(this->posY() - p.posY(), 2)
 			);
 	}
+    constexpr inline int getGridDistance(const Point& p) const
+	{
+		return
+			std::abs(this->posX() - p.posX()) +
+			std::abs(this->posY() - p.posY());
+	}
 	
     constexpr inline bool isInBounds(int size_x, int size_y) const
     {
@@ -93,6 +99,10 @@ public:
 			posX() <= std::max(p1.posX(), p2.posX()) && 
 			posY() >= std::min(p1.posY(), p2.posY()) &&
 			posY() <= std::max(p1.posY(), p2.posY());
+    }
+
+    constexpr inline bool isAdjacent(const Point& p){
+        return this->getGridDistance(p)<=1;
     }
 	
 private:

@@ -14,8 +14,6 @@ extern Creature* g_current_owner;
 class Creature : public Entity
 {
 protected:
-    bool hasCollision_;
-
     boost::shared_ptr<Controller> controller_;
 	
     // vectors of body parts
@@ -48,8 +46,9 @@ public:
     }
 
     Creature(World* world, Point pos):
-        Entity(world, pos),
-        hasCollision_(true) {}
+        Entity(world, pos){
+        hasCollision_=true;
+    }
     Creature(World* world):
         Entity(world) {}
         
@@ -57,6 +56,8 @@ public:
     {
         throw std::runtime_error("Creature::step called, should never happen.");
     }
+
+    float bite(float strength);
         
 private:
     friend class boost::serialization::access;
@@ -77,6 +78,10 @@ private:
 
     // body parts can for example add or remove other body parts
     friend BodyPart;
+    friend AntLegs;
+    friend AntMandibles;
+    friend AntWorkerAbdomen;
+    friend AntQueenAbdomen;
 };
 
 #endif // CREATURE_H

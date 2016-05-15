@@ -24,7 +24,6 @@ class AntWorkerAbdomen;
 class AntQueenAbdomen;
 
 class Ant : public Creature, virtual Visitable {
-
 public:
 	enum class Type 
 	{

@@ -2,7 +2,7 @@
 # Sconstruct file, Kamil Cukrowski
 
 # !	scons anthill (default) builds shared library for python
-# !	scons test				builds & runs tests
+# !	scons test				builds & runs tests; profiling works on linux
 # 	scons standalone		builds standalone version of anthill (for debug)
 # 	scons build_test		builds tests, doesn't run them
 
@@ -12,7 +12,6 @@ sources = [ Glob('simulation/*.cpp') ];
 
 # -- Environment() setup -- #
 env = Environment();
-env.VariantDir('_build', 'program', duplicate=0)
 if env['PLATFORM'] == 'win32':
 	env.Append(CCFLAGS = " /D BOOST_PYTHON_STATIC_LIB /O2 /D_USRDLL /D_WINDLL /DOTHER_DEFINES /LD /EHsc ");
 	env.Append(LINKFLAGS = " /DLL ");
@@ -23,9 +22,10 @@ if env['PLATFORM'] == 'win32':
 	env['SHLIBSUFFIX'] = '.pyd' ; # we want anthill.so, default is libanthill.se
 else:
 	# linux platform
-	env.Append(CCFLAGS = ' -Werror -Wall --std=c++14 -O2 -g -fPIC ');
+	env.Append(CCFLAGS = ' -Werror -Wall --std=c++14 -O2 -g -fPIC '\
+			'-fprofile-arcs -ftest-coverage ')
 	env.Append(CCFLAGS = '-Iboost'); # add boost support
-	env.Append(LINKFLAGS = '-fPIC -lboost_serialization'); # compile shared # boost serialization
+	env.Append(LINKFLAGS = '-fPIC -lboost_serialization -fprofile-arcs'); # compile shared # boost serialization
 	# add python3 support
 	env.ParseConfig('pkg-config --cflags --libs python3')
 	# strange library name on debian
@@ -50,8 +50,8 @@ anthill_standalone = env.Program(target = 'standalone', source = [ sources, 'mai
 
 # -- test using shared library that in the same folder that executable -- #
 env_test = env.Clone();
-env_test.Append(LINKFLAGS=' -lboost_unit_test_framework -L./ -Wl,-rpath -Wl,' + Dir('#').abspath + ' -lanthill ');
-env_test.Append(CCFLAGS=' -I ./simulation --define BOOST_TEST_DYN_LINK ')
+env_test.Append(LINKFLAGS='-lboost_unit_test_framework -L./ -Wl,-rpath -Wl,' + Dir('#').abspath + ' -lanthill');
+env_test.Append(CCFLAGS='--std=c++14 --define BOOST_TEST_DYN_LINK')
 env_test.VariantDir('_build_test', 'tests', duplicate=0)
 anthill_test = env_test.Program(target = 'build_test', source = [ Glob('_build_test/*.cpp'), 'main_tests.cpp' ] );
 Depends(anthill_test, libanthill)
@@ -60,8 +60,11 @@ Depends(anthill_test, libanthill)
 import os
 def run_tests(target, source, env):
 	print "\n\n\t\t\t----- TESTING ----- \n";
-	os.system("./build_test --log_level=message --show_progress=yes --report_level=short")
+	os.system("./build_test --log_level=message --show_progress=yes "\
+		"--report_level=short")
+	os.system("./generateTestReport.sh")
 	return None
-anthill_test_run = env_test.Command(target = 'test', source = "./build_test", action = run_tests );
+anthill_test_run = env_test.Command(target = 'test', source = "./build_test", 
+	action = run_tests );
 Depends(anthill_test_run, anthill_test)
 

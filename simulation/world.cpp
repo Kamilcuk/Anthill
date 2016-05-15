@@ -98,8 +98,6 @@ void World::saveState(std::string filename)
     std::cout << "Saving simulation state to " << filename << std::endl;
     std::ofstream file(filename);
     boost::archive::text_oarchive out_archive(file);
-    
-    // out_archive.register_type<Ant>();
      
     out_archive << *this;
     out_archive << foods_;
@@ -118,7 +116,6 @@ void World::loadState(std::string filename)
     boost::archive::text_iarchive in_archive(file);
     
     g_world = this; // see serialization.hpp for info on this line
-    // in_archive.register_type<Ant>();
     
     in_archive >> *this;
     in_archive >> foods_;
