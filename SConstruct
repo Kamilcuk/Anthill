@@ -12,6 +12,7 @@ sources = [ Glob('simulation/*.cpp') ];
 
 # -- Environment() setup -- #
 env = Environment();
+env.VariantDir('_build', 'program', duplicate=0)
 if env['PLATFORM'] == 'win32':
 	env.Append(CCFLAGS = " /D BOOST_PYTHON_STATIC_LIB /O2 /D_USRDLL /D_WINDLL /DOTHER_DEFINES /LD /EHsc ");
 	env.Append(LINKFLAGS = " /DLL ");
@@ -50,7 +51,7 @@ anthill_standalone = env.Program(target = 'standalone', source = [ sources, 'mai
 # -- test using shared library that in the same folder that executable -- #
 env_test = env.Clone();
 env_test.Append(LINKFLAGS=' -lboost_unit_test_framework -L./ -Wl,-rpath -Wl,' + Dir('#').abspath + ' -lanthill ');
-env_test.Append(CCFLAGS='--define BOOST_TEST_DYN_LINK')
+env_test.Append(CCFLAGS=' -I ./simulation --define BOOST_TEST_DYN_LINK ')
 env_test.VariantDir('_build_test', 'tests', duplicate=0)
 anthill_test = env_test.Program(target = 'build_test', source = [ Glob('_build_test/*.cpp'), 'main_tests.cpp' ] );
 Depends(anthill_test, libanthill)

@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QSizePolicy
 
 from PyQt5.QtGui import QPen
 from PyQt5.QtGui import QBrush
@@ -17,6 +18,41 @@ import ctypes
 
 import anthill
 #from timer import Timer
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+class Statistics():
+	def __init__(self, stat_label, parent, width=3, height=4, dpi=100):
+		self.fig = Figure(figsize=(width, height), dpi=dpi)
+		self.axes = self.fig.add_subplot(111)
+		self.axes.hold(False)
+		
+		self.canvas = FigureCanvasQTAgg(self.fig)
+		parent.addWidget(self.canvas, 1, 0, 1, 1)
+		
+		self.canvas.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+		self.canvas.updateGeometry()
+		
+		self.stat_label = stat_label;
+		self.reset()
+
+	def refresh(self, stats):
+		# stats.print()
+		_translate = QtCore.QCoreApplication.translate
+		self.stat_label.setText(_translate("MainWindow", stats.print()))
+		# counters
+		foodCnt = stats.foodCnt()
+		self.foods.append(foodCnt.existing)
+		self.stepNumbers.append(stats.stepNumber())
+		# plot
+		self.axes.plot(self.stepNumbers, self.foods)
+		self.axes.set_xlabel("Numer kroku symulacji")
+		self.axes.set_ylabel("Ilosc jedzenia")
+		self.canvas.draw()
+
+	def reset(self):
+		self.foods = []
+		self.stepNumbers = []
 
 class MainWindow(QMainWindow):
     def __init__(self,path=''):
@@ -55,7 +91,9 @@ class MainWindow(QMainWindow):
         
         self.maxPheromone=1        
         self.paused = True
-
+        
+        self.statistics = Statistics(self.ui.stat_label, self.ui.gridLayout_3)
+        
     def __exit__(self):
         self.refreshTimer.stop()
 
@@ -119,7 +157,6 @@ class MainWindow(QMainWindow):
         bgPen=QPen(QBrush(QColor()),0)
         scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
 
-        # symulacja tak? Kamil
         # na razie może być, później się zrobi wątek w c++. ms
         self.world.simulationStep()
 
@@ -157,10 +194,10 @@ class MainWindow(QMainWindow):
         self.drawEntities(anthills,anthillPen,anthillBrush)
         
         # update statistics
-        stats = self.world.getStatistics()
+        # if ( stats bar opened? ): then ; Kamil, no need for stastics if we aren't looking at them
+        stats = self.world.getStatistics();
         if stats:
-            _translate = QtCore.QCoreApplication.translate
-            self.ui.stat_label.setText(_translate("MainWindow", stats.print()))
+            self.statistics.refresh(stats)
 
     def restartTimer(self):
         self.refresh()
@@ -191,6 +228,7 @@ class MainWindow(QMainWindow):
                 antsParams = anthill.AntsParams()
                 anthill.WorldGenerator.placeAnts(self.world, antsParams)
 
+                self.statistics.reset()
                 self.world.startSimulation()
                 
             self.ui.startSimulationButton.setText(_translate(

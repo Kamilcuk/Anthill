@@ -28,7 +28,7 @@ using namespace boost::python;
 BOOST_PYTHON_MODULE(anthill)
 {
 #define REGISTER_SHAREDPTR(x) boost::python::register_ptr_to_python\
-    <shared_ptr<x>>();
+	<shared_ptr<x>>();
     
     REGISTER_SHAREDPTR(World);
     REGISTER_SHAREDPTR(WorldGenerator);
@@ -59,7 +59,9 @@ BOOST_PYTHON_MODULE(anthill)
 #define REGISTER_METHOD(cl, x) .def(#x, &cl::x)
 #define REGISTER_METHOD_REF(cl, x) \
     .def(#x, &cl::x, return_internal_reference<>())
-    
+
+#define REGISTER_VARIABLE_READONLY(cl, x) .def_readonly(#x, &cl::x)
+
 // for specific template method:
 #define REGISTER_WORLDGETOBJ_METHOD_REF(x) \
     .def("get"#x"s", &World::getSimulationObjects<x>,\
@@ -112,7 +114,17 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_METHOD(Point, posX)
         REGISTER_METHOD(Point, posY)
     ;    
+	REGISTER_CLASS_NOINIT(Statistics::EntityCnt)
+			REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, init)
+			REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, existing)
+			REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, removed)
+	;
     REGISTER_CLASS_NOINIT(Statistics)
-        REGISTER_METHOD(Statistics, print)
+			REGISTER_METHOD(Statistics, print)
+			REGISTER_METHOD(Statistics, antCnt)
+			REGISTER_METHOD(Statistics, foodCnt)
+			REGISTER_METHOD(Statistics, obstacleCnt)
+			REGISTER_METHOD(Statistics, stepNumber)
     ;
+
 }
