@@ -10,39 +10,90 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-using namespace std;
+Statistics::EntityCnt::EntityCnt() {
+	existing = removed = init = 0;
+}
+
+void Statistics::EntityCnt::prepare() {
+
+	existing = 0;
+}
+
+void Statistics::EntityCnt::count(const Entity &e, bool &firstCount) {
+	if ( firstCount ) {
+		init++;
+	}
+	if ( e.isFlaggedToRemove() ) {
+		/* hope we never see this entity again. Never. We relay on hope. */
+		removed++;
+	} else {
+		existing++;
+	}
+}
+
+Statistics::EntityCnt Statistics::antCnt() const
+{
+	return antCnt_;
+}
+
+Statistics::EntityCnt Statistics::foodCnt() const
+{
+	return foodCnt_;
+}
+
+Statistics::EntityCnt Statistics::obstacleCnt() const
+{
+	return obstacleCnt_;
+}
+
+unsigned int Statistics::stepNumber() const
+{
+	return stepNumber_;
+}
 
 Statistics::Statistics()
 {
-	this->reset();
+
+}
+
+const std::string print2(const Statistics::EntityCnt& u, const std::string app) {
+	return std::string(
+				app+" init count: "+std::to_string(u.init)+"\n"+
+				app+" alive: "+std::to_string(u.existing)+"\n"+
+				app+" dead: "+std::to_string(u.removed)+"\n"
+			);
 }
 
 const std::string Statistics::print() const
 {
-	return std::string( "Number ants alive: " + to_string(antCnt_.existing) + "\n" +
-			"Number food alive: " + to_string(antCnt_.existing) + "\n" +
-			"Init Food count: " + to_string(antCnt_.init) + "\n" +
-			"init ant vound: " + to_string(antCnt_.init) + "\n" +
-			"antsCarringFood_ = " + to_string(antsCarringFood_) + "\n" +
-			"Numebr of obstacles: " + to_string(obstacleCnt_.existing) + "\n" +
-			"initial number of obstacles: " + to_string(obstacleCnt_.init) + "\n" +
-			"Number of ants that died: " + to_string(antCnt_.removed) + "\n");
+	return std::string(
+				print2(antCnt_, "ants")+
+				print2(foodCnt_, "foods")+
+				print2(obstacleCnt_, "obstacles")+
+				"ants carring smth = " + std::to_string(antsCarring_) + "\n"+
+				"step number = " + std::to_string(stepNumber_)+"\n"
+			);
 }
 
 void Statistics::visit(const Ant &a)
 {
-	count(antCnt_, a);
+	antCnt_.count(a, firstCount_);
 }
 
 void Statistics::visit(const Food &f)
 {
-	count(foodCnt_, f);
+	foodCnt_.count(f, firstCount_);
+}
+
+void Statistics::visit(const Obstacle &u)
+{
+	obstacleCnt_.count(u, firstCount_);
 }
 
 void Statistics::visit(const AntMandibles &u)
 {
 	if ( u.isHolding() ) {
-		antsCarringFood_++;
+		antsCarring_++;
 
 		/* check if this is food? shlouldn't the ant know what and if its carrying a thing
 		auto f = u.getHoldingObject();
@@ -54,36 +105,22 @@ void Statistics::visit(const AntMandibles &u)
 	}
 }
 
-void Statistics::visit(const Obstacle &u)
-{
-	count(obstacleCnt_, u);
-}
-
-void Statistics::reset()
-{
-	stepNumber_ = 0;
-	antCnt_.reset();
-	foodCnt_.reset();
-	obstacleCnt_.reset();
-}
-
 void Statistics::update(const std::vector<Visitable*>& vv)
 {
+	/* upate stepNumber_ */
 	stepNumber_++;
-	antsCarringFood_ = 0;
+	if ( firstCount_ ) {
+		firstCount_ = ( stepNumber_ <= 1 );
+	}
+
+	/* prepare counters */
+	antsCarring_ = 0;
+	antCnt_.prepare();
+	foodCnt_.prepare();
+	obstacleCnt_.prepare();
+
+	/* visit! */
 	for (auto& v : vv) {
 		v->accept(*this);
 	}
-}
-
-void Statistics::count(UpdatableCount &c, const Updatable &u)
-{
-	if ( stepNumber_ == 1 ) {
-		c.init++;
-		c.existing++;
-	}
-	// if ( u.isFlaggedToRemove() ) {
-	// 	c.existing--;
-	// 	c.removed++;
-	// }
 }
