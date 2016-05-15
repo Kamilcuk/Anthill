@@ -23,6 +23,15 @@ class Entity : public Updatable, public boost::enable_shared_from_this<Entity>
 	/** position of this entity */
 	Point pos_;
 
+    // for different derived classes different meaning,
+    // but all of them need this variable
+    // ex. Ant life energy, Obstacle endurance, Food energy, etc.
+
+protected:
+    bool hasCollision_;
+    float energy_;
+    float maxEnergy_;
+
 public:
     enum class Smell{
         Food,
@@ -64,12 +73,20 @@ public:
 	/** return lenght of a straight line betweej this and the other entity */
     float getDistance(Entity * const e) const;
 
+
     // physics
     virtual Smell getSmell(){ return Smell::None;}
     virtual int getColorR(){return 0;}
     virtual int getColorG(){return 0;}
     virtual int getColorB(){return 0;}
     virtual int getColorA(){return 255;}
+
+    // have yourself bitten,
+    // returns energy that can be eaten
+    virtual float bite(float strength){return 0;}
+
+    float getEnergy(){return energy_;}
+    float getMaxEnergy(){return maxEnergy_;}
     
 private:
     bool to_remove_flag_ = false;  
@@ -81,6 +98,7 @@ private:
 	{
 		ar & pos_;
 	}
+
 };
 
 #endif // ENTITY_H

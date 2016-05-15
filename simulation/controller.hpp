@@ -9,6 +9,18 @@ class Creature;
 class Controller{
 protected:
     Creature* owner_;
+
+    // methods that can be used by other controllers
+    
+    // returns (if there is something to eat, eatenSomething)
+    std::pair<bool,bool> eatingActivity(auto, auto, auto);
+
+    // returns (if returned, if lost pheromone trace)
+    std::pair<bool,bool> returnToAnthill(auto, auto, auto);
+
+    // returns (took food, if uses froomFood pheromones to find it)
+    std::pair<bool,bool> goToFood(auto,auto,auto);
+
 public:
     Controller(Creature* owner){
         owner_=owner;
@@ -23,10 +35,18 @@ private:
 	}
 };
 
+
 class AntWorkerAI : public Controller{
     // ant starts to panic when is probably deadlocked with other ants
     int panicTimeLeft_;
     int timeSearchingWithFromFoodPheromones_;
+
+    enum class Activity{
+        TakingFoodToAnthill,
+        GoingToFoodSource,
+        Eating
+    };
+    Activity currentActivity_;
 
 public:
     AntWorkerAI(Creature* owner);
@@ -40,8 +60,10 @@ private:
         ar & boost::serialization::base_object<Controller>(*this);
 		ar & panicTimeLeft_;
         ar & timeSearchingWithFromFoodPheromones_;
+        ar & currentActivity_;
 	}
 };
+
 
 class AntQueenAI : public Controller{
 public:
@@ -57,12 +79,15 @@ private:
 	}
 };
 
+
 class AntScoutAI : public Controller{
     // ant starts to panic when is probably deadlocked with other ants
     int panicTimeLeft_;
     enum class Activity{
         ScanningArea,
-        MarkingPathToFood
+        MarkingPathToFood,
+        ReturnToAnthill,
+        Eating
     };
     Activity currentActivity_;
 

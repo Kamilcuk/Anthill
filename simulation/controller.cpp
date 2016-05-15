@@ -3,10 +3,101 @@
 #include "bodyParts.hpp"
 #include "pheromoneMap.hpp"
 
+std::pair<bool,bool> Controller::eatingActivity(auto legs, auto sensor, auto ma){
+    bool eatenSomething=false;
+    bool foundTarget=false;
+    auto observations = sensor->getObservations();
+    for(auto o : observations){
+        if((o.getSmell()==Entity::Smell::Food)){
+            if(ma->bite(o)==false){
+                Point eatingPos=o.getPos();
+                if(sensor->isAccessible(o)){
+                    legs->goToPos(eatingPos);
+                    foundTarget=true;
+                    break;
+                }else{
+                    continue;
+                }
+            }else{
+
+                eatenSomething=true;
+                break;
+            }
+        }
+    }
+    return std::make_pair(foundTarget,eatenSomething);
+}
+
+std::pair<bool,bool> Controller::returnToAnthill(auto legs, auto sensor, auto ma){
+    Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill);
+    bool lostTrace=false;
+    bool returned=false;
+
+    if(target!=Point(INT_MAX,INT_MAX)){
+        // sensed Anthill
+        if(target==owner_->getPos()){
+            ma->drop();
+
+            returned=true;
+
+        }else{
+            legs->goToPos(target);
+        }
+    }else{
+        // search Anthill
+        target=sensor->getFarthestPheromone(PheromoneMap::Type::ToFood);
+        if(target!=owner_->getPos()){
+            legs->goToPos(target);
+        }else{
+            lostTrace=true;
+            // lost trace
+            legs->goRandom();
+        }
+    }
+
+    return std::make_pair(returned,lostTrace);
+}
+
+std::pair<bool,bool> Controller::goToFood(auto legs, auto sensor, auto ma){
+    bool takenFood=false;
+    bool usingFromFoodPheromones=false;
+    Point target=sensor->getFarthestPheromone(PheromoneMap::Type::FromFood);
+    if(target==owner_->getPos()){ // || timeSearchingWithFromFoodPheromones_>70){
+        legs->goRandom();
+    }else{
+        legs->goToPos(target);
+        usingFromFoodPheromones=true;
+    }
+        
+    auto observations = sensor->getObservations();
+    for(auto o : observations){
+        if(sensor->getPheromoneStrength(PheromoneMap::Type::Anthill,o.getPos())>0.05)
+            // this food is already in Anthill
+            continue;
+
+        if((o.getSmell()==Entity::Smell::Food) && !ma->isHolding()){
+            if(o.getPos() != owner_->getPos()){ 
+                if(sensor->isAccessible(o)){
+                    //timeSearchingWithFromFoodPheromones_=0;
+                    legs->goToPos(o.getPos());
+                    break;
+                }
+            }else{
+                ma->grab(o);
+                takenFood=true;
+                break;
+            }
+        }
+    }
+
+    return std::make_pair(takenFood,usingFromFoodPheromones);
+}
+
 AntWorkerAI::AntWorkerAI(Creature* owner):
     Controller(owner),
     panicTimeLeft_(0),
     timeSearchingWithFromFoodPheromones_(0){
+    currentActivity_=Activity::GoingToFoodSource;
 }
 
 
@@ -55,71 +146,66 @@ void AntWorkerAI::step(int deltatime){
         return;
     }
 
-    if(!ma->isHolding()){
-        // search food
-        
-        bool usingFromFoodPheromones=false;
-        Point target=sensor->getFarthestPheromone(PheromoneMap::Type::FromFood);
-        if(target==owner_->getPos()){ // || timeSearchingWithFromFoodPheromones_>70){
-            legs->goRandom();
-        }else{
-            legs->goToPos(target);
+    //if(!ma->isHolding()){
+    if(currentActivity_==Activity::GoingToFoodSource){
+
+        auto temp=goToFood(legs,sensor,ma);
+        bool takenFood=temp.first;
+        bool usingFromFoodPheromones=temp.second;
+
+        if(usingFromFoodPheromones)
             ++timeSearchingWithFromFoodPheromones_;
-            usingFromFoodPheromones=true;
-        }
-            
-        auto observations = sensor->getObservations();
-        for(auto o : observations){
-            if(sensor->getPheromoneStrength(PheromoneMap::Type::Anthill,o.getPos())>0.05)
-                // this food is already in Anthill
-                continue;
 
-            if((o.getSmell()==Entity::Smell::Food) && !ma->isHolding()){
-                if(o.getPos() != owner_->getPos()){ 
-                    if(sensor->isAccessible(o)){
-                        timeSearchingWithFromFoodPheromones_=0;
-                        legs->goToPos(o.getPos());
-                        break;
-                    }
-                }else{
-                    ma->grab(o);
-                    break;
-                }
-            }
-        }
-
-        if(usingFromFoodPheromones && timeSearchingWithFromFoodPheromones_<70)
+        // maybe you are marking path to food for too long, 
+        // this is probably a fake path
+        if(usingFromFoodPheromones && timeSearchingWithFromFoodPheromones_<150)
             abd->dropToFoodPheromones();
-    }else{
-        // take food to Anthill
 
-        Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill);
-        bool lostTrace=false;
-
-        if(target!=Point(INT_MAX,INT_MAX)){
-            // sensed Anthill
-            if(target==owner_->getPos()){
-                ma->drop();
-            }else{
-                legs->goToPos(target);
-            }
-        }else{
-            // search Anthill
-            target=sensor->getFarthestPheromone(PheromoneMap::Type::ToFood);
-            if(target!=owner_->getPos()){
-                legs->goToPos(target);
-            }else{
-                lostTrace=true;
-                // lost trace
-                legs->goRandom();
-            }
+        if(takenFood){
+            timeSearchingWithFromFoodPheromones_=0;
+            abd->dropFromFoodPheromones();
+            currentActivity_=Activity::TakingFoodToAnthill;
         }
+
+    }else if(currentActivity_==Activity::TakingFoodToAnthill){
+        
+        auto temp=returnToAnthill(legs,sensor,ma);
+        bool returned=temp.first;
+        bool lostTrace=temp.second;
 
         if(!lostTrace)
             abd->dropFromFoodPheromones();
+        else
+            legs->goRandom();
+
+        if(returned){
+            abd->dropFromFoodPheromones();
+
+            if(owner_->getEnergy()< 50)
+                currentActivity_=Activity::Eating;
+            else
+                currentActivity_=Activity::GoingToFoodSource;
+        }
+
+    }else if(currentActivity_==Activity::Eating){
+
+        auto temp=eatingActivity(legs,sensor,ma);
+        bool targetFound=temp.first;
+        bool eatenSomething=temp.second;
+
+        if(!eatenSomething && !targetFound)
+            // no food
+            currentActivity_=Activity::GoingToFoodSource;
+
+        if(owner_->getEnergy()>=owner_->getMaxEnergy()-1)
+            // fed
+            currentActivity_=Activity::GoingToFoodSource;
+
+    }else{
+        std::cout<<"worker no activity"<<std::endl;
     }
 
-    if(legs->getTimeNotMoving()>2){
+    if(legs->getTimeNotMoving()>2 && currentActivity_!=Activity::Eating){
         panicTimeLeft_=4;
         legs->goRandom();
     }
@@ -228,6 +314,7 @@ void AntScoutAI::step(int deltatime){
         return;
     }
 
+
     if(currentActivity_==Activity::ScanningArea){
         // search food
         
@@ -247,49 +334,59 @@ void AntScoutAI::step(int deltatime){
                     }
                 }else{
                     ma->grab(o);
+                    abd->dropToFoodPheromones();
                     currentActivity_=Activity::MarkingPathToFood;
                     break;
                 }
             }
         }
 
-        abd->dropToFoodPheromones();
-    }else if(currentActivity_==Activity::MarkingPathToFood){
-        // take food to Anthill
+        if(owner_->getEnergy()< 50)
+            // should return 
+            currentActivity_=Activity::ReturnToAnthill;
+        else
+            // continue scanning activity
+            abd->dropToFoodPheromones();
+
+    }else if(currentActivity_==Activity::MarkingPathToFood ||
+             currentActivity_==Activity::ReturnToAnthill){
         
+        auto temp=returnToAnthill(legs,sensor,ma);
+        bool returned=temp.first;
+        bool lostTrace=temp.second;
 
-        Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill);
-        bool lostTrace=false;
+        // don't mark path, if it is randomly chosen
+        if(!lostTrace && currentActivity_==Activity::MarkingPathToFood)
+            abd->dropFromFoodPheromones();
 
-        if(target!=Point(INT_MAX,INT_MAX)){
-            // sensed Anthill
-            //lostTrace=false;
-            if(target==owner_->getPos()){
-                ma->drop();
+        if(returned){
+            // check if should eat, or start scanning
+            if(owner_->getEnergy()< 50)
+                currentActivity_=Activity::Eating;
+            else
                 currentActivity_=Activity::ScanningArea;
-            }else{
-                legs->goToPos(target);
-            }
-        }else{
-            // search Anthill
-            target=sensor->getFarthestPheromone(PheromoneMap::Type::ToFood);
-            if(target!=owner_->getPos()){
-                legs->goToPos(target);
-            }else{
-                lostTrace=true;
-                // lost trace
-                legs->goRandom();
-            }
         }
 
-        if(!lostTrace)
-            abd->dropFromFoodPheromones();
+    }else if(currentActivity_==Activity::Eating){
+
+        auto temp=eatingActivity(legs,sensor,ma);
+        bool targetFound=temp.first;
+        bool eatenSomething=temp.second;
+
+        if(!eatenSomething && !targetFound)
+            // no food
+            currentActivity_=Activity::ScanningArea;
+
+        if(owner_->getEnergy()>=owner_->getMaxEnergy()-1)
+            // fed
+            currentActivity_=Activity::ScanningArea;
+
     }else{
         std::cout<<"No activity"<<std::endl;
     }
 
-    if(legs->getTimeNotMoving()>3){
-        panicTimeLeft_=5;
+    if(legs->getTimeNotMoving()>2 && currentActivity_!=Activity::Eating){
+        panicTimeLeft_=2;
         legs->goRandom();
     }
 }
