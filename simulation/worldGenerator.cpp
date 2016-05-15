@@ -24,7 +24,7 @@ void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
 {
     for(int i = 0; i < params.quantity; i++)
     {
-        Point pos(rand() % world->width, rand() % (world->height));
+        Point pos(rand() % world->width_, rand() % (world->height_));
             
         world->addSimulationObject<Anthill>(
             boost::make_shared<Anthill>(world, pos));
@@ -40,72 +40,118 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
     if(world->getSimulationObjects<Anthill>().size() == 0) 
         throw std::runtime_error("No anthill!");
         
-    int delta = params.max_dist_from_anthill - params.min_dist_from_anthill;
+    const int delta = params.max_dist_from_anthill - 
+        params.min_dist_from_anthill;
     
-    // todo: more anthills
+    // todo: handle more anthills
     auto anthill_pos = world->getSimulationObjects<Anthill>()[0]->getPos();
     
     int num_spawned = 0;
+    int scouts_count = int((params.quantity-1)*0.1);
+    if (scouts_count==0 && params.quantity>1){
+        // at least 1 scout
+        scouts_count=1;
+    }
+
     while(num_spawned < params.quantity)
     {
         Point pos(anthill_pos.posX() + rand() % delta * randSign(),
             anthill_pos.posY() + rand() % delta * randSign());
         
-        // check map bounds
-        if (!pos.isInBounds(world->width, world->height))
+        if (!pos.isInBounds(world->width_, world->height_))
+            continue;
+
+        bool collision_detected = false;
+        for(const auto& obstacle : world->getSimulationObjects<Obstacle>())
+        {
+            if(obstacle->getPos() == pos)
+            {
+                collision_detected = true;
+                break;
+            }
+        }
+        if(collision_detected)
             continue;
             
-        world->addSimulationObject<Creature>(
-            boost::make_shared<Ant>(world, pos));
+        if(num_spawned == 0)
+        {
+            // spawn one queen
+            world->addSimulationObject<Creature>(
+                boost::make_shared<Ant>(world, pos, Ant::Type::Queen));
+        }
+        else if(num_spawned <= scouts_count)
+        {
+            world->addSimulationObject<Creature>(
+                boost::make_shared<Ant>(world, pos, Ant::Type::Scout));
+        }else{
+            world->addSimulationObject<Creature>(
+                boost::make_shared<Ant>(world, pos, Ant::Type::Worker));
+        }
 
-        // all correct
         num_spawned++;
     }   
 }
 
 void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
 {
-    if(params.quantity < 0) 
-        throw std::runtime_error("Invalid quantity of obstacles");
+    if(params.quantity_per_100_by_100 < 0) 
+        throw std::runtime_error("Invalid quantity per 100 by 100 of obstacles");
+        
+    const int num_to_spawn = params.quantity_per_100_by_100 * 
+        world->width_ * world->height_ / 10000.0;
         
     int num_spawned = 0;
-    while(num_spawned < params.quantity)
+    while(num_spawned < num_to_spawn)
     {       
-        for(auto point : generateBlob<Obstacle>(params.blob, 
-                world->width, world->height))
+        for(const auto& point : params.blob.generate( 
+                world->width_, world->height_))
         {
-            if(!point.isInBounds(world->width, world->height))
+            if(!point.isInBounds(world->width_, world->height_))
                 continue;
                 
             world->addSimulationObject<Obstacle>(
                 boost::make_shared<Obstacle>(world, point));
         }
     
-        // all correct
         num_spawned++;
     }  
 }
 
 void WorldGenerator::placeFoods(World* world, FoodsParams& params)
 {
-    if(params.quantity < 0) 
-        throw std::runtime_error("Invalid quantity of foods");
+    if(params.quantity_per_100_by_100 < 0) 
+        throw std::runtime_error("Invalid quantity per 100 by 100 of foods");
+        
+    const int num_to_spawn = params.quantity_per_100_by_100 * 
+        world->width_ * world->height_ / 10000.0;
         
     int num_spawned = 0;
-    while(num_spawned < params.quantity)
+    while(num_spawned < num_to_spawn)
     {       
-        for(auto point : generateBlob<Food>(params.blob, 
-                world->width, world->height))
+        for(const auto& point : params.blob.generate( 
+                world->width_, world->height_))
         {
-            if(!point.isInBounds(world->width, world->height))
+            if(!point.isInBounds(world->width_, world->height_))
                 continue;
 
             world->addSimulationObject<Food>(
                 boost::make_shared<Food>(world, point));
         }
                     
-        // all correct
         num_spawned++;
     }  
+}
 
+void WorldGenerator::initPheromoneMaps(World* world, float to_food_decay_rate,
+    float from_food_decay_rate, float anthill_decay_rate)
+{
+    world->pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::ToFood, 
+            world->width_, world->height_, to_food_decay_rate));
+    world->pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::FromFood, 
+            world->width_, world->height_, from_food_decay_rate));
+    world->pheromone_maps_.emplace_back(
+        boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::Anthill, 
+            world->width_, world->height_, anthill_decay_rate));
 }

@@ -1,54 +1,116 @@
 #include "bodyParts.hpp"
+
+#include <set>
+
 #include "creature.hpp"
 #include "world.hpp"
 #include "pheromoneMap.hpp"
-#include "ant.hpp"
+#include "obstacle.hpp"
+#include "point.hpp"
 
+// BodyPart
+bool BodyPart::isAccessible(Point p){
+    if(!p.isInBounds(world_->getDimensions()))
+        return false;
+
+    bool collision_detected = false;
+    for(const auto& creature : world_->getSimulationObjects<Creature>()){
+        if(creature->getPos() == p && creature->hasCollision()){
+            collision_detected = true;
+            break;
+        }
+    }
+    if(collision_detected)
+        return false;
+    for(const auto& obstacle : world_->getSimulationObjects<Obstacle>()){
+        if(obstacle->getPos() == p){
+            collision_detected = true;
+            break;
+        }
+    }
+    return !collision_detected;
+}
+
+
+// AntLegs
 AntLegs::AntLegs(World* w, Creature* owner) : BodyPart(w,owner)
 {
     targetPos_=owner->getPos();
+    timeNotMoving_=0;
+    timeGoingRandom_=0;
 }
 
 void AntLegs::goToPos(const Point& p){
+    timeGoingRandom_=0;
     targetPos_=p;
+}
+
+void AntLegs::goRandom(){
+    ++timeGoingRandom_;
+    if(timeGoingRandom_>10 || timeGoingRandom_==1){
+        targetPos_=Point(rand()-RAND_MAX/2, rand()-RAND_MAX/2);
+        if(timeGoingRandom_>10)
+            timeGoingRandom_=0;
+    }
 }
 
 void AntLegs::step(int deltatime){
     while((deltatime--)>0){
         Point curPos=owner_->getPos();
-        int x=curPos.posX();
-        int y=curPos.posY();
-        if(curPos.posX() != targetPos_.posX())
-            x+= (curPos.posX() < targetPos_.posX()) ? 1 : -1;
-        if(curPos.posY() != targetPos_.posY())
-            y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
 
         // check if this position is free (there is no other creature)
         // (detect collision)
-        for(auto a : world_->getSimulationObjects<Creature>()){
-            if(a->getPos() == Point(x,y)){
-                // collision detected
+
+        for(int i=0;i<=2;++i){
+            // try to move by both axes, then single axes if not possible
+            bool dx,dy;
+            if(i==0){
+                dx=1;
+                dy=1;
+            }else if(i==1){
+                dx=1;
+                dy=0;
+            }else if(i==2){
+                dx=0;
+                dy=1;
+            }
+
+            int x=curPos.posX();
+            int y=curPos.posY();
+
+            if(dx && curPos.posX() != targetPos_.posX())
+                x+= (curPos.posX() < targetPos_.posX()) ? 1 : -1;
+            if(dy && curPos.posY() != targetPos_.posY())
+                y+= (curPos.posY() < targetPos_.posY()) ? 1 : -1;
+
+            if(BodyPart::isAccessible(Point(x,y))){
+                owner_->setPos(Point(x,y));
+                timeNotMoving_=0;
                 return;
             }
         }
-        owner_->setPos(Point(x,y));
+        ++timeNotMoving_;
     }
 }
 
 // AntSensor
+
+const float AntSensor::pheromoneRange=7.0;
+const float AntSensor::seeingRange=7.0;
+
 Point AntSensor::Observation::getPos()const{ 
     return ent_.lock()->getPos(); 
 }
 
-int AntSensor::Observation::getSmell()const{
+Entity::Smell AntSensor::Observation::getSmell()const{
     return ent_.lock()->getSmell(); 
 }
 
-std::vector<AntSensor::Observation> AntSensor::getEntities(){
+std::vector<AntSensor::Observation> AntSensor::getObservations(){
     std::vector<Observation> ret;
     
-    for(auto& a : world_->getEntityPtrs()){
-        if(a.lock()->getPos().getDistance(owner_->getPos()) <= 4)
+    for(const auto& a : world_->getEntityPtrs()){
+        if(a.lock()->getPos().getDistance(owner_->getPos()) <= seeingRange)
             ret.push_back(Observation(a));
     }
     
@@ -61,6 +123,130 @@ std::vector<AntSensor::Observation> AntSensor::getEntities(){
     return ret;
 }
 
+bool AntSensor::isAccessible(const Observation& o){
+    return BodyPart::isAccessible(o.getPos());
+}
+
+
+Point AntSensor::getClosestPheromone(PheromoneMap::Type pType, float distance){
+    float range=pheromoneRange;
+    int r=int(range+1);
+    Point ownPos=owner_->getPos();
+
+    Point bestFit=Point(INT_MAX,INT_MAX);
+
+    for(const auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType() != pType)
+            continue;
+
+        for(int dx=-r; dx<=r; ++dx){
+            for(int dy=-r; dy<=r; ++dy){
+
+                int x=ownPos.posX()+dx;
+                int y=ownPos.posY()+dy;
+                Point pos=Point(x,y);
+
+                if(pos.getDistance(ownPos)>range)
+                    continue;
+
+                if(!pos.isInBounds(world_->getDimensions())) 
+                    continue;
+
+                if(pos.getDistance(ownPos)<distance)
+                    continue;
+
+                if(pm->getStrengthAtPosition(pos)<0.1)
+                    continue;
+
+                if(pos.getDistance(ownPos) < bestFit.getDistance(ownPos)){
+                    bestFit=pos;
+                }
+            }
+        }
+    }
+
+    return bestFit;
+}
+
+Point AntSensor::getFarthestPheromone(PheromoneMap::Type pType,float maxDistance){
+    float range=pheromoneRange;
+    int r=int(range+1);
+    Point ownPos=owner_->getPos();
+    Point bestFit=ownPos;
+
+    for(const auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType() != pType)
+            continue;
+
+        for(int dx=-r; dx<=r; ++dx){
+            for(int dy=-r; dy<=r; ++dy){
+
+                int x=ownPos.posX()+dx;
+                int y=ownPos.posY()+dy;
+                Point pos=Point(x,y);
+
+                if(pos.getDistance(ownPos)>range)
+                    continue;
+
+                if(!pos.isInBounds(world_->getDimensions())) 
+                    continue;
+
+                if(pos.getDistance(ownPos)>maxDistance)
+                    continue;
+
+                if(pm->getStrengthAtPosition(pos)<0.1)
+                    continue;
+
+                const float epsilon=1.5;
+                if(pos.getDistance(ownPos)-epsilon > bestFit.getDistance(ownPos)){
+                    // is much larger
+                    bestFit=pos;
+                    continue;
+                }
+
+                const float epsilon2=0.5;
+                if(pos.getDistance(ownPos) + epsilon2 > bestFit.getDistance(ownPos)){
+                    // is weakly(with epsilon) larger
+                    // prefer pos that is closer to lastSensedPheromonePos
+                    if(    pos.getDistance(lastSensedPheromonePos_) <
+                        bestFit.getDistance(lastSensedPheromonePos_)){
+                        bestFit=pos;
+                    }
+                }
+            }
+        }
+        break;
+    }
+    lastSensedPheromonePos_=bestFit;
+    return bestFit;
+}
+
+float AntSensor::getPheromoneStrength(PheromoneMap::Type type, Point pos){
+    for(const auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType() != type)
+            continue;
+        if(owner_->getPos().getDistance(pos)<=pheromoneRange)
+            return pm->getStrengthAtPosition(pos);
+        else 
+            return 0;
+    }
+    return 0;
+}
+
+Point AntSensor::findAdjecentPos(Point p){
+    for(int dx=-1; dx<=1; ++dx){
+        for(int dy=-1; dy<=1; ++dy){
+            if((dx==0) xor (dy==0)){
+                Point adjP=Point(p.posX()+dx,p.posY()+dy);
+                if(BodyPart::isAccessible(adjP)){
+                    return adjP;
+                }
+            }
+        }
+    }
+    return Point(INT_MAX,INT_MAX);
+}
+
 // AntMandibles
 boost::weak_ptr<Entity> AntMandibles::getHoldingObject() const
 {
@@ -68,18 +254,29 @@ boost::weak_ptr<Entity> AntMandibles::getHoldingObject() const
 }
 
 bool AntMandibles::grab(boost::weak_ptr<Entity> e){
-	if(owner_->getPos()!=e.lock()->getPos())
-        return 0;
-    if(isHolding()){
-        return 0;
+    
+    if(isHolding())
+        return false;
+    
+    if (owner_->getPos()== e.lock()->getPos()){
+        holdingObject_ = e;
     }
-    holdingObject_=e;
-    return 1;
+
+    return true;
 }
 
 bool AntMandibles::grab(AntSensor::Observation o){
     grab(o.ent_);
     return 1;
+}
+
+bool AntMandibles::drop(){
+    if(holdingObject_.expired())
+        return false;
+    else{
+        holdingObject_=boost::weak_ptr<Entity>();
+        return true;
+    }
 }
 
 void AntMandibles::step(int deltaTime){
@@ -97,20 +294,49 @@ void AntMandibles::accept(Visitor &v) const
 void AntWorkerAbdomen::dropToFoodPheromones(){
     dropType=PheromoneMap::Type::ToFood;
 }
+void AntWorkerAbdomen::dropFromFoodPheromones(){
+    dropType=PheromoneMap::Type::FromFood;
+}
 
 void AntWorkerAbdomen::step(int deltaTime){
     if(deltaTime<=0)
         return;
     if(dropType == PheromoneMap::Type::None)
         return;
-    for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
+    for(const auto& pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
-            pm->createBlob(owner_->getPos(), 2, 100);
+            pm->createBlob(owner_->getPos(), 1.5, 100);
+            dropType = PheromoneMap::Type::None;
             return;
         }
     }
 
+    throw std::runtime_error("AntWorkerAbdomen::step, no such pheromone map");
     dropType = PheromoneMap::Type::None;
 }
 
 
+// AntQueenAbdomen
+void AntQueenAbdomen::dropAnthillPheromones(){
+    dropType=PheromoneMap::Type::Anthill;
+}
+
+void AntQueenAbdomen::step(int deltaTime){
+    if(deltaTime<=0)
+        return;
+    if(dropType == PheromoneMap::Type::None)
+        return;
+    for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
+        if(pm->getType()==dropType){
+            pm->createBlob(owner_->getPos(), 6, 200);
+            dropType = PheromoneMap::Type::None;
+            return;
+        }
+    }
+
+}
+
+void AntLarvaBody::step(int deltaTime){
+    // TODO
+    assert(0);
+}

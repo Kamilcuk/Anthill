@@ -18,12 +18,15 @@
 #include "pheromoneMap.hpp"
 #include "visitable.hpp"
 
-class Entity;
+#include "entity.hpp"
 class Creature;
 
 class BodyPart : public Updatable{
 protected:
     Creature* owner_;
+
+    // 'global' methods for derived body parts
+    bool isAccessible(Point);
 public:
     BodyPart(World* w, Creature* c):
         Updatable(w), owner_(c){}
@@ -31,19 +34,26 @@ public:
 };
 
 class AntLegs : public BodyPart{
+    // how much time ant is standing in one place
+    int timeNotMoving_;
+    int timeGoingRandom_;
     Point targetPos_;
 public:
     AntLegs(World* w, Creature* owner);
     AntLegs(const AntLegs& o) :
         BodyPart(o) {}
     void goToPos(const Point& p);
+    void goRandom();
     void step(int);
+    int getTimeNotMoving(){ return timeNotMoving_; }
     
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
-	{
+    {
+		ar & timeNotMoving_;
+		ar & timeGoingRandom_;
 		ar & targetPos_;
 	}
 };
@@ -52,13 +62,21 @@ class AntMandibles;
 
 class AntSensor : public BodyPart{
 public:
+    // how far pheromones can be from owner to be detected 
+    // and recognized
+    const static float pheromoneRange;
+
+    // how far entities can be to be observed by owner
+    const static float seeingRange;
+
     class Observation {
         boost::weak_ptr<Entity> ent_;
+
     public:
         Observation(boost::weak_ptr<Entity> e) : ent_(e)
         { }
         Point getPos()const;
-        int getSmell()const;
+        Entity::Smell getSmell()const;
 
         // All body parts implements whole physics.
         // AntMandibles must know more about this object
@@ -68,16 +86,40 @@ public:
         // so,
         friend AntMandibles;
     };
+
+    // when sensing pheromone, 
+    // these closer to last are prefered
+    Point lastSensedPheromonePos_;
+
     AntSensor(World* w, Creature* owner):
         BodyPart(w,owner){}
 
-    std::vector<Observation> getEntities();
+    std::vector<Observation> getObservations();
+
+    bool isAccessible(const Observation&);
+
+    // retruns closest pheromone 'entity' position whose 
+    // distance from owner_ is >= distance
+    // if don't exist returns Point(INF,INF)
+    // visibility is clamped to an constant
+    Point getClosestPheromone(PheromoneMap::Type,float distance=0);
+
+    // returns farthest pheromone 'entity' position whose 
+    // distance from owner_ is <= distance
+    // if don't exist returns owner position
+    // visibility is clamped to an constant
+    Point getFarthestPheromone(PheromoneMap::Type,float maxDistance=1000000);
+
+    float getPheromoneStrength(PheromoneMap::Type,Point);
+
+    Point findAdjecentPos(Point p);
     
 private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& ar, const unsigned int version)
     {
+        ar & lastSensedPheromonePos_;
 	}
 };
 
@@ -90,6 +132,7 @@ public:
     {}
     bool grab(boost::weak_ptr<Entity> e);
     bool grab(AntSensor::Observation o);
+    bool drop();
     void step(int);
 	bool isHolding() const { return !holdingObject_.expired(); }
     
@@ -125,6 +168,33 @@ private:
 	{
 		ar & dropType;
 	}
+};
+
+class AntQueenAbdomen : public BodyPart{
+	PheromoneMap::Type dropType;
+public:
+    AntQueenAbdomen(World* w, Creature* owner):
+        BodyPart(w,owner),
+        dropType(PheromoneMap::Type::None) // don't drop
+    {};
+    void dropAnthillPheromones();
+    void step(int);
+    
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & dropType;
+	}
+};
+
+class AntLarvaBody : public BodyPart{
+public:
+    AntLarvaBody(World* w, Creature* owner):
+        BodyPart(w,owner)
+    {}
+    void step(int);
 };
 
 

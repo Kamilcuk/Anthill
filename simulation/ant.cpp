@@ -18,26 +18,39 @@
 #include "bodyParts.hpp"
 
 
-Ant::Ant(World* world, Point pos) :
+Ant::Ant(World* world, Point pos,Type type) :
 	Visitable(world),
 	Creature(world, pos)
 {
-	antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
-    antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
-    antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
-    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-        this));
+    if(type==Type::Worker){
+        antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+        antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+        antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+        antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
+        controller_=boost::shared_ptr<Controller>(new AntWorkerAI(static_cast<Creature*>(this)));
+        controller_=boost::make_shared<AntWorkerAI>(static_cast<Creature*>(this));
+    }else if(type==Type::Queen){
+        antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+        antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+        antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+        antQueenAbdomens.emplace_back(boost::make_shared<AntQueenAbdomen>(world,this));
+        controller_=boost::make_shared<AntQueenAI>(static_cast<Creature*>(this));
+    }else if(type==Type::Scout){
+        antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
+        antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
+        antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
+        antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world,this));
+        controller_=boost::make_shared<AntScoutAI>(static_cast<Creature*>(this));
+    }else if(type==Type::Larva){
+        hasCollision_=false;
+        // no controller
+    }
 }
 
 Ant::Ant(World* world) :
     Visitable(world),
     Creature(world)
 {
-    antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));
-    antMandibles.emplace_back(boost::make_shared<AntMandibles>(world, this));
-    antSensors.emplace_back(boost::make_shared<AntSensor>(world, this));
-    antWorkerAbdomens.emplace_back(boost::make_shared<AntWorkerAbdomen>(world, 
-        this));
 }
 
 Ant::~Ant()
@@ -51,63 +64,15 @@ void Ant::step(int deltaTime) {
     
     if(!deltaTime)
         return;
-    // test AI - all the below(like below) will be in Controller (similar context)
-    // in this function will be probably only: controller.step()
-    
-    if(antLegs.empty()){
-        std::cout<<"Nie mam sensorow\n";
-        return;
-    }
-    if(antMandibles.empty()){
-        std::cout<<"Nie mam rzujek\n";
-        return;
-    }
-    if(antSensors.empty()){
-        std::cout<<"Nie mam nog\n";
-        return;
-    }
-    if(antWorkerAbdomens.empty()){
-        std::cout<<"Nie mam kaloryfera\n";
-        return;
-    }
-    
-    auto legs = antLegs[0];
-    auto ma = antMandibles[0];
-    auto sensor = antSensors[0];
-    auto abd = antWorkerAbdomens[0];
-    
-    bool targetPosChanged=0;
-    Point targetPos=Point(rand()%40+1,rand()%40+1);
-        
-    auto observations = sensor->getEntities();
-    for(auto o : observations){
-        // smell of food (enum ?)
-        if((o.getSmell()==100) && !ma->isHolding()){
-            if(o.getPos() != getPos()){
-                if(!targetPosChanged){
-                    targetPos=o.getPos();
-                    targetPosChanged=1;
-                }
-                continue;
-            }
-            ma->grab(o);
-            std::cout<<"grabbed\n";
-            break;
-        }
-    }
 
-    if(!ma->isHolding()){
-        abd->dropToFoodPheromones();
+    if(controller_ != nullptr){
+        controller_->step(deltaTime);
     }else{
-        //TODO: return somewhere
-        // example - point (0,0)
-        legs->goToPos(Point(0,0));
-        return;
+        std::cout<<"Don't have controller"<<std::endl;
     }
-
-    legs->goToPos(targetPos);
 }
 
 void Ant::accept(Visitor& v) const {
     v.visit(*this);
 }
+

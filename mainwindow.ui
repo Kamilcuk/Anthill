@@ -42,7 +42,21 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QPushButton" name="saveStateButton">
+         <property name="text">
+          <string>Save state</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="loadStateButton">
+         <property name="text">
+          <string>Load state</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Framerate:</string>
          </property>
@@ -51,11 +65,75 @@
        <item>
         <widget class="QDoubleSpinBox" name="framerateBox">
          <property name="maximum">
-          <double>200.000000000000000</double>
+          <double>1000000.000000000000000</double>
          </property>
          <property name="value">
           <double>10.000000000000000</double>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Frame skipping</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="frameSkipping">
+         <property name="maximum">
+          <number>1000000</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Paint:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton">
+         <property name="text">
+          <string>Foods</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">painterButtonGroup</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="text">
+          <string>Obstacles</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">painterButtonGroup</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton_3">
+         <property name="text">
+          <string>Pheromone (to food)</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">painterButtonGroup</string>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton_4">
+         <property name="text">
+          <string>Pheromone (from food)</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">painterButtonGroup</string>
+         </attribute>
         </widget>
        </item>
        <item>
@@ -83,7 +161,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="PreviewTab">
        <attribute name="title">
@@ -119,7 +197,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>28</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -151,4 +229,10 @@
  </widget>
  <resources/>
  <connections/>
+ <slots>
+  <slot>zoomChange()</slot>
+ </slots>
+ <buttongroups>
+  <buttongroup name="painterButtonGroup"/>
+ </buttongroups>
 </ui>

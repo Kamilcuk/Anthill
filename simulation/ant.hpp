@@ -14,27 +14,27 @@
 #include "world.hpp"
 #include "creature.hpp"
 #include "visitable.hpp"
+#include "controller.hpp"
 
 class World;
 class AntLegs;
 class AntMandibles;
 class AntSensor;
 class AntWorkerAbdomen;
-
-// for explanation of this line see serializationCustom.hpp
-extern Creature* g_current_owner;
+class AntQueenAbdomen;
 
 class Ant : public Creature, virtual Visitable {
-	int speed_ = 1;
-	int visibility_ = 4;
-	
-    // vectors of body parts
-    std::vector<boost::shared_ptr<AntLegs> > antLegs;
-    std::vector<boost::shared_ptr<AntMandibles> > antMandibles;
-    std::vector<boost::shared_ptr<AntSensor> > antSensors;
-    std::vector<boost::shared_ptr<AntWorkerAbdomen> > antWorkerAbdomens;
+
 public:
-	Ant(World* world, Point pos);
+	enum class Type 
+	{
+        Worker,
+        Queen,
+        Scout,
+        Larva
+	};
+
+	Ant(World* world, Point pos,Type type=Type::Worker);
 	Ant(World* world);
 	virtual ~Ant();
 	
@@ -49,13 +49,7 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
 	{
         ar & boost::serialization::base_object<Creature>(*this);
-        // for explanation of this line see serializationCustom.hpp
-        g_current_owner = this; 
-		ar & antLegs;
-        ar & antMandibles;
-        ar & antSensors;
-        ar & antWorkerAbdomens;
 	}
 };
 
-#endif /* ANT_H_ */
+#endif //ANT_H_

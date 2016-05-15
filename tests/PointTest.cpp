@@ -39,3 +39,23 @@ BOOST_AUTO_TEST_CASE(test_isInBounds)
     BOOST_CHECK_EQUAL(p.isInBounds(5, 15), false);    
     BOOST_CHECK_EQUAL(p.isInBounds(5, 5), false);    
 }
+
+BOOST_AUTO_TEST_CASE(test_operators)
+{
+    Point p(2, 2), q(5, 5);
+    BOOST_CHECK_EQUAL(Point(7, 7), p + q);
+    BOOST_CHECK_EQUAL(Point(-3, -3), p - q);
+    BOOST_CHECK_EQUAL(20, p * q);
+    BOOST_CHECK_EQUAL(Point(6, 6), p * 3);
+    
+    p += q;
+    BOOST_CHECK_EQUAL(Point(7, 7), p);
+    q -= p;
+    BOOST_CHECK_EQUAL(Point(-2, -2), q);
+    
+    p *= 2;
+    BOOST_CHECK_EQUAL(Point(14, 14), p);
+    
+    BOOST_CHECK(p != q);
+    BOOST_CHECK(!(p == q));
+}

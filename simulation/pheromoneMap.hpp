@@ -23,7 +23,8 @@ public:
 	{
 		None,
 		ToFood,
-		FromFood
+		FromFood,
+        Anthill
 	};
 
 	PheromoneMap(World* world, PheromoneMap::Type type, unsigned p_size_x, 
