@@ -45,6 +45,8 @@ BOOST_AUTO_TEST_CASE(test_saveAndLoadState_shouldHaveSameNumOfEntities)
     
     
     std::string filename = "test_world_serialization";
+    
+    std::cout.setstate(std::ios_base::failbit); // suppres load/save msg
     to_save.saveState(filename);
 
     World to_load;
@@ -53,6 +55,7 @@ BOOST_AUTO_TEST_CASE(test_saveAndLoadState_shouldHaveSameNumOfEntities)
     BOOST_CHECK_EQUAL(to_load.getEntityPtrs().size(), 4);
     
     remove(filename.c_str());
+    std::cout.clear();
 }
 
 } // namespace SerializationTest

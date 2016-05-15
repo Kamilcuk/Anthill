@@ -23,40 +23,43 @@ import ctypes
 import anthill
 #from timer import Timer
 
+import matplotlib
+matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 class Statistics():
-	def __init__(self, stat_label, parent, width=3, height=4, dpi=100):
-		self.fig = Figure(figsize=(width, height), dpi=dpi)
-		self.axes = self.fig.add_subplot(111)
-		self.axes.hold(False)
-		
-		self.canvas = FigureCanvasQTAgg(self.fig)
-		parent.addWidget(self.canvas, 1, 0, 1, 1)
-		
-		self.canvas.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
-		self.canvas.updateGeometry()
-		
-		self.stat_label = stat_label;
-		self.reset()
+    def __init__(self, stat_label, parent, width=3, height=4, dpi=100):
 
-	def refresh(self, stats):
-		# stats.print()
-		_translate = QtCore.QCoreApplication.translate
-		self.stat_label.setText(_translate("MainWindow", stats.print()))
-		# counters
-		foodCnt = stats.foodCnt()
-		self.foods.append(foodCnt.existing)
-		self.stepNumbers.append(stats.stepNumber())
-		# plot
-		self.axes.plot(self.stepNumbers, self.foods)
-		self.axes.set_xlabel("Numer kroku symulacji")
-		self.axes.set_ylabel("Ilosc jedzenia")
-		self.canvas.draw()
+        self.fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = self.fig.add_subplot(111)
+        self.axes.hold(False)
+        
+        self.canvas = FigureCanvasQTAgg(self.fig)
+        parent.addWidget(self.canvas, 1, 0, 1, 1)
+        
+        self.canvas.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+        self.canvas.updateGeometry()
+        
+        self.stat_label = stat_label;
+        self.reset()
 
-	def reset(self):
-		self.foods = []
-		self.stepNumbers = []
+    def refresh(self, stats):
+        # stats.print()
+        _translate = QtCore.QCoreApplication.translate
+        self.stat_label.setText(_translate("MainWindow", stats.print()))
+        # counters
+        foodCnt = stats.foodCnt()
+        self.foods.append(foodCnt.existing)
+        self.stepNumbers.append(stats.stepNumber())
+        # plot
+        self.axes.plot(self.stepNumbers, self.foods)
+        self.axes.set_xlabel("Numer kroku symulacji")
+        self.axes.set_ylabel("Ilosc jedzenia")
+        self.canvas.draw()
+
+    def reset(self):
+        self.foods = []
+        self.stepNumbers = []
 
 class MainWindow(QMainWindow):
 
