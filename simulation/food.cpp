@@ -13,6 +13,7 @@ Food::Food(World* world, Point pos) :
 	Entity(world, pos),
 	used(false)
 {
+    energy_=50;
 }
 
 Food::Food(World* world) :
@@ -32,6 +33,12 @@ void Food::setUsed(bool value)
 	used = value;
 }
 
+float Food::bite(float strength){
+    float ret=std::min(energy_,strength);
+    energy_-=strength;
+    return ret;
+}
+
 void Food::accept(Visitor &v) const
 {
 	v.visit(*this);
@@ -39,6 +46,7 @@ void Food::accept(Visitor &v) const
 
 void Food::step(int deltaTime)
 {
-	if ( getUsed() == true )
-        this->flagToRemove();
+    if (energy_<=0){
+        flagToRemove();
+    }
 }

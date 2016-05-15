@@ -6,7 +6,8 @@
 
 Entity::Entity(World* world, Point pos) :
     Updatable(world),
-    pos_(pos)
+    pos_(pos),
+    hasCollision_(false)
 {
 }
 

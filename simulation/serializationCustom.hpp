@@ -29,6 +29,7 @@
 BOOST_CLASS_EXPORT(Ant)
 BOOST_CLASS_EXPORT(AntWorkerAI)
 BOOST_CLASS_EXPORT(AntQueenAI)
+BOOST_CLASS_EXPORT(AntScoutAI)
 
 /**
  * Many objects require pointer to World object in their constructors.
@@ -87,12 +88,14 @@ namespace boost
         
         LOAD_PTR_OWNER(AntWorkerAI);
         LOAD_PTR_OWNER(AntQueenAI);
+        LOAD_PTR_OWNER(AntScoutAI);
         
         LOAD_PTR_WORLD_AND_OWNER(AntLegs);
         LOAD_PTR_WORLD_AND_OWNER(AntMandibles);
         LOAD_PTR_WORLD_AND_OWNER(AntSensor);
         LOAD_PTR_WORLD_AND_OWNER(AntWorkerAbdomen);
         LOAD_PTR_WORLD_AND_OWNER(AntQueenAbdomen);
+        LOAD_PTR_WORLD_AND_OWNER(AntLarvaBody);
         
         // Followiong is serialization of PheromoneMap::Type enum class
         template<class Archive>
