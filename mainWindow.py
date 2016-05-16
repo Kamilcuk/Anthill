@@ -214,13 +214,19 @@ class MainWindow(QMainWindow):
 
 
     def handlePainterOption(self):
-        if self.ui.painterButtonGroup.checkedId() == 1:
+        # we're checking against button text which is bad but it's the easiest
+        # way I think...
+        if self.ui.painterButtonGroup.checkedButton().text() == \
+                "Foods":
             self.drawOnMap = anthill.Painter.drawFoods
-        elif self.ui.painterButtonGroup.checkedId() == 2:
+        elif self.ui.painterButtonGroup.checkedButton().text() == \
+                "Obstacles":
             self.drawOnMap = anthill.Painter.drawObstacles
-        elif self.ui.painterButtonGroup.checkedId() == 3:
+        elif self.ui.painterButtonGroup.checkedButton().text() == \
+                "Pheromone (to food)":
            self.drawOnMap = anthill.Painter.drawPheromoneToFood
-        elif self.ui.painterButtonGroup.checkedId() == 4:
+        elif self.ui.painterButtonGroup.checkedButton().text() == \
+                "Pheromone (from food)":
            self.drawOnMap = anthill.Painter.drawPheromoneFromFood
 
     @pyqtSlot()

@@ -94,7 +94,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QRadioButton" name="drawFoods">
          <property name="text">
           <string>Foods</string>
          </property>
@@ -107,7 +107,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_2">
+        <widget class="QRadioButton" name="drawObstacles">
          <property name="text">
           <string>Obstacles</string>
          </property>
@@ -117,7 +117,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_3">
+        <widget class="QRadioButton" name="drawPheromoneToFood">
          <property name="text">
           <string>Pheromone (to food)</string>
          </property>
@@ -127,7 +127,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_4">
+        <widget class="QRadioButton" name="drawPheromoneFromFood">
          <property name="text">
           <string>Pheromone (from food)</string>
          </property>
@@ -197,7 +197,7 @@
      <x>0</x>
      <y>0</y>
      <width>924</width>
-     <height>19</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

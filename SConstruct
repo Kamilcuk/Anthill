@@ -23,7 +23,7 @@ if env['PLATFORM'] == 'win32':
 else:
 	# linux platform
 	env.Append(CCFLAGS = ' -Werror -Wall --std=c++14 -O2 -g -fPIC '\
-			'-fprofile-arcs -ftest-coverage ')
+			'-fprofile-arcs -ftest-coverage')
 	env.Append(CCFLAGS = '-Iboost'); # add boost support
 	env.Append(LINKFLAGS = '-fPIC -lboost_serialization -fprofile-arcs'); # compile shared # boost serialization
 	# add python3 support
