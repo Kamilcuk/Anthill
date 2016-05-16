@@ -25,10 +25,6 @@ protected:
 
 public:
 
-    bool hasCollision(){
-        return hasCollision_;
-    }
-
     std::vector<boost::shared_ptr<AntLegs> >& getAntLegs(){
         return antLegs;
     }
@@ -50,7 +46,9 @@ public:
         hasCollision_=true;
     }
     Creature(World* world):
-        Entity(world) {}
+        Entity(world) {
+        hasCollision_ = true;
+    }
         
     virtual void step(int) override
     {

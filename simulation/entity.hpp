@@ -45,6 +45,11 @@ public:
 	Entity(const Entity&);    
     Entity& operator=(const Entity&);
 
+    inline bool hasCollision()
+    {
+        return hasCollision_;
+    }
+
     /// We need to provide implementation so that Entity is serializable.
     virtual void step(int) override
     {
