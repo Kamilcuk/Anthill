@@ -76,6 +76,15 @@ BOOST_FIXTURE_TEST_CASE(test_makeTrackedEntity_shouldStore, Fixture)
     BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_startSimulation_statisticsShouldWork, Fixture)
+{
+    BOOST_CHECK(world.getStatistics() == nullptr);
+    world.startSimulation();
+    BOOST_CHECK(world.getStatistics());
+    BOOST_CHECK_EQUAL(world.getStatistics()->stepNumber(), 0);
+    world.simulationStep();
+    BOOST_CHECK_EQUAL(world.getStatistics()->stepNumber(), 1);
+}
 
 BOOST_FIXTURE_TEST_CASE(
     test_removeSimulationObject_shouldBeGoneImmediately, Fixture)

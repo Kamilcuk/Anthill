@@ -41,7 +41,7 @@ struct AntsParams
 {
     int quantity = 1;
     
-    // defines a ring in which 
+    // defines a ring in which ants can be placed
     int min_dist_from_anthill = 5;
     int max_dist_from_anthill = 10;
     
@@ -55,7 +55,7 @@ struct AntsParams
 struct ObstaclesParams
 {
     RandomBlob blob;
-    int quantity_per_100_by_100 = 20;
+    int quantity_per_100_by_100 = 1000;
     
     // scale default params based on "obstacle_freq" param
     void applyObstacleFrequency(unsigned obstacle_freq);
@@ -67,7 +67,7 @@ struct ObstaclesParams
 struct FoodsParams
 {
     RandomBlob blob;
-    int quantity_per_100_by_100 = 30;
+    int quantity_per_100_by_100 = 700;
     FoodsParams() 
     { 
         blob.line_size_min = 1; 

@@ -53,8 +53,16 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
         scouts_count=1;
     }
 
+    int deadlock_counter = 0; // to prevent deadlock if there is no empty space
+    const int deadlock_threshold = params.quantity; // try more times the more 
+                                                    // ants there are
+                                                 
     while(num_spawned < params.quantity)
     {
+        if(deadlock_counter > deadlock_threshold)
+            throw std::runtime_error(
+                "WorldGenerator::placeAnts no available empty space");
+        
         Point pos(anthill_pos.posX() + rand() % delta * randSign(),
             anthill_pos.posY() + rand() % delta * randSign());
         
@@ -62,17 +70,20 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
             continue;
 
         bool collision_detected = false;
-        for(const auto& obstacle : world->getSimulationObjects<Obstacle>())
+        for(const auto& e : world->getEntityPtrs())
         {
-            if(obstacle->getPos() == pos)
+            if(e.lock()->hasCollision() && e.lock()->getPos() == pos)
             {
                 collision_detected = true;
+                deadlock_counter++;
                 break;
             }
         }
+
         if(collision_detected)
             continue;
-            
+        else deadlock_counter = 0;
+        
         if(num_spawned == 0)
         {
             // spawn one queen
@@ -95,25 +106,27 @@ void WorldGenerator::placeAnts(World* world, AntsParams& params)
 void WorldGenerator::placeObstacles(World* world, ObstaclesParams& params)
 {
     if(params.quantity_per_100_by_100 < 0) 
-        throw std::runtime_error("Invalid quantity per 100 by 100 of obstacles");
+        throw std::runtime_error("Invalid quantity per 100 by 100 of obstacle");
         
     const int num_to_spawn = params.quantity_per_100_by_100 * 
-        world->width_ * world->height_ / 10000.0;
-        
+        world->width_ * world->height_ / 10000;
+
     int num_spawned = 0;
     while(num_spawned < num_to_spawn)
     {       
         for(const auto& point : params.blob.generate( 
                 world->width_, world->height_))
         {
+            if(num_spawned > num_to_spawn) break;
+            
             if(!point.isInBounds(world->width_, world->height_))
                 continue;
                 
             world->addSimulationObject<Obstacle>(
                 boost::make_shared<Obstacle>(world, point));
+                
+            num_spawned++;
         }
-    
-        num_spawned++;
     }  
 }
 
@@ -123,7 +136,7 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
         throw std::runtime_error("Invalid quantity per 100 by 100 of foods");
         
     const int num_to_spawn = params.quantity_per_100_by_100 * 
-        world->width_ * world->height_ / 10000.0;
+        world->width_ * world->height_ / 10000;
         
     int num_spawned = 0;
     while(num_spawned < num_to_spawn)
@@ -131,14 +144,16 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
         for(const auto& point : params.blob.generate( 
                 world->width_, world->height_))
         {
+            if(num_spawned > num_to_spawn) break;
+            
             if(!point.isInBounds(world->width_, world->height_))
                 continue;
 
             world->addSimulationObject<Food>(
                 boost::make_shared<Food>(world, point));
-        }
-                    
-        num_spawned++;
+                
+            num_spawned++;
+        }       
     }  
 }
 

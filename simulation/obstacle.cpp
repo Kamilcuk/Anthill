@@ -6,12 +6,14 @@ Obstacle::Obstacle(World* world, Point pos) :
 	Visitable(world),
 	Entity(world, pos)
 {
+	hasCollision_ = true;
 }
 
 Obstacle::Obstacle(World* world) :
 	Visitable(world),
 	Entity(world)
 {
+	hasCollision_ = true;
 }
 
 void Obstacle::step(int)
