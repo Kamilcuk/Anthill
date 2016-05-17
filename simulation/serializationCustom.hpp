@@ -73,6 +73,12 @@ Creature* g_current_owner;
     inline void load_construct_data( \
         Archive & ar, my_class * t, const unsigned int file_version) \
     { ::new(t)my_class(g_world, g_current_owner); } 
+    
+/// helper macro for serializing enum classes
+#define SERIALIZE_ENUM_CLASS(enum_class) \
+    template<class Archive> \
+    void serialize(Archive & ar, enum_class& t, const unsigned int) \
+    { ar & make_binary_object(&t, sizeof(t)); }
 
 namespace boost
 {
@@ -97,12 +103,8 @@ namespace boost
         LOAD_PTR_WORLD_AND_OWNER(AntQueenAbdomen);
         LOAD_PTR_WORLD_AND_OWNER(AntLarvaBody);
         
-        // Followiong is serialization of PheromoneMap::Type enum class
-        template<class Archive>
-        void serialize(Archive & ar, PheromoneMap::Type& t, const unsigned int)
-        {
-            ar & make_binary_object(&t, sizeof(t));
-        }
+        SERIALIZE_ENUM_CLASS(PheromoneMap::Type);
+        SERIALIZE_ENUM_CLASS(Entity::Smell);
     }
 }
 

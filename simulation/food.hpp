@@ -27,7 +27,6 @@ public:
 	void setUsed(bool value);
 
     /// physics
-    Entity::Smell getSmell(){return Entity::Smell::Food;}
     float bite(float);
 
 	/// serialization

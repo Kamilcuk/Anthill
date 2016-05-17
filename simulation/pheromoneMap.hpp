@@ -92,8 +92,6 @@ private:
 	{
 		ar & decay_coeff_;
 		ar & map_;
-		// implementation of enum class serialization is in 
-		// serializationCustom.hpp
 		ar & type_;	
 	}
 };
