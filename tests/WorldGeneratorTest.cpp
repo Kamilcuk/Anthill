@@ -241,10 +241,7 @@ BOOST_FIXTURE_TEST_CASE(test_initPheromoneMaps_shouldBeMaps, Fixture)
 {
     BOOST_CHECK_EQUAL(world.getSimulationObjects<PheromoneMap>().size(), 0);  
     const unsigned num_phero_maps = 3; 
-    const float to_food_decay_rate = 0.5, from_food_decay_rate = 0.5, 
-        anthill_decay_rate = 0.5;
-    WorldGenerator::initPheromoneMaps(&world, to_food_decay_rate,
-        from_food_decay_rate, anthill_decay_rate);
+    WorldGenerator::initPheromoneMaps(&world);
     BOOST_CHECK(world.getSimulationObjects<PheromoneMap>().size() == 
         num_phero_maps);
     BOOST_CHECK(world.getEntityPtrs().size() == 0); // phero maps arent entities

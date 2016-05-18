@@ -34,6 +34,19 @@ struct AnthillParams
     unsigned quantity = 1;
 };
 
+/// Struct representing params for creating anthills. 
+struct PheromoneParams
+{
+    float to_food_decay_rate = 0.2;
+    float from_food_decay_rate = 0.2;
+    float anthill_decay_rate = 0.2;
+    float scale = 0.4;
+    
+    /// translates coefficients from 1-100 and applies scale
+    void applyCoefficients(unsigned to_food, unsigned from_food, 
+        unsigned anthill);
+};
+
 /// Struct representing params for spawning ants. 
 /// All default field values can be created as base values, which are multiplied
 /// by some coefficient as needed.

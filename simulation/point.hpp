@@ -73,6 +73,7 @@ public:
 			std::pow(this->posY() - p.posY(), 2)
 			);
 	}
+	
     constexpr inline int getGridDistance(const Point& p) const
 	{
 		return
@@ -101,8 +102,9 @@ public:
 			posY() <= std::max(p1.posY(), p2.posY());
     }
 
-    constexpr inline bool isAdjacent(const Point& p){
-        return this->getGridDistance(p)<=1;
+    constexpr inline bool isAdjacent(const Point& p) const
+	{
+		return std::abs(posX() - p.posX()) + std::abs(posY() - p.posY()) <= 1;
     }
 	
 private:

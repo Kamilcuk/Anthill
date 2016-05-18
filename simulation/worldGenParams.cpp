@@ -32,6 +32,15 @@ std::set<Point> RandomBlob::generate(unsigned size_x, unsigned size_y)
     }
 }
 
+void PheromoneParams::applyCoefficients(unsigned to_food, unsigned from_food, 
+    unsigned anthill)
+{
+    // 0.01 because GUI has 1-100 knobs
+    to_food_decay_rate = 0.01 * float(to_food) * scale;
+    from_food_decay_rate = 0.01 * float(from_food) * scale;
+    anthill_decay_rate = 0.01 * float(anthill) * scale;
+}    
+
 void AntsParams::applyNumAnts(unsigned desired_num_ants)
 {
     quantity = desired_num_ants;

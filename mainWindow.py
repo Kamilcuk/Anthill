@@ -125,7 +125,10 @@ class MainWindow(QMainWindow):
                     self.lastMousePosOnMap = coords
 
                 self.drawOnMap(self.world, self.lastMousePosOnMap[0],
-                    self.lastMousePosOnMap[1], coords[0], coords[1])
+                    self.lastMousePosOnMap[1], coords[0], coords[1],
+                    self.ui.painterRadius.value(), 
+                    self.ui.painterIntensity.value() * 0.01 *\
+                        anthill.WorldGenerator.default_pheromone_params.scale)
                 self.lastMousePosOnMap = coords
 
             if self.draggingCamera:
@@ -318,7 +321,7 @@ class MainWindow(QMainWindow):
                 dialog.processResults()
                 self.world.setDimensions(dialog.worldWidth, dialog.worldHeight)
 
-                try
+                try:
                     anthill.WorldGenerator.placeObstacles(self.world,
                         dialog.obstaclesParams)
                     anthill.WorldGenerator.placeFoods(self.world,
@@ -328,10 +331,8 @@ class MainWindow(QMainWindow):
                     anthill.WorldGenerator.placeAnts(self.world,
                         dialog.antsParams)
                     anthill.WorldGenerator.initPheromoneMaps(self.world,
-                        dialog.pheroToFoodCoef,
-                        dialog.pheroFromFoodCoef,
-                        dialog.pheroAnthillCoef)
-                except
+                        dialog.pheromoneParams)
+                except:
                     pass
 
                 self.statistics.reset()

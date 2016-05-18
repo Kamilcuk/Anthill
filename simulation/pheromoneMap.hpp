@@ -30,15 +30,8 @@ public:
 	PheromoneMap(World* world, PheromoneMap::Type type, unsigned p_size_x, 
 		unsigned p_size_y, float decay_coeff);
 	PheromoneMap(World* world);
-	//PheromoneMap(const PheromoneMap&);
 	~PheromoneMap();
 	
-    // we need to provide following operators so that we can use references
-    // in Python module (Python lists use these operators)
-	//PheromoneMap& operator=(const PheromoneMap&);
-    //bool operator==(const PheromoneMap&);
-    //bool operator!=(const PheromoneMap&);
-
 	/// Implemented from Updatable.
 	void step(int p_delta_time);
 

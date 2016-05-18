@@ -21,6 +21,7 @@ INIT_STATIC(WorldGenerator, AnthillParams, default_anthill_params);
 INIT_STATIC(WorldGenerator, AntsParams, default_ants_params);
 INIT_STATIC(WorldGenerator, ObstaclesParams, default_obstacles_params);
 INIT_STATIC(WorldGenerator, FoodsParams, default_food_params);
+INIT_STATIC(WorldGenerator, PheromoneParams, default_pheromone_params);
 
 void WorldGenerator::placeAnthill(World* world, AnthillParams& params)
 {
@@ -112,18 +113,17 @@ void WorldGenerator::placeFoods(World* world, FoodsParams& params)
     }  
 }
 
-void WorldGenerator::initPheromoneMaps(World* world, float to_food_decay_rate,
-    float from_food_decay_rate, float anthill_decay_rate)
+void WorldGenerator::initPheromoneMaps(World* world, PheromoneParams& params)
 {
     world->pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::ToFood, 
-            world->width_, world->height_, to_food_decay_rate));
+            world->width_, world->height_, params.to_food_decay_rate));
     world->pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::FromFood, 
-            world->width_, world->height_, from_food_decay_rate));
+            world->width_, world->height_, params.from_food_decay_rate));
     world->pheromone_maps_.emplace_back(
         boost::make_shared<PheromoneMap>(world, PheromoneMap::Type::Anthill, 
-            world->width_, world->height_, anthill_decay_rate));
+            world->width_, world->height_, params.anthill_decay_rate));
 }
 
 std::set<Point> WorldGenerator::getTakenSpaces(World* world)

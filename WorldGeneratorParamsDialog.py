@@ -24,13 +24,13 @@ class WorldGeneratorParamsDialog(QDialog):
         self.foodsParams = anthill.FoodsParams()
         self.anthillParams = anthill.AnthillParams()
         self.antsParams = anthill.AntsParams()
+        self.pheromoneParams = anthill.PheromoneParams()
         self.worldWidth = 200
         self.worldHeight = 200
 
     def processResults(self):
-        self.pheroToFoodCoef = self.ui.toFoodCoef.value() / (15*100.0)
-        self.pheroFromFoodCoef = self.ui.fromFoodCoef.value() / (15*100.0)
-        self.pheroAnthillCoef = self.ui.toFoodCoef.value() / (15*100.0)
+        self.pheromoneParams.applyCoefficients(self.ui.toFoodCoef.value(), 
+            self.ui.fromFoodCoef.value(), self.ui.anthillCoef.value())
         self.obstaclesParams.applyObstacleFrequency(self.ui.obstacleFreq.value())
         self.foodsParams.applyFoodGenerosity(self.ui.foodGenerosity.value())
         self.antsParams.applyNumAnts(self.ui.numAnts.value())

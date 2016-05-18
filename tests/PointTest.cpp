@@ -82,6 +82,28 @@ BOOST_AUTO_TEST_CASE(test_distance)
     BOOST_CHECK_CLOSE(p.getDistance(q), 2, 0.00001); 
 }
 
+BOOST_AUTO_TEST_CASE(test_isAdjacent)
+{
+    Point p(5, 5);
+    BOOST_CHECK(p.isAdjacent(Point(5, 5))); 
+    
+    BOOST_CHECK(p.isAdjacent(Point(4, 5))); 
+    BOOST_CHECK(p.isAdjacent(Point(6, 5))); 
+    BOOST_CHECK(p.isAdjacent(Point(5, 4))); 
+    BOOST_CHECK(p.isAdjacent(Point(5, 6))); 
+    
+    BOOST_CHECK(!p.isAdjacent(Point(4, 4))); 
+    BOOST_CHECK(!p.isAdjacent(Point(6, 6))); 
+    BOOST_CHECK(!p.isAdjacent(Point(4, 6))); 
+    BOOST_CHECK(!p.isAdjacent(Point(6, 4))); 
+}
+
+BOOST_AUTO_TEST_CASE(test_getGridDistance)
+{
+    Point p(2, 2), q(4, 4);
+    BOOST_CHECK_EQUAL(p.getGridDistance(q), 4); 
+}
+
 BOOST_AUTO_TEST_CASE(test_toString)
 {
     Point p(2, 2);
