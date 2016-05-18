@@ -14,9 +14,8 @@ class Visitable
     World* world_;
 public:
     Visitable(World* world);
+    Visitable(const Visitable&);
     virtual ~Visitable();
-    
-	Visitable& operator=(const Visitable&);
     
     virtual void accept(Visitor& v) const = 0;
 };

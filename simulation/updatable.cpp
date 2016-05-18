@@ -17,19 +17,3 @@ Updatable::Updatable(const Updatable& other)  :
 {
     world_->addUpdatable(this);
 }
-
-Updatable& Updatable::operator=(const Updatable& other)
-{
-    world_ = other.world_;
-    return *this;
-}
-
-bool Updatable::operator==(const Updatable& other)
-{
-    return *this == other;
-}
-
-bool Updatable::operator!=(const Updatable& other)
-{
-    return *this != other;
-}

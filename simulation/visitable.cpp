@@ -15,8 +15,8 @@ Visitable::~Visitable()
     world_->removeVisitable(this);
 }
 
-Visitable& Visitable::operator=(const Visitable& other)
+Visitable::Visitable(const Visitable& other) :
+    world_(other.world_)
 {
-    world_ = other.world_;
-    return *this;
+    world_->addVisitable(this);
 }

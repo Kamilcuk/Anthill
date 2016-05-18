@@ -39,7 +39,7 @@ class World {
     friend class WorldGenerator;
 
     // world properties
-    int width_, height_;
+    unsigned width_, height_;
     
     // Pointers to stuff that is automatically updated in simualtion loop.
     // We're using an observer pattern here, so raw pointers are appropriate.
@@ -73,7 +73,7 @@ public:
     World();
     ~World();
 
-	void setDimensions(int x, int y);
+	void setDimensions(unsigned x, unsigned y);
 	Point getDimensions();
 
     /// Sets up simulation.

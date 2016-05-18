@@ -41,7 +41,7 @@ World::~World()
     this->stopSimulation();
 }
 
-void World::setDimensions(int X, int Y)
+void World::setDimensions(unsigned X, unsigned Y)
 {
 	width_ = X;
 	height_ = Y;

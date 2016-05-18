@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE( testAntEating ){
     auto ma=ant.lock()->getAntMandibles()[0];
     auto sensor=ant.lock()->getAntSensors()[0];
 
-    for(int i=0;i<100000;++i){
+    for(int i=0;i<100;++i){
         BOOST_CHECK(!ant.expired());
         if(i%100==0)
             w.addSimulationObject<Food>(
