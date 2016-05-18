@@ -247,6 +247,15 @@ BOOST_FIXTURE_TEST_CASE(test_initPheromoneMaps_shouldBeMaps, Fixture)
     BOOST_CHECK(world.getEntityPtrs().size() == 0); // phero maps arent entities
 }
 
+BOOST_FIXTURE_TEST_CASE(test_setCoefficientsFromGUIKnobs, Fixture)
+{
+    PheromoneParams params;
+    params.scale = 0.1;
+    params.to_food_decay_rate = 0.5;
+    params.applyCoefficients(20, 30, 40);
+    BOOST_CHECK_CLOSE(params.to_food_decay_rate, 0.02, 0.0001);
+}
+
 BOOST_FIXTURE_TEST_CASE(test_invalidRandomBlobParams_shouldThrow, Fixture)
 {
     ObstaclesParams params;
