@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>364</width>
-     <height>349</height>
+     <height>400</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
@@ -135,13 +135,20 @@
          </widget>
         </item>
         <item row="3" column="0">
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Ratio of scouts</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>Obstacle frequency</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QLabel" name="label_7">
@@ -169,14 +176,14 @@
           </item>
          </layout>
         </item>
-        <item row="5" column="0">
+        <item row="6" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
            <string>Foods generosity</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="6" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QLabel" name="label_8">
@@ -204,14 +211,14 @@
           </item>
          </layout>
         </item>
-        <item row="7" column="0">
+        <item row="8" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>Pheromone decay rates</string>
           </property>
          </widget>
         </item>
-        <item row="7" column="1">
+        <item row="8" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -237,7 +244,7 @@
                </size>
               </property>
               <property name="value">
-               <number>50</number>
+               <number>20</number>
               </property>
              </widget>
             </item>
@@ -267,7 +274,7 @@
                </size>
               </property>
               <property name="value">
-               <number>50</number>
+               <number>30</number>
               </property>
              </widget>
             </item>
@@ -302,6 +309,37 @@
              </widget>
             </item>
            </layout>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>0%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="percentScouts">
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>100%</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

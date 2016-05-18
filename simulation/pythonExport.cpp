@@ -114,6 +114,7 @@ BOOST_PYTHON_MODULE(anthill)
 
     REGISTER_CLASS(AntsParams)        
         REGISTER_METHOD(AntsParams, applyNumAnts)
+        REGISTER_METHOD(AntsParams, applyRatioScouts)
     ;        
     REGISTER_CLASS(ObstaclesParams)
         REGISTER_METHOD(ObstaclesParams, applyObstacleFrequency)
@@ -162,13 +163,3 @@ BOOST_PYTHON_MODULE(anthill)
     ;
 
 }
-
-#undef REGISTER_SHAREDPTR
-#undef REGISTER_VECTOR_SHAREDPTR
-#undef REGISTER_CLASS
-#undef REGISTER_CLASS_NOINIT
-#undef REGISTER_METHOD
-#undef REGISTER_METHOD_REF
-#undef REGISTER_TEMPLATE_METHOD
-#undef REGISTER_TEMPLATE_METHOD_REF
-#undef REGISTER_VARIABLE_READONLY

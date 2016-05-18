@@ -318,18 +318,21 @@ class MainWindow(QMainWindow):
                 dialog.processResults()
                 self.world.setDimensions(dialog.worldWidth, dialog.worldHeight)
 
-                anthill.WorldGenerator.placeObstacles(self.world,
-                    dialog.obstaclesParams)
-                anthill.WorldGenerator.placeFoods(self.world,
-                    dialog.foodsParams)
-                anthill.WorldGenerator.placeAnthill(self.world,
-                    dialog.anthillParams)
-                anthill.WorldGenerator.placeAnts(self.world,
-                    dialog.antsParams)
-                anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    dialog.pheroToFoodCoef,
-                    dialog.pheroFromFoodCoef,
-                    dialog.pheroAnthillCoef)
+                try
+                    anthill.WorldGenerator.placeObstacles(self.world,
+                        dialog.obstaclesParams)
+                    anthill.WorldGenerator.placeFoods(self.world,
+                        dialog.foodsParams)
+                    anthill.WorldGenerator.placeAnthill(self.world,
+                        dialog.anthillParams)
+                    anthill.WorldGenerator.placeAnts(self.world,
+                        dialog.antsParams)
+                    anthill.WorldGenerator.initPheromoneMaps(self.world,
+                        dialog.pheroToFoodCoef,
+                        dialog.pheroFromFoodCoef,
+                        dialog.pheroAnthillCoef)
+                except
+                    pass
 
                 self.statistics.reset()
                 self.world.startSimulation()

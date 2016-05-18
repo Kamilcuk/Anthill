@@ -73,89 +73,94 @@ BOOST_FIXTURE_TEST_CASE(
 }
 
 BOOST_FIXTURE_TEST_CASE(
-    test_placeManyAntsInSmallRadius_shouldThrow, Fixture)
+    test_placeMoreAntsThanFreeSpace_shouldCreateAsMuchAsPossibleAndThrow, 
+    Fixture)
 {
+    const Point centre(world_dim_x / 2, world_dim_y / 2);
+    
     WorldGenerator::placeAnthill(&world);
-
+    auto anthill = world.getSimulationObjects<Anthill>()[0];
+    anthill->setPos(centre);
+    
     AntsParams params;
-    const unsigned to_spawn = 1000;
-    params.quantity = to_spawn;
-    params.min_dist_from_anthill = 2;
-    params.max_dist_from_anthill = 5;
-   
+    params.quantity = world_dim_x * world_dim_y;
+    
+    world.setDimensions(world_dim_x, world_dim_y);
+    
+    // create some obstacles
+    int num_obstacles = 0;
+    for(const auto& p : ShapeGenerator::GenerateCircle(centre, 25))
+    {
+        world.addSimulationObject<Obstacle>(
+            boost::make_shared<Obstacle>(&world, p));
+        num_obstacles++;
+    }
+
+    const int expected_num = world_dim_x * world_dim_y - num_obstacles;
+    
     BOOST_CHECK_THROW(WorldGenerator::placeAnts(&world, params), 
         std::runtime_error);
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 
+        expected_num);
 }
 
 BOOST_FIXTURE_TEST_CASE(
-    test_placeAntsWhenNoEmptySpace_shouldThrow, Fixture)
+    test_placeAntWhenNoImmediateEmptySpace_shouldExpandRadiusAndFit, Fixture)
 {
+    const Point centre(world_dim_x / 2, world_dim_y / 2);
     WorldGenerator::placeAnthill(&world);
-    auto anthill = world.getSimulationObjects<Anthill>()[0];
-    auto anthill_pos = anthill->getPos();
     
-    const float radius = 5;
+    auto anthill = world.getSimulationObjects<Anthill>()[0];
+    anthill->setPos(centre);
+    
+    const float obstacle_radius = 15;
     
     // spam a blob of obstacles around the anthill
-    for(const auto& p : ShapeGenerator::GenerateCircle(anthill_pos, radius))
+    for(const auto& p : ShapeGenerator::GenerateCircle(centre, obstacle_radius))
         world.addSimulationObject<Obstacle>(
             boost::make_shared<Obstacle>(&world, p));
-    
+       
+    const unsigned original_max_radius = 5;
     AntsParams params;
     params.quantity = 1;
     params.min_dist_from_anthill = 2;
-    params.max_dist_from_anthill = radius;
+    params.max_dist_from_anthill = original_max_radius;
+    
+    WorldGenerator::placeAnts(&world, params);
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 1);
+    BOOST_CHECK_LT(original_max_radius, (unsigned)params.max_dist_from_anthill);
+}
+
+BOOST_FIXTURE_TEST_CASE(
+    test_userFriendlyAntCreation_shouldSpawnAsSpecified, Fixture)
+{
+    WorldGenerator::placeAnthill(&world);
+    AntsParams params;
+    params.quantity = 1;
+    params.ratio_scouts = 0.2;
+    params.applyNumAnts(50);
+    BOOST_CHECK_EQUAL(params.quantity, 50);
+    params.applyRatioScouts(25);
+    BOOST_CHECK_CLOSE(params.ratio_scouts, 0.25, 0.001);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_placeAntsWithoutAnthill_shouldThrow, Fixture)
+{
+    AntsParams params;
+    BOOST_CHECK_EQUAL(world.getSimulationObjects<Anthill>().size(), 0);
     BOOST_CHECK_THROW(WorldGenerator::placeAnts(&world, params), 
         std::runtime_error);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_placeAntsInvalidParams_shouldThrow, Fixture)
 {
+    WorldGenerator::placeAnthill(&world);
     AntsParams params;
-    params.quantity = -10;
-    BOOST_CHECK_THROW(WorldGenerator::placeAnts(&world, params), 
-        std::runtime_error);
     params.quantity = 10;
-    params.min_dist_from_anthill = -2;
+    params.min_dist_from_anthill = 5;
+    params.max_dist_from_anthill = 2;
     BOOST_CHECK_THROW(WorldGenerator::placeAnts(&world, params), 
         std::runtime_error);
-    params.min_dist_from_anthill = 2;
-    params.max_dist_from_anthill = -5;
-    BOOST_CHECK_THROW(WorldGenerator::placeAnts(&world, params), 
-        std::runtime_error);
-    params.max_dist_from_anthill = 5;
-}
-
-BOOST_FIXTURE_TEST_CASE(
-    test_userFriendlyAntCreation_shouldCreateSpecifiedNumAnts, Fixture)
-{
-    WorldGenerator::placeAnthill(&world);    
-    
-    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);    
-    AntsParams params;
-    const unsigned to_spawn = 20;
-    params.applyNumAnts(to_spawn);
-    WorldGenerator::placeAnts(&world, params);
-    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), to_spawn);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1 + to_spawn); // + anthill
-}
-
-BOOST_FIXTURE_TEST_CASE(
-    test_userFriendlyAntCreationPlaceManyAnts_shouldExpandToFitAll, Fixture)
-{
-    WorldGenerator::placeAnthill(&world);    
-    
-    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);    
-    AntsParams params;
-    const unsigned to_spawn = 2000, original_max_radius = 5;
-    params.quantity = to_spawn;
-    params.max_dist_from_anthill = original_max_radius;
-    
-    params.applyNumAnts(to_spawn);
-    BOOST_CHECK(original_max_radius < (unsigned)params.max_dist_from_anthill);
-    
-    WorldGenerator::placeAnts(&world, params);
-    BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), to_spawn);
 }
 
 BOOST_FIXTURE_TEST_CASE(
@@ -177,7 +182,7 @@ BOOST_FIXTURE_TEST_CASE(
 BOOST_FIXTURE_TEST_CASE(test_placeObstaclesInvalidParams_shouldThrow, Fixture)
 {
     ObstaclesParams params;
-    params.quantity_per_100_by_100 = -5;
+    params.quantity_per_100_by_100 = 10001;
     BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params),
         std::runtime_error);
 }
@@ -214,7 +219,7 @@ BOOST_FIXTURE_TEST_CASE(
 BOOST_FIXTURE_TEST_CASE(test_placeFoodsInvalidParams_shouldThrow, Fixture)
 {
     FoodsParams params;
-    params.quantity_per_100_by_100 = -5;
+    params.quantity_per_100_by_100 = 10001;
     BOOST_CHECK_THROW(WorldGenerator::placeFoods(&world, params),
         std::runtime_error);
 }
@@ -248,43 +253,25 @@ BOOST_FIXTURE_TEST_CASE(test_initPheromoneMaps_shouldBeMaps, Fixture)
 BOOST_FIXTURE_TEST_CASE(test_invalidRandomBlobParams_shouldThrow, Fixture)
 {
     ObstaclesParams params;
-    params.blob.line_size_min = -1;
-    BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
-        std::runtime_error);    
-    params.blob.line_size_min = 1;
 
-    params.blob.line_size_max = -1;
+    params.blob.line_size_min = 10;
+    params.blob.line_size_max = 5;
     BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
         std::runtime_error);    
-    params.blob.line_size_max = 10;
-    
-        params.blob.line_size_min = 15;
+    params.blob.line_size_min = 2;
+
+    params.blob.circle_radius_min = 10;
+    params.blob.circle_radius_max = 5;
     BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
         std::runtime_error);    
-    params.blob.line_size_min = 1;
-    
-        params.blob.circle_radius_min = -1;
-    BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
-        std::runtime_error);    
-    params.blob.circle_radius_min = 1;
-    
-        params.blob.circle_radius_max = -1;
-    BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
-        std::runtime_error);    
-    params.blob.circle_radius_max = 10;
-    
-        params.blob.circle_radius_min = 15;
-    BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
-        std::runtime_error);    
-    params.blob.circle_radius_min = 1;
-    
+    params.blob.circle_radius_min = 2;
+        
     params.blob.chance_line = -1;
     BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
         std::runtime_error);    
     params.blob.chance_line = 2;
     BOOST_CHECK_THROW(WorldGenerator::placeObstacles(&world, params), 
         std::runtime_error);
-    
 }
 
 } // namespace WorldGeneratorTest

@@ -34,5 +34,6 @@ class WorldGeneratorParamsDialog(QDialog):
         self.obstaclesParams.applyObstacleFrequency(self.ui.obstacleFreq.value())
         self.foodsParams.applyFoodGenerosity(self.ui.foodGenerosity.value())
         self.antsParams.applyNumAnts(self.ui.numAnts.value())
+        self.antsParams.applyRatioScouts(self.ui.percentScouts.value())
         self.worldWidth = self.ui.worldWidth.value()
         self.worldHeight = self.ui.worldHeight.value()

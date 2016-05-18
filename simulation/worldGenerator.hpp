@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <math.h>
 #include <set>
+#include <vector>
 
 #include "point.hpp"
 #include "worldGenParams.hpp"
+#include "ant.hpp"
 
 class World;
 class Anthill;
-class Ant;
 class Obstacle;
 class Food;
 
@@ -48,6 +49,13 @@ private:
     {
         return (rand() % 2 ? 1 : -1);
     }
+    
+    static std::set<Point> getTakenSpaces(World* world);
+    static std::vector<Point> getFreeSpaces(World* world);
+    static std::vector<Point> getAllPoints(World* world);
+    static Point fitNewPos(World* world, AntsParams& params, 
+        std::vector<Point>& free_spaces);
+    static Ant::Type decideAntType(const int num_spawned, AntsParams& params);
 };
 
 
