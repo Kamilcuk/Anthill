@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE( testAntLegs )
     }
 }
 
-BOOST_AUTO_TEST_CASE( testAntDeath )
+BOOST_AUTO_TEST_CASE( testAntDeath)
 {
     World w;
     
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE( testAntDeath )
         w.simulationStep();
         // is alive after some steps, and no food
         BOOST_CHECK(!wp.expired());
-    }
+    }    
     for(int i=0;i<100000;++i){
         w.simulationStep();
     }

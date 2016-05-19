@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>924</width>
-    <height>701</height>
+    <width>1024</width>
+    <height>960</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,6 +109,13 @@
             <widget class="QSpinBox" name="frameSkipping">
              <property name="maximum">
               <number>1000000</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="multithreaded">
+             <property name="text">
+              <string>Multithreaded</string>
              </property>
             </widget>
            </item>
@@ -260,7 +267,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>924</width>
+     <width>1024</width>
      <height>27</height>
     </rect>
    </property>

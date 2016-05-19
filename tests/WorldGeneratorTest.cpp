@@ -34,7 +34,7 @@ BOOST_FIXTURE_TEST_CASE(test_placeAnthill_shouldBeAnthill, Fixture)
     params.quantity = 1;    
     WorldGenerator::placeAnthill(&world, params);
     BOOST_CHECK_EQUAL(world.getSimulationObjects<Anthill>().size(), 1);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
+    BOOST_CHECK_EQUAL(world.getEntityMap().lock()->getAllEntities().size(), 1);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_placeAnts_shouldBeAnts, Fixture)
@@ -48,7 +48,8 @@ BOOST_FIXTURE_TEST_CASE(test_placeAnts_shouldBeAnts, Fixture)
     params.max_dist_from_anthill = 5;
     WorldGenerator::placeAnts(&world, params);
     BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 10);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 11); // (+ anthill)
+    BOOST_CHECK_EQUAL(world.getEntityMap().lock()->getAllEntities().size(), 11); 
+        // (+ anthill)
 }
 
 BOOST_FIXTURE_TEST_CASE(
@@ -176,7 +177,7 @@ BOOST_FIXTURE_TEST_CASE(
             params.quantity_per_100_by_100 * world_dim_x * world_dim_y / 10000;
     
     BOOST_CHECK_CLOSE(actual_num / expected_num, 1, generation_random_epsilon);
-    BOOST_CHECK(world.getEntityPtrs().size() > 0);
+    BOOST_CHECK(world.getEntityMap().lock()->getAllEntities().size() > 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_placeObstaclesInvalidParams_shouldThrow, Fixture)
@@ -213,7 +214,7 @@ BOOST_FIXTURE_TEST_CASE(
             params.quantity_per_100_by_100 * world_dim_x * world_dim_y / 10000;
     
     BOOST_CHECK_CLOSE(actual_num / expected_num, 1, generation_random_epsilon);
-    BOOST_CHECK(world.getEntityPtrs().size() > 0);
+    BOOST_CHECK(world.getEntityMap().lock()->getAllEntities().size() > 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_placeFoodsInvalidParams_shouldThrow, Fixture)
@@ -244,7 +245,8 @@ BOOST_FIXTURE_TEST_CASE(test_initPheromoneMaps_shouldBeMaps, Fixture)
     WorldGenerator::initPheromoneMaps(&world);
     BOOST_CHECK(world.getSimulationObjects<PheromoneMap>().size() == 
         num_phero_maps);
-    BOOST_CHECK(world.getEntityPtrs().size() == 0); // phero maps arent entities
+    BOOST_CHECK(world.getEntityMap().lock()->getAllEntities().size() == 0); 
+        // phero maps arent entities
 }
 
 BOOST_FIXTURE_TEST_CASE(test_setCoefficientsFromGUIKnobs, Fixture)

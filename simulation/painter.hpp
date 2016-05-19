@@ -42,31 +42,21 @@ public:
         );
      
         
-        // remember only positions of entities in a rectangle defined by 
-        // "from" and "to" params (+- radius), to improve performance
-        const auto& all_entities = world->getEntityPtrs();
-        std::set<Point> nonempty_spaces_trimmed;
-        
         const int leftmost = std::min(from.posX(), to.posX()) - radius,
             rightmost = std::max(from.posX(), to.posX()) + radius,
             bottommost = std::min(from.posY(), to.posY()) - radius,
             topmost = std::max(from.posY(), to.posY()) + radius;
         const Point botleft(leftmost, bottommost), topright(rightmost, topmost);
         
-        std::for_each(all_entities.begin(), all_entities.end(),
-            [&nonempty_spaces_trimmed, &botleft, &topright] (auto entity) 
-            -> void { 
-                if(entity.lock()->getPos().isInBounds(botleft, topright))
-                    nonempty_spaces_trimmed.insert(entity.lock()->getPos()); 
-            }
-        );
-        
+        const auto& entities = world->getEntityMap().lock()->
+            getEntitiesInSquare(botleft, topright);
+
         // remove painted points for which their space is already occupied
         candidate_points.erase(
             std::remove_if(candidate_points.begin(), candidate_points.end(),
-                [&nonempty_spaces_trimmed] (auto candidate_pt) -> bool {
-                    for(auto& nonempty_space : nonempty_spaces_trimmed)
-                        if(candidate_pt == nonempty_space)
+                [&entities] (auto candidate_pt) -> bool {
+                    for(auto& e : entities)
+                        if(candidate_pt == e.lock()->getPos())
                             return true;
                     return false;
                 }),

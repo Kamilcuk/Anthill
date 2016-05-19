@@ -66,6 +66,27 @@ public:
 	void setPosX(int posX);
 	void setPosY(int posY);
 	
+	constexpr inline Point clamped(const Point& p1, const Point p2)
+	{	
+		// for single coord: 
+		// posX_ > leftmost ? (posX_ < rightmost ? posX_ : rightmost) : leftmost
+		// Compiler bug: std::min doesn't qualify as constexpr
+#define leftmost (p1.posX() > p2.posX() ? p2.posX() : p1.posX())
+#define rightmost std::max(p1.posX(), p2.posX())
+#define bottommost (p1.posY() > p2.posY() ? p2.posY() : p1.posY())
+#define topmost std::max(p1.posY(), p2.posY())
+;
+		return Point(
+			posX_ > leftmost ? (posX_ < rightmost ? posX_ : rightmost) 
+				: leftmost,
+			posY_ > bottommost ? (posY_ < topmost ? posY_ : topmost) 
+				: bottommost);
+#undef leftmost
+#undef rightmost
+#undef bottommost
+#undef topmost			
+	}
+	
     constexpr inline float getDistance(Point p) const
 	{
 		return std::sqrt(

@@ -3,6 +3,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "world.hpp"
+#include "entity2DMap.hpp"
 
 Entity::Entity(World* world, Point pos) :
     Updatable(world),
@@ -32,7 +33,7 @@ Entity::Entity(const Entity& other) :
 
 Entity::~Entity()
 {
-    world_->invalidateEntities();
+    world_->getEntityMap().lock()->invalidate();
 }
 
 Point Entity::getPos() const
@@ -42,7 +43,9 @@ Point Entity::getPos() const
 
 void Entity::setPos(Point pos)
 {
+    const Point old_pos = this->pos_;
     this->pos_ = pos;
+    world_->getEntityMap().lock()->move(shared_from_this(), old_pos);
 }
 
 float Entity::getDistance(Entity * const e) const

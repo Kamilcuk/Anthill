@@ -28,7 +28,8 @@ BOOST_AUTO_TEST_CASE(test_saveAndLoadState_shouldHaveSameNumOfEntities)
     
     World to_save;
 
-    BOOST_CHECK_EQUAL(to_save.getEntityPtrs().size(), 0);
+    BOOST_CHECK_EQUAL(
+        to_save.getEntityMap().lock()->getAllEntities().size(), 0);
     
     to_save.addSimulationObject<Anthill>(
         boost::make_shared<Anthill>(&to_save));
@@ -41,7 +42,8 @@ BOOST_AUTO_TEST_CASE(test_saveAndLoadState_shouldHaveSameNumOfEntities)
     to_save.addSimulationObject<Obstacle>(
         boost::make_shared<Obstacle>(&to_save));
 
-    BOOST_CHECK_EQUAL(to_save.getEntityPtrs().size(), 4);
+    BOOST_CHECK_EQUAL(
+        to_save.getEntityMap().lock()->getAllEntities().size(), 4);
     
     
     std::string filename = "test_world_serialization";
@@ -50,9 +52,11 @@ BOOST_AUTO_TEST_CASE(test_saveAndLoadState_shouldHaveSameNumOfEntities)
     to_save.saveState(filename);
 
     World to_load;
-    BOOST_CHECK_EQUAL(to_load.getEntityPtrs().size(), 0);
+    BOOST_CHECK_EQUAL(
+        to_load.getEntityMap().lock()->getAllEntities().size(), 0);
     to_load.loadState(filename);
-    BOOST_CHECK_EQUAL(to_load.getEntityPtrs().size(), 4);
+    BOOST_CHECK_EQUAL(
+        to_load.getEntityMap().lock()->getAllEntities().size(), 4);
     
     remove(filename.c_str());
     std::cout.clear();

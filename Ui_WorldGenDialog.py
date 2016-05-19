@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'worldgen.ui'
 #
-# Created: Wed May 18 23:44:06 2016
+# Created: Fri May 20 00:39:24 2016
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ class Ui_WorldGenDialog(object):
     def setupUi(self, WorldGenDialog):
         WorldGenDialog.setObjectName("WorldGenDialog")
         WorldGenDialog.setWindowModality(QtCore.Qt.WindowModal)
-        WorldGenDialog.resize(364, 347)
+        WorldGenDialog.resize(382, 396)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -66,8 +66,8 @@ class Ui_WorldGenDialog(object):
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_3)
         self.numAnts = QtWidgets.QSpinBox(WorldGenDialog)
-        self.numAnts.setMaximum(1000)
-        self.numAnts.setProperty("value", 100)
+        self.numAnts.setMaximum(100000)
+        self.numAnts.setProperty("value", 1000)
         self.numAnts.setObjectName("numAnts")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.numAnts)
         self.label_15 = QtWidgets.QLabel(WorldGenDialog)

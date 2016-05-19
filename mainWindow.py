@@ -241,6 +241,7 @@ class MainWindow(QMainWindow):
         w = self.world.getDimensions().posX()
         h = self.world.getDimensions().posY()
 
+        self.world.setMultithreaded(self.ui.multithreaded.isChecked())
         self.world.simulationStep()
 
         # update statistics
@@ -260,7 +261,7 @@ class MainWindow(QMainWindow):
             bgBrush=QBrush(QColor(50,120,50,255))
             bgPen=QPen(QBrush(QColor()),0)
             scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
-
+            
             # draw pheromone map
             pheromoneColors=[ (50,50,155),
                     (255,50,50),
@@ -293,7 +294,6 @@ class MainWindow(QMainWindow):
             anthillPen=QPen(QBrush(QColor()),0)
             anthillBrush=QBrush(QColor(200,20,20,150))
             self.drawEntities(anthills,anthillPen,anthillBrush)
-
 
     def restartTimer(self):
         self.refresh()

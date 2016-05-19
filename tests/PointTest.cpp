@@ -118,4 +118,20 @@ BOOST_AUTO_TEST_CASE(test_toStringStream)
     BOOST_CHECK_EQUAL(test_stream.str(), "2,2");
 }
 
+BOOST_AUTO_TEST_CASE(test_clamped)
+{
+    Point c1(5, 5), c2(15, 15);
+    BOOST_CHECK_EQUAL(Point(10, 10).clamped(c1, c2), Point(10, 10));
+    
+    BOOST_CHECK_EQUAL(Point(20, 10).clamped(c1, c2), Point(15, 10));
+    BOOST_CHECK_EQUAL(Point(0, 10).clamped(c1, c2), Point(5, 10));
+    BOOST_CHECK_EQUAL(Point(10, 20).clamped(c1, c2), Point(10, 15));
+    BOOST_CHECK_EQUAL(Point(10, 0).clamped(c1, c2), Point(10, 5));
+    
+    BOOST_CHECK_EQUAL(Point(0, 0).clamped(c1, c2), Point(5, 5));
+    BOOST_CHECK_EQUAL(Point(20, 20).clamped(c1, c2), Point(15, 15));
+    BOOST_CHECK_EQUAL(Point(0, 20).clamped(c1, c2), Point(5, 15));
+    BOOST_CHECK_EQUAL(Point(20, 0).clamped(c1, c2), Point(15, 5));
+}
+
 } // namespace PointTest

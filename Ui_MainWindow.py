@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Wed May 18 23:44:09 2016
+# Created: Fri May 20 00:32:29 2016
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(924, 701)
+        MainWindow.resize(1024, 960)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -64,6 +64,9 @@ class Ui_MainWindow(object):
         self.frameSkipping.setMaximum(1000000)
         self.frameSkipping.setObjectName("frameSkipping")
         self.verticalLayout.addWidget(self.frameSkipping)
+        self.multithreaded = QtWidgets.QCheckBox(self.OptionsGroupBox)
+        self.multithreaded.setObjectName("multithreaded")
+        self.verticalLayout.addWidget(self.multithreaded)
         self.line = QtWidgets.QFrame(self.OptionsGroupBox)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -127,7 +130,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 924, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 27))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -160,6 +163,7 @@ class Ui_MainWindow(object):
         self.loadStateButton.setText(_translate("MainWindow", "Load state"))
         self.label_4.setText(_translate("MainWindow", "Framerate:"))
         self.label.setText(_translate("MainWindow", "Frame skipping"))
+        self.multithreaded.setText(_translate("MainWindow", "Multithreaded"))
         self.label_3.setText(_translate("MainWindow", "Paint:"))
         self.drawFoods.setText(_translate("MainWindow", "Foods"))
         self.drawObstacles.setText(_translate("MainWindow", "Obstacles"))

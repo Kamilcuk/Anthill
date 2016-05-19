@@ -44,9 +44,8 @@ BOOST_FIXTURE_TEST_CASE(
 
 BOOST_FIXTURE_TEST_CASE(test_drawEntitiesCross_shouldNotOverlap, Fixture)
 {
-    Painter::drawEntitiesWrapper<Obstacle>(&world, 10, 0, 10, 20, 5);
-    Painter::drawEntitiesWrapper<Food>(&world, 0, 10, 20, 10, 5);
-    
+    Painter::drawEntitiesWrapper<Obstacle>(&world, 10, 0, 10, 20, 1);
+    Painter::drawEntitiesWrapper<Food>(&world, 0, 10, 20, 10, 1);
     BOOST_CHECK_GT(world.getSimulationObjects<Obstacle>().size(), 
         world.getSimulationObjects<Food>().size());
 }
