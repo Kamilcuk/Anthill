@@ -244,9 +244,8 @@ class MainWindow(QMainWindow):
         self.world.simulationStep()
 
         # update statistics
-        # if ( stats bar opened? ): then ; Kamil, no need for stastics if we aren't looking at them
         stats = self.world.getStatistics();
-        if stats:
+        if self.ui.tabWidget.currentWidget().objectName() == "StatsTab":
             self.statistics.refresh(stats)
 
         self.frameSkippingCounter+=1
