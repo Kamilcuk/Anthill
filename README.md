@@ -11,7 +11,8 @@ To build&run the application you need:
 - scons
 - python3 with PyQt5
 - boost
-- lcov (for profiling, works only with gcc)
+- lcov (for profiling and test coverage, works only with gcc)
+- google-perftools, libgoogle-perftools-dev for profiling
 
 Project was succesfuly build, run and tested on following platforms:
 - Arch linux
@@ -22,9 +23,10 @@ Build & run
 -----------
 Executing:
 - scons anthill (default) - builds shared library for python
-- scons test	- 			builds & runs tests; profiling works on linux
+- scons test	- 			builds & runs tests, shows test coverage report
 - scons standalone	-	builds standalone version of anthill (for debug)
 - scons build_test	-	builds tests, doesn't run them
+- ./runProfiler.sh  -   attaches profiler and shows profiler output
 
 To run the project execute file 'main.py' with the python3 interpreter.
 

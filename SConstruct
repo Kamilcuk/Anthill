@@ -23,7 +23,7 @@ if env['PLATFORM'] == 'win32':
 else:
 	# linux platform
 	env.Append(CCFLAGS = ' -Werror -Wall --std=c++14 -O2 -g -fPIC '\
-			'-fprofile-arcs -ftest-coverage')
+			'-fprofile-generate  -ftest-coverage') #-fprofile-use
 	env.Append(CCFLAGS = '-Iboost'); # add boost support
 	env.Append(LINKFLAGS = '-fPIC -lboost_serialization -fprofile-arcs'); # compile shared # boost serialization
 	# add python3 support
@@ -65,6 +65,5 @@ def run_tests(target, source, env):
 	os.system("./generateTestReport.sh")
 	return None
 anthill_test_run = env_test.Command(target = 'test', source = "./build_test", 
-	action = run_tests );
+	action = run_tests);
 Depends(anthill_test_run, anthill_test)
-
