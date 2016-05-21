@@ -15,23 +15,24 @@ bool BodyPart::isAccessible(Point p){
     if(!p.isInBounds(world_->getDimensions()))
         return false;
 
+    Point owner_pos=owner_->getPos();
+
+    int seeingRange=1;
+
     bool collision_detected = false;
-    for(const auto& creature : world_->getSimulationObjects<Creature>()){
-        if(creature->getPos() == p && creature->hasCollision()){
-            //if(creature.get() == owner_)
-            //    continue;
+
+    auto in_square = world_->getEntityMap().lock()->getEntitiesInSquare(
+        Point(owner_pos.posX() - seeingRange, owner_pos.posY() - seeingRange),
+        Point(owner_pos.posX() + seeingRange, owner_pos.posY() + seeingRange));
+           
+    for(const auto& a : in_square) 
+    {
+        if(a.lock()->getPos() == p && a.lock()->hasCollision()){
             collision_detected = true;
             break;
         }
     }
-    if(collision_detected)
-        return false;
-    for(const auto& obstacle : world_->getSimulationObjects<Obstacle>()){
-        if(obstacle->getPos() == p){
-            collision_detected = true;
-            break;
-        }
-    }
+
     return !collision_detected;
 }
 
