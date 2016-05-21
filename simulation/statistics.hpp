@@ -29,7 +29,6 @@ public:
 		void count(const Entity& e, bool &firstCount);
 	};
 private:
-
 	/** is this first time we count objects? */
 	bool firstCount_ = true;
 	/** step number */
@@ -54,7 +53,7 @@ public:
     const std::string print() const;
 
 	// refreshes all stats, using vector of visitables
-	void update(const std::vector<Visitable *> &vv);
+	void update(const World &world, const bool &enabled);
 
 	// Visitor interface
 	void visit(const Ant &a);

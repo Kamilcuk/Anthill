@@ -28,17 +28,27 @@
 #include "statistics.hpp"
 
 
+bool World::getStatisticsEnabled() const
+{
+	return statisticsEnabled_;
+}
+
+void World::setStatisticsEnabled(bool statisticsEnabled)
+{
+	statisticsEnabled_ = statisticsEnabled;
+}
+
 World::World()
 {    
-    setDimensions(300, 200);
+	setDimensions(300, 200);
 
-    /* initialize random seed: */
+	/* initialize random seed: */
 	srand (time(NULL));
 }
 
 World::~World()
 {
-    this->stopSimulation();
+	this->stopSimulation();
 }
 
 void World::setDimensions(int X, int Y)
@@ -81,7 +91,7 @@ void World::simulationStep()
 
 	// we can track visitables that want to be erased/die
 	if(statistics_)
-        statistics_->update(this->getVisitablePtrs());
+		statistics_->update(*this, statisticsEnabled_);
 
     for(auto u : updatable_ptrs_)
         u->step(0);

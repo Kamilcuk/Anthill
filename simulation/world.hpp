@@ -67,7 +67,8 @@ class World {
     VectorOfWeakPtrs<Entity> entity_ptrs_;
 
     // Stats object.
-    boost::shared_ptr<Statistics> statistics_;
+	boost::shared_ptr<Statistics> statistics_;
+	bool statisticsEnabled_ = false;
     
 public:
     World();
@@ -145,8 +146,11 @@ public:
     /// Removes expired pointers and returns a vector of weak_ptrs of entities.
     VectorOfWeakPtrs<Entity>& getEntityPtrs();
     
+	bool getStatisticsEnabled() const;
+	void setStatisticsEnabled(bool statisticsEnabled);
+
 private:
-    // using friends here because we want following methods below to be called 
+	// using friends here because we want following methods below to be called
     // in very specific situations.
     friend class Updatable;
     friend class Visitable;

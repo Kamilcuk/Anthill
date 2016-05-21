@@ -100,6 +100,7 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_METHOD(World, simulationStep)
         REGISTER_METHOD(World, saveState)
         REGISTER_METHOD(World, loadState)
+		REGISTER_METHOD(World, setStatisticsEnabled)
     ;
     
     

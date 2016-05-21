@@ -53,11 +53,11 @@ unsigned int Statistics::stepNumber() const
 
 Statistics::Statistics()
 {
-
+    
 }
 
 const std::string print2(const Statistics::EntityCnt& u, const std::string app) {
-	return std::string(
+    return std::string(
 				app+" init count: "+std::to_string(u.init)+"\n"+
 				app+" alive: "+std::to_string(u.existing)+"\n"+
 				app+" dead: "+std::to_string(u.removed)+"\n"
@@ -105,22 +105,25 @@ void Statistics::visit(const AntMandibles &u)
 	}
 }
 
-void Statistics::update(const std::vector<Visitable*>& vv)
+void Statistics::update(const World& world, const bool& enabled)
 {
-	/* upate stepNumber_ */
 	stepNumber_++;
 	if ( firstCount_ ) {
 		firstCount_ = ( stepNumber_ <= 1 );
 	}
 
-	/* prepare counters */
-	antsCarring_ = 0;
-	antCnt_.prepare();
-	foodCnt_.prepare();
-	obstacleCnt_.prepare();
+	if ( enabled || firstCount_ ) {
+		const std::vector<Visitable *> &vv = world.getVisitablePtrs();
 
-	/* visit! */
-	for (auto& v : vv) {
-		v->accept(*this);
+		/* prepare counters */
+		antsCarring_ = 0;
+		antCnt_.prepare();
+		foodCnt_.prepare();
+		obstacleCnt_.prepare();
+
+		/* visit! */
+		for (auto& v : vv) {
+			v->accept(*this);
+		}
 	}
 }
