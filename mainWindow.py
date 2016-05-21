@@ -23,40 +23,43 @@ import ctypes
 import anthill
 #from timer import Timer
 
+import matplotlib
+matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 class Statistics():
-	def __init__(self, stat_label, parent, width=3, height=4, dpi=100):
-		self.fig = Figure(figsize=(width, height), dpi=dpi)
-		self.axes = self.fig.add_subplot(111)
-		self.axes.hold(False)
-		
-		self.canvas = FigureCanvasQTAgg(self.fig)
-		parent.addWidget(self.canvas, 1, 0, 1, 1)
-		
-		self.canvas.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
-		self.canvas.updateGeometry()
-		
-		self.stat_label = stat_label;
-		self.reset()
+    def __init__(self, stat_label, parent, width=3, height=4, dpi=100):
 
-	def refresh(self, stats):
-		# stats.print()
-		_translate = QtCore.QCoreApplication.translate
-		self.stat_label.setText(_translate("MainWindow", stats.print()))
-		# counters
-		foodCnt = stats.foodCnt()
-		self.foods.append(foodCnt.existing)
-		self.stepNumbers.append(stats.stepNumber())
-		# plot
-		self.axes.plot(self.stepNumbers, self.foods)
-		self.axes.set_xlabel("Numer kroku symulacji")
-		self.axes.set_ylabel("Ilosc jedzenia")
-		self.canvas.draw()
+        self.fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = self.fig.add_subplot(111)
+        self.axes.hold(False)
+        
+        self.canvas = FigureCanvasQTAgg(self.fig)
+        parent.addWidget(self.canvas, 1, 0, 1, 1)
+        
+        self.canvas.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+        self.canvas.updateGeometry()
+        
+        self.stat_label = stat_label;
+        self.reset()
 
-	def reset(self):
-		self.foods = []
-		self.stepNumbers = []
+    def refresh(self, stats):
+        # stats.print()
+        _translate = QtCore.QCoreApplication.translate
+        self.stat_label.setText(_translate("MainWindow", stats.print()))
+        # counters
+        foodCnt = stats.foodCnt()
+        self.foods.append(foodCnt.existing)
+        self.stepNumbers.append(stats.stepNumber())
+        # plot
+        self.axes.plot(self.stepNumbers, self.foods)
+        self.axes.set_xlabel("Numer kroku symulacji")
+        self.axes.set_ylabel("Ilosc jedzenia")
+        self.canvas.draw()
+
+    def reset(self):
+        self.foods = []
+        self.stepNumbers = []
 
 class MainWindow(QMainWindow):
 
@@ -122,7 +125,10 @@ class MainWindow(QMainWindow):
                     self.lastMousePosOnMap = coords
 
                 self.drawOnMap(self.world, self.lastMousePosOnMap[0],
-                    self.lastMousePosOnMap[1], coords[0], coords[1])
+                    self.lastMousePosOnMap[1], coords[0], coords[1],
+                    self.ui.painterRadius.value(), 
+                    self.ui.painterIntensity.value() * 0.01 *\
+                        anthill.WorldGenerator.default_pheromone_params.scale)
                 self.lastMousePosOnMap = coords
 
             if self.draggingCamera:
@@ -211,13 +217,19 @@ class MainWindow(QMainWindow):
 
 
     def handlePainterOption(self):
-        if self.ui.painterButtonGroup.checkedId() == 1:
+        # we're checking against button text which is bad but it's the easiest
+        # way I think...
+        if self.ui.painterButtonGroup.checkedButton().text() == \
+                "Foods":
             self.drawOnMap = anthill.Painter.drawFoods
-        elif self.ui.painterButtonGroup.checkedId() == 2:
+        elif self.ui.painterButtonGroup.checkedButton().text() == \
+                "Obstacles":
             self.drawOnMap = anthill.Painter.drawObstacles
-        elif self.ui.painterButtonGroup.checkedId() == 3:
+        elif self.ui.painterButtonGroup.checkedButton().text() == \
+                "Pheromone (to food)":
            self.drawOnMap = anthill.Painter.drawPheromoneToFood
-        elif self.ui.painterButtonGroup.checkedId() == 4:
+        elif self.ui.painterButtonGroup.checkedButton().text() == \
+                "Pheromone (from food)":
            self.drawOnMap = anthill.Painter.drawPheromoneFromFood
 
     @pyqtSlot()
@@ -229,12 +241,12 @@ class MainWindow(QMainWindow):
         w = self.world.getDimensions().posX()
         h = self.world.getDimensions().posY()
 
+        self.world.setMultithreaded(self.ui.multithreaded.isChecked())
         self.world.simulationStep()
 
         # update statistics
-        # if ( stats bar opened? ): then ; Kamil, no need for stastics if we aren't looking at them
         stats = self.world.getStatistics();
-        if stats:
+        if self.ui.tabWidget.currentWidget().objectName() == "StatsTab":
             self.statistics.refresh(stats)
 
         self.frameSkippingCounter+=1
@@ -249,7 +261,7 @@ class MainWindow(QMainWindow):
             bgBrush=QBrush(QColor(50,120,50,255))
             bgPen=QPen(QBrush(QColor()),0)
             scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
-
+            
             # draw pheromone map
             pheromoneColors=[ (50,50,155),
                     (255,50,50),
@@ -283,7 +295,6 @@ class MainWindow(QMainWindow):
             anthillBrush=QBrush(QColor(200,20,20,150))
             self.drawEntities(anthills,anthillPen,anthillBrush)
 
-
     def restartTimer(self):
         self.refresh()
         if self.refreshTimer:
@@ -309,18 +320,19 @@ class MainWindow(QMainWindow):
                 dialog.processResults()
                 self.world.setDimensions(dialog.worldWidth, dialog.worldHeight)
 
-                anthill.WorldGenerator.placeObstacles(self.world,
-                    dialog.obstaclesParams)
-                anthill.WorldGenerator.placeFoods(self.world,
-                    dialog.foodsParams)
-                anthill.WorldGenerator.placeAnthill(self.world,
-                    dialog.anthillParams)
-                anthill.WorldGenerator.placeAnts(self.world,
-                    dialog.antsParams)
-                anthill.WorldGenerator.initPheromoneMaps(self.world,
-                    dialog.pheroToFoodCoef,
-                    dialog.pheroFromFoodCoef,
-                    dialog.pheroAnthillCoef)
+                try:
+                    anthill.WorldGenerator.placeObstacles(self.world,
+                        dialog.obstaclesParams)
+                    anthill.WorldGenerator.placeFoods(self.world,
+                        dialog.foodsParams)
+                    anthill.WorldGenerator.placeAnthill(self.world,
+                        dialog.anthillParams)
+                    anthill.WorldGenerator.placeAnts(self.world,
+                        dialog.antsParams)
+                    anthill.WorldGenerator.initPheromoneMaps(self.world,
+                        dialog.pheromoneParams)
+                except:
+                    pass
 
                 self.statistics.reset()
                 self.world.startSimulation()

@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <thread>
 #include <fstream>
 
 #include <boost/make_shared.hpp>
@@ -28,38 +29,40 @@
 #include "statistics.hpp"
 
 
-bool World::getStatisticsEnabled() const
-{
-	return statisticsEnabled_;
-}
-
-void World::setStatisticsEnabled(bool statisticsEnabled)
-{
-	statisticsEnabled_ = statisticsEnabled;
-}
-
 World::World()
 {    
-	setDimensions(300, 200);
+    multithreaded_ = false;
+    setDimensions(300, 200);
 
-	/* initialize random seed: */
+    /* initialize random seed: */
 	srand (time(NULL));
 }
 
 World::~World()
 {
-	this->stopSimulation();
+    this->stopSimulation();
 }
 
-void World::setDimensions(int X, int Y)
+void World::setDimensions(unsigned x, unsigned y)
 {
-	width_ = X;
-	height_ = Y;
+	width_ = x;
+	height_ = y;
+    entity_map_ = boost::make_shared<Entity2DMap>(x, y);
 }
 
 Point World::getDimensions()
 {
     return Point(width_, height_);
+}
+
+void World::setMultithreaded(bool m)
+{
+    multithreaded_ = m;
+}
+
+bool World::isMultithreaded()
+{
+    return multithreaded_;
 }
 
 void World::startSimulation()
@@ -77,30 +80,29 @@ void World::stopSimulation()
     anthills_.clear();
     pheromone_maps_.clear();
     
-    getEntityPtrs();    // just to clear expired weak_ptrs
-    entity_ptrs_.clear();
-    
 	updatable_ptrs_.clear();
     visitable_ptrs_.clear();
 }
 
 void World::simulationStep()
-{   
-    for(auto u : updatable_ptrs_)
-		u->step(1);
-
+{      
+    updateAll(1);
+    entity_map_->applyAllMoves();
+    
 	// we can track visitables that want to be erased/die
 	if(statistics_)
 		statistics_->update(*this, statisticsEnabled_);
-
-    for(auto u : updatable_ptrs_)
-        u->step(0);
         
+    updateAll(0);
+    entity_map_->applyAllMoves();
+    
     // remove simulation objects that were flagged to remove;
     removeFlaggedSimulationObjects<Food>();
     removeFlaggedSimulationObjects<Obstacle>();
     removeFlaggedSimulationObjects<Creature>();
     removeFlaggedSimulationObjects<Anthill>();
+    
+    entity_map_->removeExpired();
 }
 
 void World::saveState(std::string filename)
@@ -142,20 +144,6 @@ void World::loadState(std::string filename)
     std::cout << "Finished loading" << std::endl;
 }
 
-World::VectorOfWeakPtrs<Entity>& World::getEntityPtrs()
-{ 
-    if(invalid_entities_)
-    {
-        // remove expired stuff from entities list
-        invalid_entities_ = false;
-        entity_ptrs_.erase(
-            std::remove_if(entity_ptrs_.begin(), entity_ptrs_.end(),
-                [] (auto e) -> bool { return e.expired(); }),
-            entity_ptrs_.end());
-    }
-    return entity_ptrs_; 
-}
-
 void World::addUpdatable(Updatable* u)
 {
     updatable_ptrs_.emplace_back(u);
@@ -183,12 +171,52 @@ void World::removeVisitable(Visitable* v)
 void World::trackEntity(boost::shared_ptr<Entity> e)
 {
     if(e)
-        entity_ptrs_.emplace_back(boost::weak_ptr<Entity>(e));
+        entity_map_->add(boost::weak_ptr<Entity>(e));
 }
 
-void World::invalidateEntities()
+void World::updateAll(int stepsize)
 {
-    invalid_entities_ = true;
+    if(isMultithreaded())
+        updateAllInParallel(stepsize);
+    else
+        updateAllInSerial(stepsize);
+}
+
+void World::updateAllInSerial(int stepsize)
+{
+    for(auto u : updatable_ptrs_)
+        u->step(stepsize);
+}
+
+void World::updateAllInParallel(int stepsize)
+{
+    auto worker_func = 
+        [] (auto begin, auto end, int stepsize)
+        {
+            for(auto updatable_iter = begin; updatable_iter != end; 
+                ++updatable_iter)
+            {
+                (*updatable_iter)->step(stepsize);
+            }
+        }
+    ;
+    
+    static const unsigned num_workers = std::thread::hardware_concurrency();
+    unsigned per_worker = updatable_ptrs_.size() / num_workers;
+    auto chunk_start = updatable_ptrs_.begin();
+    std::vector<std::thread> workers(num_workers);
+    for(auto w = workers.begin(); w != workers.end() - 1; ++w)
+    {
+        *w = std::thread(worker_func, chunk_start, chunk_start + per_worker, 
+            stepsize);
+        chunk_start += per_worker;
+    }
+    // set last worker's end iterator to .end() in case per_worker is not even
+    workers.back() = std::thread(worker_func, chunk_start, 
+        updatable_ptrs_.end(), stepsize); 
+
+    for(auto&& w : workers)
+        w.join();
 }
 
 

@@ -14,10 +14,10 @@ class Visitor
 {
 public:
     virtual ~Visitor() {}
-    virtual void visit(const Ant& a) = 0;
-	virtual void visit(const Food& f) = 0;
-	virtual void visit(const AntMandibles& u) = 0;
-	virtual void visit(const Obstacle& u) = 0;
+    virtual void visit(const Ant& a) {};
+	virtual void visit(const Food& f) {};
+	virtual void visit(const AntMandibles& u) {};
+	virtual void visit(const Obstacle& u) {};
 };
 
 #endif // VISITED_HPP

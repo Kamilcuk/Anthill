@@ -59,7 +59,7 @@ using namespace boost::python;
 #define REGISTER_TEMPLATE_METHOD_REF(cl, meth, templ, name) \
     .def(name, &cl::meth<templ>, return_internal_reference<>())
 
-// please decide, try not to be mean, cmon! if your going to do defines, do them, but be nice, dont change others work.
+// registers a readonly variable
 #define REGISTER_VARIABLE_READONLY(cl, x) .def_readonly(#x, &cl::x)
 
 BOOST_PYTHON_MODULE(anthill)
@@ -94,6 +94,8 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_TEMPLATE_METHOD_REF(World, getSimulationObjects, PheromoneMap, "getPheromoneMaps")
         REGISTER_METHOD(World, getStatistics)
         REGISTER_METHOD(World, setDimensions)
+        REGISTER_METHOD(World, setMultithreaded)
+        REGISTER_METHOD(World, isMultithreaded)
         REGISTER_METHOD(World, getDimensions)
         REGISTER_METHOD(World, startSimulation)
         REGISTER_METHOD(World, stopSimulation)
@@ -104,17 +106,27 @@ BOOST_PYTHON_MODULE(anthill)
     ;
     
     
-    REGISTER_CLASS_NOINIT(WorldGenerator)
+    object wg = REGISTER_CLASS_NOINIT(WorldGenerator)
         REGISTER_METHOD(WorldGenerator, placeAnthill)
         REGISTER_METHOD(WorldGenerator, placeAnts)
         REGISTER_METHOD(WorldGenerator, placeObstacles)
         REGISTER_METHOD(WorldGenerator, placeFoods)
         REGISTER_METHOD(WorldGenerator, initPheromoneMaps)
+        REGISTER_VARIABLE_READONLY(WorldGenerator, default_anthill_params)
+        REGISTER_VARIABLE_READONLY(WorldGenerator, default_ants_params)
+        REGISTER_VARIABLE_READONLY(WorldGenerator, default_obstacles_params)
+        REGISTER_VARIABLE_READONLY(WorldGenerator, default_food_params)
+        REGISTER_VARIABLE_READONLY(WorldGenerator, default_pheromone_params)
     ;
-    REGISTER_CLASS(AnthillParams);
 
+    REGISTER_CLASS(AnthillParams);
+    REGISTER_CLASS(PheromoneParams) 
+        REGISTER_METHOD(PheromoneParams, applyCoefficients)
+        REGISTER_VARIABLE_READONLY(PheromoneParams, scale)        
+    ;
     REGISTER_CLASS(AntsParams)        
         REGISTER_METHOD(AntsParams, applyNumAnts)
+        REGISTER_METHOD(AntsParams, applyRatioScouts)
     ;        
     REGISTER_CLASS(ObstaclesParams)
         REGISTER_METHOD(ObstaclesParams, applyObstacleFrequency)
@@ -163,13 +175,3 @@ BOOST_PYTHON_MODULE(anthill)
     ;
 
 }
-
-#undef REGISTER_SHAREDPTR
-#undef REGISTER_VECTOR_SHAREDPTR
-#undef REGISTER_CLASS
-#undef REGISTER_CLASS_NOINIT
-#undef REGISTER_METHOD
-#undef REGISTER_METHOD_REF
-#undef REGISTER_TEMPLATE_METHOD
-#undef REGISTER_TEMPLATE_METHOD_REF
-#undef REGISTER_VARIABLE_READONLY

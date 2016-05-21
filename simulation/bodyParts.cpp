@@ -4,6 +4,7 @@
 
 #include "creature.hpp"
 #include "world.hpp"
+#include "entity2DMap.hpp"
 #include "pheromoneMap.hpp"
 #include "obstacle.hpp"
 #include "point.hpp"
@@ -115,16 +116,22 @@ Entity::Smell AntSensor::Observation::getSmell()const{
 std::vector<AntSensor::Observation> AntSensor::getObservations(){
     std::vector<Observation> ret;
     
-    for(const auto& a : world_->getEntityPtrs()){
-        if(a.lock()->getPos().getDistance(owner_->getPos()) <= seeingRange)
+    Point owner_pos = owner_-> getPos();
+    
+    auto in_square = world_->getEntityMap().lock()->getEntitiesInSquare(
+        Point(owner_pos.posX() - seeingRange, owner_pos.posY() - seeingRange),
+        Point(owner_pos.posX() + seeingRange, owner_pos.posY() + seeingRange));
+           
+    for(const auto& a : in_square) 
+    {
+        if(a.lock()->getPos().getDistance(owner_pos) <= seeingRange)
             ret.push_back(Observation(a));
     }
     
-    Point ownerPos=owner_->getPos();
     std::sort(ret.begin(),ret.end(),
-        [ownerPos] (const Observation& a,const Observation& b) -> bool 
-        { return ownerPos.getDistance(a.getPos()) 
-            < ownerPos.getDistance(b.getPos()); });
+        [owner_pos] (const Observation& a,const Observation& b) -> bool 
+        { return owner_pos.getDistance(a.getPos()) 
+            < owner_pos.getDistance(b.getPos()); });
     
     return ret;
 }

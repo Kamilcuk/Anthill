@@ -25,10 +25,6 @@ protected:
 
 public:
 
-    bool hasCollision(){
-        return hasCollision_;
-    }
-
     std::vector<boost::shared_ptr<AntLegs> >& getAntLegs(){
         return antLegs;
     }
@@ -50,14 +46,16 @@ public:
         hasCollision_=true;
     }
     Creature(World* world):
-        Entity(world) {}
+        Entity(world) {
+        hasCollision_ = true;
+    }
         
     virtual void step(int) override
     {
         throw std::runtime_error("Creature::step called, should never happen.");
     }
 
-    float bite(float strength);
+    float bite(float strength) override;
         
 private:
     friend class boost::serialization::access;
@@ -67,7 +65,6 @@ private:
         ar & boost::serialization::base_object<Entity>(*this);
         // for explanation of this line see serializationCustom.hpp
         g_current_owner = this; 
-        ar & hasCollision_;
         ar & controller_;
 		ar & antLegs;
         ar & antMandibles;

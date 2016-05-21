@@ -63,19 +63,28 @@ BOOST_FIXTURE_TEST_CASE(test_makeVisitable_shouldAddToVectorInWorld, Fixture)
 
 BOOST_FIXTURE_TEST_CASE(test_makeUntrackedEntity_shouldntBeStored, Fixture)
 {
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
+    BOOST_CHECK_EQUAL(world.getEntityMap().lock()->getAllEntities().size(), 0);
     Creature entity_untracked(&world);
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);
+    BOOST_CHECK_EQUAL(world.getEntityMap().lock()->getAllEntities().size(), 0);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_makeTrackedEntity_shouldStore, Fixture)
 {   
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
+    BOOST_CHECK_EQUAL(world.getEntityMap().lock()->getAllEntities().size(), 0);    
     world.addSimulationObject<Creature>(
         boost::make_shared<Creature>(&world));
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);
+    BOOST_CHECK_EQUAL(world.getEntityMap().lock()->getAllEntities().size(), 1);
 }
 
+BOOST_FIXTURE_TEST_CASE(test_startSimulation_statisticsShouldWork, Fixture)
+{
+    BOOST_CHECK(world.getStatistics() == nullptr);
+    world.startSimulation();
+    BOOST_CHECK(world.getStatistics());
+    BOOST_CHECK_EQUAL(world.getStatistics()->stepNumber(), 0);
+    world.simulationStep();
+    BOOST_CHECK_EQUAL(world.getStatistics()->stepNumber(), 1);
+}
 
 BOOST_FIXTURE_TEST_CASE(
     test_removeSimulationObject_shouldBeGoneImmediately, Fixture)
@@ -89,28 +98,6 @@ BOOST_FIXTURE_TEST_CASE(
     world.removeSimulationObject<Creature>(obj);
     
     BOOST_CHECK_EQUAL(world.getSimulationObjects<Creature>().size(), 0);
-}
-
-BOOST_FIXTURE_TEST_CASE(
-    test_removeSimulationObject_shouldEntityGoneAtGetEntityPtrsCall, Fixture)
-{   
-    {
-        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
-        auto obj = world.addSimulationObject<Creature>(
-            boost::make_shared<Creature>(&world));
-            
-        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);    
-        
-        world.removeSimulationObject<Creature>(obj);
-        
-        // there should still be one in getEntityPtrs(), because shared_ptr
-        // to obj isn't invalidated yet, because there's still a local reference
-        // to obj.
-        BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 1);    
-    } 
-    // After local reference to obj gets destroyed, getEntityPtrs() should
-    // remove expired pointers.
-    BOOST_CHECK_EQUAL(world.getEntityPtrs().size(), 0);    
 }
 
 BOOST_FIXTURE_TEST_CASE(

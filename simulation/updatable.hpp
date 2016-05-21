@@ -17,13 +17,6 @@ public:
     Updatable(const Updatable&);
     virtual ~Updatable();
     
-    // we need to provide following operators so that we can use references
-    // to objects deriving from Updatable in Python module (Python lists use 
-    // these operators)
-	Updatable& operator=(const Updatable&);
-    bool operator==(const Updatable&);
-    bool operator!=(const Updatable&);
-    
     /// Interface for single simulation step. @todo
 	virtual void step(int delta_time) = 0;
     

@@ -18,6 +18,8 @@
 #include "visitor.hpp"
 #include "statistics.hpp"
 
+#include "entity2DMap.hpp"
+
 #include "point.hpp"
 
 class Food;
@@ -39,7 +41,9 @@ class World {
     friend class WorldGenerator;
 
     // world properties
-    int width_, height_;
+    unsigned width_, height_;
+    
+    bool multithreaded_;
     
     // Pointers to stuff that is automatically updated in simualtion loop.
     // We're using an observer pattern here, so raw pointers are appropriate.
@@ -66,16 +70,23 @@ class World {
     using VectorOfWeakPtrs = std::vector<boost::weak_ptr<T> >;
     VectorOfWeakPtrs<Entity> entity_ptrs_;
 
+    // 2D vector containing pointers to entities.
+    boost::shared_ptr<Entity2DMap> entity_map_;
+
     // Stats object.
 	boost::shared_ptr<Statistics> statistics_;
 	bool statisticsEnabled_ = false;
+    
     
 public:
     World();
     ~World();
 
-	void setDimensions(int x, int y);
+	void setDimensions(unsigned x, unsigned y);
 	Point getDimensions();
+    
+    void setMultithreaded(bool m);
+    bool isMultithreaded();
 
     /// Sets up simulation.
     void startSimulation();
@@ -83,6 +94,7 @@ public:
     void stopSimulation();
     /// Executed for every simulation step.
     void simulationStep();
+    
     
     /// Serializes simulation state.
     void saveState(std::string filename);
@@ -140,11 +152,11 @@ public:
     inline const std::vector<Visitable*>& getVisitablePtrs() const
     { return visitable_ptrs_; }
     
-    boost::shared_ptr<Statistics> getStatistics() const
+    inline boost::shared_ptr<Statistics> getStatistics() const
     { return statistics_; }
     
-    /// Removes expired pointers and returns a vector of weak_ptrs of entities.
-    VectorOfWeakPtrs<Entity>& getEntityPtrs();
+    inline boost::weak_ptr<Entity2DMap> getEntityMap()
+    { return entity_map_; }
     
 	bool getStatisticsEnabled() const;
 	void setStatisticsEnabled(bool statisticsEnabled);
@@ -159,9 +171,19 @@ private:
     /// Adds updatable object to updatables_ptrs vector. Should be called only
     /// inside Updatable constructor!!
     void addUpdatable(Updatable* u);
+    
     /// Removes an updatable from updatables_ptrs vector. Should be called only
     /// inside Updatable destructor!!
     void removeUpdatable(Updatable* u);
+
+    /// Updates all updatables with specified stepsize.
+    void updateAll(int stepsize);
+
+    /// Updates all updatables using specified stepsize in parallel.
+    void updateAllInParallel(int stepsize);
+    
+    /// Updates all updatables using specified stepsize in serial.  
+    void updateAllInSerial(int stepsize);
 
     /// Adds visitable object to visitable_ptrs vector. Should be called only
     /// inside Visitable constructor!!
@@ -171,14 +193,11 @@ private:
     void removeVisitable(Visitable* v);
     
     /// Checks if specified shared_ptr is valid and adds a weak_ptr created from
-    /// it to to entity_ptrs_ vector.
+    /// it to to entity_map_ vector.
     void trackEntity(boost::shared_ptr<Entity> e);
-    /// Invalidates list of entities, so that getEntityPtrs() knows to remove 
-    /// expired pointers when it's called. This method should be called when
-    /// an Entity is destructed or removed from simulation state.
-    void invalidateEntities();
-    bool invalid_entities_ = true;
-       
+    
+
+           
 private:
     friend class boost::serialization::access;
 	template<class Archive>

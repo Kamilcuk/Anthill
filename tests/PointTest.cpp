@@ -82,6 +82,28 @@ BOOST_AUTO_TEST_CASE(test_distance)
     BOOST_CHECK_CLOSE(p.getDistance(q), 2, 0.00001); 
 }
 
+BOOST_AUTO_TEST_CASE(test_isAdjacent)
+{
+    Point p(5, 5);
+    BOOST_CHECK(p.isAdjacent(Point(5, 5))); 
+    
+    BOOST_CHECK(p.isAdjacent(Point(4, 5))); 
+    BOOST_CHECK(p.isAdjacent(Point(6, 5))); 
+    BOOST_CHECK(p.isAdjacent(Point(5, 4))); 
+    BOOST_CHECK(p.isAdjacent(Point(5, 6))); 
+    
+    BOOST_CHECK(!p.isAdjacent(Point(4, 4))); 
+    BOOST_CHECK(!p.isAdjacent(Point(6, 6))); 
+    BOOST_CHECK(!p.isAdjacent(Point(4, 6))); 
+    BOOST_CHECK(!p.isAdjacent(Point(6, 4))); 
+}
+
+BOOST_AUTO_TEST_CASE(test_getGridDistance)
+{
+    Point p(2, 2), q(4, 4);
+    BOOST_CHECK_EQUAL(p.getGridDistance(q), 4); 
+}
+
 BOOST_AUTO_TEST_CASE(test_toString)
 {
     Point p(2, 2);
@@ -94,6 +116,22 @@ BOOST_AUTO_TEST_CASE(test_toStringStream)
     std::stringstream test_stream;
     test_stream << p;
     BOOST_CHECK_EQUAL(test_stream.str(), "2,2");
+}
+
+BOOST_AUTO_TEST_CASE(test_clamped)
+{
+    Point c1(5, 5), c2(15, 15);
+    BOOST_CHECK_EQUAL(Point(10, 10).clamped(c1, c2), Point(10, 10));
+    
+    BOOST_CHECK_EQUAL(Point(20, 10).clamped(c1, c2), Point(15, 10));
+    BOOST_CHECK_EQUAL(Point(0, 10).clamped(c1, c2), Point(5, 10));
+    BOOST_CHECK_EQUAL(Point(10, 20).clamped(c1, c2), Point(10, 15));
+    BOOST_CHECK_EQUAL(Point(10, 0).clamped(c1, c2), Point(10, 5));
+    
+    BOOST_CHECK_EQUAL(Point(0, 0).clamped(c1, c2), Point(5, 5));
+    BOOST_CHECK_EQUAL(Point(20, 20).clamped(c1, c2), Point(15, 15));
+    BOOST_CHECK_EQUAL(Point(0, 20).clamped(c1, c2), Point(5, 15));
+    BOOST_CHECK_EQUAL(Point(20, 0).clamped(c1, c2), Point(15, 5));
 }
 
 } // namespace PointTest

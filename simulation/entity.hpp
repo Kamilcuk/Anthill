@@ -22,22 +22,24 @@ class Entity : public Updatable, public boost::enable_shared_from_this<Entity>
 {
 	/** position of this entity */
 	Point pos_;
-
-    // for different derived classes different meaning,
-    // but all of them need this variable
-    // ex. Ant life energy, Obstacle endurance, Food energy, etc.
-
-protected:
-    bool hasCollision_;
-    float energy_;
-    float maxEnergy_;
-
+    
 public:
-    enum class Smell{
+    enum class Smell {
         Food,
         None
     };
-    
+
+protected:
+    // for different derived classes different meaning,
+    // but all of them need this variable
+    // ex. Ant life energy, Obstacle endurance, Food energy, etc.
+    bool hasCollision_;
+    float energy_;
+    float maxEnergy_;
+    Smell smell_;
+
+public:
+
 	Entity(World *world, Point pos);
 	Entity(World *world);
 	virtual ~Entity();
@@ -45,8 +47,13 @@ public:
 	Entity(const Entity&);    
     Entity& operator=(const Entity&);
 
+    inline bool hasCollision() const
+    {
+        return hasCollision_;
+    }
+
     /// We need to provide implementation so that Entity is serializable.
-    virtual void step(int) override
+    inline virtual void step(int) override
     {
         throw std::runtime_error("Entity::step called, should never happen.");
     }
@@ -75,18 +82,18 @@ public:
 
 
     // physics
-    virtual Smell getSmell(){ return Smell::None;}
-    virtual int getColorR(){return 0;}
-    virtual int getColorG(){return 0;}
-    virtual int getColorB(){return 0;}
-    virtual int getColorA(){return 255;}
+    virtual Smell getSmell() const { return smell_; }
+    virtual int getColorR() const { return 0; }
+    virtual int getColorG() const { return 0; }
+    virtual int getColorB() const { return 0; }
+    virtual int getColorA() const { return 255; }
 
     // have yourself bitten,
     // returns energy that can be eaten
-    virtual float bite(float strength){return 0;}
+    virtual float bite(float strength) { return 0; }
 
-    float getEnergy(){return energy_;}
-    float getMaxEnergy(){return maxEnergy_;}
+    float getEnergy() const { return energy_; }
+    float getMaxEnergy() const { return maxEnergy_; }
     
 private:
     bool to_remove_flag_ = false;  
@@ -97,6 +104,11 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
 	{
 		ar & pos_;
+        ar & hasCollision_;
+        ar & hasCollision_;
+        ar & energy_;
+        ar & maxEnergy_;
+        ar & smell_;
 	}
 
 };

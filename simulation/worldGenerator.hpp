@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <math.h>
 #include <set>
+#include <vector>
 
 #include "point.hpp"
 #include "worldGenParams.hpp"
+#include "ant.hpp"
 
 class World;
 class Anthill;
-class Ant;
 class Obstacle;
 class Food;
 
@@ -26,6 +27,7 @@ public:
     static AntsParams default_ants_params;
     static ObstaclesParams default_obstacles_params;
     static FoodsParams default_food_params;
+    static PheromoneParams default_pheromone_params;
 
     // Following methods will modify world state by adding new objects to 
     // simulation state.
@@ -38,16 +40,23 @@ public:
     static void placeFoods(World* world, 
         FoodsParams& params = WorldGenerator::default_food_params);
         
-    /// Initializes pheromone maps with specified pheromone decay rates.
-    /// Number and types of pheromone maps is hardcoded.
-    static void initPheromoneMaps(World* world, float to_food_decay_rate,
-        float from_food_decay_rate, float anthill_decay_rate);
+    /// Initializes pheromone maps with specified params.
+    /// Number and types of pheromone maps are hardcoded.
+    static void initPheromoneMaps(World* world, 
+        PheromoneParams& params = WorldGenerator::default_pheromone_params);
         
 private:
     inline static int randSign()
     {
         return (rand() % 2 ? 1 : -1);
     }
+    
+    static std::set<Point> getTakenSpaces(World* world);
+    static std::vector<Point> getFreeSpaces(World* world);
+    static std::vector<Point> getAllPoints(World* world);
+    static Point fitNewPos(World* world, AntsParams& params, 
+        std::vector<Point>& free_spaces);
+    static Ant::Type decideAntType(const int num_spawned, AntsParams& params);
 };
 
 

@@ -16,33 +16,8 @@ PheromoneMap::PheromoneMap(World* world) :
 {
 }
 
-PheromoneMap::PheromoneMap(const PheromoneMap& other)
-	:
-    Updatable(other.world_), map_(other.map_), type_(other.type_),
-	decay_coeff_(other.decay_coeff_)
-{
-}
-
 PheromoneMap::~PheromoneMap()
 {
-}
-
-PheromoneMap& PheromoneMap::operator=(const PheromoneMap& other)
-{
-	map_ = other.map_;
-	type_ = other.type_;
-	decay_coeff_ = other.decay_coeff_;
-    return *this;
-}
-
-bool PheromoneMap::operator==(const PheromoneMap& other)
-{
-    return *this == other;
-}
-
-bool PheromoneMap::operator!=(const PheromoneMap& other)
-{
-    return *this != other;
 }
 
 PheromoneMap::Type PheromoneMap::getType() const
@@ -132,6 +107,8 @@ Point PheromoneMap::getStrongestAtArea(const Point &middle, const float radius)
 			}
 		}
 	}
+	if(ret == Point(-1, -1)) 
+		throw std::runtime_error("getStrongestAtArea: not found");
 	return ret;
 }
 
@@ -141,8 +118,9 @@ void PheromoneMap::createBlob(const Point& p_pos, const float p_radius,
     int sizeX=map_.size();
     int sizeY=map_[0].size();
 
-    if(!p_pos.isInBounds(sizeX,sizeY))
-	    throw std::runtime_error("createBlob: Specified position exceeds pheromone map.");
+    if(!p_pos.isInBounds(sizeX, sizeY))
+	    throw std::runtime_error("createBlob: Specified position exceeds "
+			"pheromone map.");
 
 	// consider each cell in a square
     const int x1 = std::max(int((p_pos.posX() - p_radius)),0);

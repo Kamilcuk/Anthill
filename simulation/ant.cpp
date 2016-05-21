@@ -89,8 +89,6 @@ void Ant::step(int deltaTime) {
     energy_-=0.1;
     energy_=std::min(energy_,maxEnergy_);
 
-    energy_=std::max(energy_,-10.0f);
-
     if(energy_<=0){
         flagToRemove();
     }

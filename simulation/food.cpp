@@ -14,6 +14,7 @@ Food::Food(World* world, Point pos) :
 	used(false)
 {
     energy_=50;
+	smell_ = Smell::Food;
 }
 
 Food::Food(World* world) :
@@ -21,6 +22,7 @@ Food::Food(World* world) :
 	Entity(world),
 	used(false)
 {
+	smell_ = Smell::Food;
 }
 
 bool Food::getUsed() const
