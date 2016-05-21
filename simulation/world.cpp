@@ -91,7 +91,7 @@ void World::simulationStep()
     
 	// we can track visitables that want to be erased/die
 	if(statistics_)
-        statistics_->update(this->getVisitablePtrs());
+		statistics_->update(*this, statisticsEnabled_);
         
     updateAll(0);
     entity_map_->applyAllMoves();
