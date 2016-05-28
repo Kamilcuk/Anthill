@@ -30,6 +30,7 @@ BOOST_CLASS_EXPORT(Ant)
 BOOST_CLASS_EXPORT(AntWorkerAI)
 BOOST_CLASS_EXPORT(AntQueenAI)
 BOOST_CLASS_EXPORT(AntScoutAI)
+BOOST_CLASS_EXPORT(CustomController)
 
 /**
  * Many objects require pointer to World object in their constructors.
@@ -95,6 +96,7 @@ namespace boost
         LOAD_PTR_OWNER(AntWorkerAI);
         LOAD_PTR_OWNER(AntQueenAI);
         LOAD_PTR_OWNER(AntScoutAI);
+        LOAD_PTR_OWNER(CustomController);
         
         LOAD_PTR_WORLD_AND_OWNER(AntLegs);
         LOAD_PTR_WORLD_AND_OWNER(AntMandibles);

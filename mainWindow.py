@@ -33,13 +33,13 @@ class Statistics():
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.fig.add_subplot(111)
         self.axes.hold(False)
-        
+
         self.canvas = FigureCanvasQTAgg(self.fig)
         parent.addWidget(self.canvas, 1, 0, 1, 1)
-        
+
         self.canvas.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
         self.canvas.updateGeometry()
-        
+
         self.stat_label = stat_label;
         self.reset()
 
@@ -126,7 +126,7 @@ class MainWindow(QMainWindow):
 
                 self.drawOnMap(self.world, self.lastMousePosOnMap[0],
                     self.lastMousePosOnMap[1], coords[0], coords[1],
-                    self.ui.painterRadius.value(), 
+                    self.ui.painterRadius.value(),
                     self.ui.painterIntensity.value() * 0.01 *\
                         anthill.WorldGenerator.default_pheromone_params.scale)
                 self.lastMousePosOnMap = coords
@@ -161,9 +161,9 @@ class MainWindow(QMainWindow):
         self.world = anthill.World();
 
         self.paused = True
-        
+
         self.statistics = Statistics(self.ui.stats_label, self.ui.gridLayout_3)
-        
+
     def __exit__(self):
         self.refreshTimer.stop()
 
@@ -261,7 +261,7 @@ class MainWindow(QMainWindow):
             bgBrush=QBrush(QColor(50,120,50,255))
             bgPen=QPen(QBrush(QColor()),0)
             scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
-            
+
             # draw pheromone map
             pheromoneColors=[ (50,50,155),
                     (255,50,50),

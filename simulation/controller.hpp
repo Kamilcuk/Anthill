@@ -4,6 +4,7 @@
 #include "serialization.hpp"
 #include "point.hpp"
 
+
 class Creature;
 
 class Controller{
@@ -103,6 +104,27 @@ private:
         ar & boost::serialization::base_object<Controller>(*this);
 		ar & panicTimeLeft_;
         ar & currentActivity_;
+	}
+};
+
+#include <boost/python.hpp>
+
+class CustomController : public Controller{
+    boost::python::object obj_;
+
+public:
+    CustomController(Creature* owner,std::string filePath="");
+    void step(int deltaTime);
+
+    Creature* getOwner(){
+        return owner_;
+    }
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& ar, const unsigned int version)
+    {
+        ar & boost::serialization::base_object<Controller>(*this);
 	}
 };
 

@@ -27,9 +27,26 @@ using boost::shared_ptr;
 using std::vector;
 using namespace boost::python;
 
+
+template<typename T> list toList(const T& v){
+    list l;
+    for(auto& x:v){
+        l.append(x);
+    }
+    return l;
+}
+
+list Creature_getAntLegs(Creature *c){
+    return toList(c->getAntLegs());
+}
+
 // registers a shared_ptr
 #define REGISTER_SHAREDPTR(x) boost::python::register_ptr_to_python\
 	<shared_ptr<x>>();
+
+// registers a ptr
+#define REGISTER_PTR(x) boost::python::register_ptr_to_python\
+	<x*>();
     
 // registers a vector of shared_ptr of objects of specified type
 #define REGISTER_VECTOR_SHAREDPTR(x) class_<vector<shared_ptr<x> > >(#x "_vec")\
@@ -46,6 +63,11 @@ using namespace boost::python;
 
 // registers a method with custom exported Python name
 #define REGISTER_METHOD_CUSTOM_NAME(cl, meth, name) .def(name, &cl::meth)
+
+// registers a method which returns pointer and 
+// tells python to use it as  reference to existing object
+#define REGISTER_METHOD_RETURN_REFERENCE(cl, meth) .def(#meth, &cl::meth, \
+            return_value_policy<reference_existing_object>())
 
 // same as REGISTER_METHOD but returns a reference
 #define REGISTER_METHOD_REF(cl, meth) \
@@ -102,7 +124,7 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_METHOD(World, simulationStep)
         REGISTER_METHOD(World, saveState)
         REGISTER_METHOD(World, loadState)
-		REGISTER_METHOD(World, setStatisticsEnabled)
+		//REGISTER_METHOD(World, setStatisticsEnabled)
     ;
     
     
@@ -144,6 +166,10 @@ BOOST_PYTHON_MODULE(anthill)
     
     REGISTER_CLASS_NOINIT(Creature)
         REGISTER_METHOD(Creature, getPos)
+
+        // for python AI
+        .def("getAntLegs",Creature_getAntLegs)
+        // TODO: other body parts
     ;
     REGISTER_CLASS_NOINIT(Food)
         REGISTER_METHOD(Food, getPos)
@@ -162,16 +188,29 @@ BOOST_PYTHON_MODULE(anthill)
         REGISTER_METHOD(Point, posY)
     ;    
 	REGISTER_CLASS_NOINIT(Statistics::EntityCnt)
-			REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, init)
-			REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, existing)
-			REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, removed)
+        REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, init)
+        REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, existing)
+        REGISTER_VARIABLE_READONLY(Statistics::EntityCnt, removed)
 	;
     REGISTER_CLASS_NOINIT(Statistics)
-			REGISTER_METHOD(Statistics, print)
-			REGISTER_METHOD(Statistics, antCnt)
-			REGISTER_METHOD(Statistics, foodCnt)
-			REGISTER_METHOD(Statistics, obstacleCnt)
-			REGISTER_METHOD(Statistics, stepNumber)
+        REGISTER_METHOD(Statistics, print)
+        REGISTER_METHOD(Statistics, antCnt)
+        REGISTER_METHOD(Statistics, foodCnt)
+        REGISTER_METHOD(Statistics, obstacleCnt)
+        REGISTER_METHOD(Statistics, stepNumber)
     ;
+
+    // for python AI
+    
+    // to get Creature::owner_
+    REGISTER_PTR(Creature)
+    ;
+
+    REGISTER_CLASS_NOINIT(AntLegs)
+        REGISTER_METHOD(AntLegs, goRandom)
+    ;
+    REGISTER_SHAREDPTR(AntLegs);
+
+    // TODO: other body parts
 
 }

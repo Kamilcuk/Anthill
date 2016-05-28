@@ -390,3 +390,29 @@ void AntScoutAI::step(int deltatime){
         legs->goRandom();
     }
 }
+
+
+CustomController::CustomController(Creature* owner,std::string filePath):
+    Controller(owner){
+
+    using namespace boost::python;
+
+    // empty class for holding fun
+    obj_=eval("lambda: None\n");
+    
+    // TODO: get code from external file
+    // this is example
+    exec(R"(
+def step(owner):
+    legs=owner.getAntLegs()
+    legs[0].goRandom()
+    )");
+
+    object fun=eval("step");
+
+    obj_.attr("step") = fun;
+}
+
+void CustomController::step(int deltaTime){
+    obj_.attr("step")(owner_);
+}
