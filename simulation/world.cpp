@@ -135,6 +135,8 @@ void World::loadState(std::string filename)
     in_archive >> creatures_;
     in_archive >> anthills_;
     in_archive >> pheromone_maps_;
+
+    entity_map_ = boost::make_shared<Entity2DMap>(width_, height_);
     
     for(const auto& entity : foods_) trackEntity(entity);
     for(const auto& entity : obstacles_) trackEntity(entity);
