@@ -176,6 +176,9 @@ void AntWorkerAI::step(int deltatime){
             currentActivity_=Activity::TakingFoodToAnthill;
         }
 
+        if(owner_->getEnergy()< 50)
+            currentActivity_=Activity::Eating;
+
     }else if(currentActivity_==Activity::TakingFoodToAnthill){
         
         auto temp=returnToAnthill(legs,sensor,ma);
@@ -351,8 +354,9 @@ void AntScoutAI::step(int deltatime){
         }
 
         if(owner_->getEnergy()< 50)
-            // should return 
-            currentActivity_=Activity::ReturnToAnthill;
+            currentActivity_=Activity::Eating;
+            // should return
+            //currentActivity_=Activity::ReturnToAnthill;
         else
             // continue scanning activity
             abd->dropToFoodPheromones();
@@ -399,7 +403,6 @@ void AntScoutAI::step(int deltatime){
         legs->goRandom();
     }
 }
-
 
 CustomController::CustomController(Creature* owner,std::string filePath):
     Controller(owner){

@@ -189,7 +189,10 @@ Ant::Type WorldGenerator::decideAntType(const int num_spawned, AntsParams& param
     if(num_spawned == 0)
         // spawn one queen
         return Ant::Type::Queen;
-    else if(num_spawned <= params.ratio_scouts * params.quantity)
+    else if(num_spawned ==1){
+        // at least one Scout
+        return Ant::Type::Scout;
+    }else if(num_spawned <= params.ratio_scouts * params.quantity)
         return Ant::Type::Scout;
     else
         return Ant::Type::Worker;
