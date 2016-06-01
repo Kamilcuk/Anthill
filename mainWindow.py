@@ -263,13 +263,19 @@ class MainWindow(QMainWindow):
             scene.addRect(0,0,w,h,pen=bgPen,brush=bgBrush)
 
             # draw pheromone map
-            pheromoneColors=[ (50,50,155),
-                    (255,50,50),
-                    (0,255,0)]
             pMaps=self.world.getPheromoneMaps()
             pMaps=[pMaps[p] for p in range(len(pMaps))]
+
+            pheromoneColors=[
+                    (50,50,155),
+                    (255,50,50),
+                    (0,255,0)]
+            displayPheromones= [self.ui.displayPheromones1.isChecked(),
+                                self.ui.displayPheromones2.isChecked(),
+                                self.ui.displayPheromones3.isChecked()]
             for i,m in enumerate(pMaps):
-                self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
+                if(displayPheromones[i]):
+                    self.drawPheromoneMap(m,baseRGB=(pheromoneColors[i]))
 
             # draw obstacles
             obstacles=self.world.getObstacles()
@@ -287,7 +293,10 @@ class MainWindow(QMainWindow):
             creatures=self.world.getCreatures()
             creaturePen=QPen(QBrush(QColor()),0)
             creatureBrush=QBrush(QColor(100,100,50,200))
-            self.drawEntities(creatures,creaturePen,creatureBrush,True,7)
+            if(self.ui.displayRanges.isChecked()):
+                self.drawEntities(creatures,creaturePen,creatureBrush,True,7)
+            else:
+                self.drawEntities(creatures,creaturePen,creatureBrush,True)
 
             # draw anthills
             anthills=self.world.getAnthills()
