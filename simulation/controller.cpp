@@ -3,7 +3,10 @@
 #include "bodyParts.hpp"
 #include "pheromoneMap.hpp"
 
-std::pair<bool,bool> Controller::eatingActivity(auto legs, auto sensor, auto ma){
+std::pair<bool,bool> Controller::eatingActivity(
+        boost::shared_ptr<AntLegs> legs,
+        boost::shared_ptr<AntSensor> sensor, 
+        boost::shared_ptr<AntMandibles> ma){
     bool eatenSomething=false;
     bool foundTarget=false;
     auto observations = sensor->getObservations();
@@ -28,7 +31,10 @@ std::pair<bool,bool> Controller::eatingActivity(auto legs, auto sensor, auto ma)
     return std::make_pair(foundTarget,eatenSomething);
 }
 
-std::pair<bool,bool> Controller::returnToAnthill(auto legs, auto sensor, auto ma){
+std::pair<bool,bool> Controller::returnToAnthill(
+        boost::shared_ptr<AntLegs> legs,
+        boost::shared_ptr<AntSensor> sensor, 
+        boost::shared_ptr<AntMandibles> ma){
     Point target=sensor->getClosestPheromone(PheromoneMap::Type::Anthill);
     bool lostTrace=false;
     bool returned=false;
@@ -58,7 +64,10 @@ std::pair<bool,bool> Controller::returnToAnthill(auto legs, auto sensor, auto ma
     return std::make_pair(returned,lostTrace);
 }
 
-std::pair<bool,bool> Controller::goToFood(auto legs, auto sensor, auto ma){
+std::pair<bool,bool> Controller::goToFood(
+        boost::shared_ptr<AntLegs> legs,
+        boost::shared_ptr<AntSensor> sensor, 
+        boost::shared_ptr<AntMandibles> ma){
     bool takenFood=false;
     bool usingFromFoodPheromones=false;
     Point target=sensor->getFarthestPheromone(PheromoneMap::Type::FromFood);

@@ -3,6 +3,7 @@
 
 #include "serialization.hpp"
 #include "point.hpp"
+#include "bodyParts.hpp"
 
 
 class Creature;
@@ -14,13 +15,22 @@ protected:
     // methods that can be used by other controllers
     
     // returns (if there is something to eat, eatenSomething)
-    std::pair<bool,bool> eatingActivity(auto, auto, auto);
+    std::pair<bool,bool> eatingActivity(
+        boost::shared_ptr<AntLegs> legs,
+        boost::shared_ptr<AntSensor> sensor, 
+        boost::shared_ptr<AntMandibles> ma);
 
     // returns (if returned, if lost pheromone trace)
-    std::pair<bool,bool> returnToAnthill(auto, auto, auto);
+    std::pair<bool,bool> returnToAnthill(
+        boost::shared_ptr<AntLegs> legs,
+        boost::shared_ptr<AntSensor> sensor, 
+        boost::shared_ptr<AntMandibles> ma);
 
     // returns (took food, if uses froomFood pheromones to find it)
-    std::pair<bool,bool> goToFood(auto,auto,auto);
+    std::pair<bool,bool> goToFood(
+        boost::shared_ptr<AntLegs> legs,
+        boost::shared_ptr<AntSensor> sensor, 
+        boost::shared_ptr<AntMandibles> ma);
 
 public:
     Controller(Creature* owner){
