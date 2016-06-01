@@ -134,6 +134,37 @@
            </property>
           </widget>
          </item>
+         <item row="3" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>0%</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="percentScouts">
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>10</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>100%</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
@@ -237,7 +268,7 @@
                 </size>
                </property>
                <property name="value">
-                <number>20</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -267,7 +298,7 @@
                 </size>
                </property>
                <property name="value">
-                <number>30</number>
+                <number>50</number>
                </property>
               </widget>
              </item>
@@ -305,40 +336,9 @@
            </item>
           </layout>
          </item>
-         <item row="3" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_16">
-             <property name="text">
-              <string>0%</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSlider" name="percentScouts">
-             <property name="maximum">
-              <number>100</number>
-             </property>
-             <property name="value">
-              <number>10</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>100%</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
         </layout>
        </item>
-       <item alignment="Qt::AlignHCenter">
+       <item>
         <widget class="QDialogButtonBox" name="buttonBox">
          <property name="enabled">
           <bool>true</bool>

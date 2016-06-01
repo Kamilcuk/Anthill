@@ -31,7 +31,7 @@ Ant::Ant(World* world, Point pos,Type type) :
 
         controller_=boost::make_shared<AntWorkerAI>(static_cast<Creature*>(this));
 
-        maxEnergy_=100;
+        maxEnergy_=200;
         energy_=maxEnergy_;
 
     }else if(type==Type::Queen){
@@ -42,7 +42,7 @@ Ant::Ant(World* world, Point pos,Type type) :
 
         controller_=boost::make_shared<AntQueenAI>(static_cast<Creature*>(this));
 
-        maxEnergy_=500;
+        maxEnergy_=1000;
         energy_=maxEnergy_;
 
     }else if(type==Type::Scout){
@@ -53,7 +53,7 @@ Ant::Ant(World* world, Point pos,Type type) :
 
         controller_=boost::make_shared<AntScoutAI>(static_cast<Creature*>(this));
 
-        maxEnergy_=120;
+        maxEnergy_=220;
         energy_=maxEnergy_;
 
     }else if(type==Type::Larva){

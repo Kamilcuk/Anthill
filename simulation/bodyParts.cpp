@@ -17,7 +17,7 @@ bool BodyPart::isAccessible(Point p){
 
     Point owner_pos=owner_->getPos();
 
-    int seeingRange=1;
+    int seeingRange=3;
 
     bool collision_detected = false;
 

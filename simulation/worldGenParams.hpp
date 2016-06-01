@@ -40,7 +40,7 @@ struct PheromoneParams
     float to_food_decay_rate = 0.2;
     float from_food_decay_rate = 0.2;
     float anthill_decay_rate = 0.2;
-    float scale = 0.4;
+    float scale = 0.07;
     
     /// translates coefficients from 1-100 and applies scale
     void applyCoefficients(unsigned to_food, unsigned from_food, 
