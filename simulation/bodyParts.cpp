@@ -250,7 +250,7 @@ float AntSensor::getPheromoneStrength(PheromoneMap::Type type, Point pos){
 Point AntSensor::findAdjecentPos(Point p){
     for(int dx=-1; dx<=1; ++dx){
         for(int dy=-1; dy<=1; ++dy){
-            if((dx==0) xor (dy==0)){
+            if((dx==0)!=(dy==0)){
                 Point adjP=Point(p.posX()+dx,p.posY()+dy);
                 if(BodyPart::isAccessible(adjP)){
                     return adjP;
