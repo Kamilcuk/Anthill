@@ -41,10 +41,10 @@ public:
 	{ return Point(posX_ - rhs.posX_, posY_ - rhs.posY_); }
 	
 	// dot product
-	constexpr inline float operator*(const Point& rhs) 
+	constexpr inline float operator*(const Point& rhs) const
 	{ return posX_ * rhs.posX_ + posY_ * rhs.posY_; }
 	
-	constexpr inline Point operator*(const float& rhs) 
+	constexpr inline Point operator*(const float& rhs) const
 	{ return Point(posX_ * rhs, posY_ * rhs); }
 	
 	inline Point& operator+=(const Point& rhs) 
@@ -66,7 +66,7 @@ public:
 	void setPosX(int posX);
 	void setPosY(int posY);
 	
-	constexpr inline Point clamped(const Point& p1, const Point p2)
+	constexpr inline Point clamped(const Point& p1, const Point p2) const
 	{	
 		// for single coord: 
 		// posX_ > leftmost ? (posX_ < rightmost ? posX_ : rightmost) : leftmost
@@ -87,7 +87,7 @@ public:
 #undef topmost			
 	}
 	
-    constexpr inline float getDistance(Point p) const
+    inline float getDistance(Point p) const
 	{
 		return std::sqrt(
 			std::pow(this->posX() - p.posX(), 2) +
@@ -95,7 +95,7 @@ public:
 			);
 	}
 	
-    constexpr inline int getGridDistance(const Point& p) const
+    inline int getGridDistance(const Point& p) const
 	{
 		return
 			std::abs(this->posX() - p.posX()) +
@@ -123,7 +123,7 @@ public:
 			posY() <= std::max(p1.posY(), p2.posY());
     }
 
-    constexpr inline bool isAdjacent(const Point& p) const
+    inline bool isAdjacent(const Point& p) const
 	{
 		return std::abs(posX() - p.posX()) + std::abs(posY() - p.posY()) <= 1;
     }
