@@ -26,6 +26,7 @@ class Entity : public Updatable, public boost::enable_shared_from_this<Entity>
 public:
     enum class Smell {
         Food,
+        Ant,
         None
     };
 

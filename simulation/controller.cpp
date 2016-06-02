@@ -14,7 +14,7 @@ std::pair<bool,bool> Controller::eatingActivity(
         if((o.getSmell()==Entity::Smell::Food)){
             if(ma->bite(o)==false){
                 Point eatingPos=o.getPos();
-                if(sensor->isAccessible(o)){
+                if(sensor->isAccessible(o) || o.getPos()==owner_->getPos()){
                     legs->goToPos(eatingPos);
                     foundTarget=true;
                     break;
@@ -206,8 +206,9 @@ void AntWorkerAI::step(int deltatime){
         bool eatenSomething=temp.second;
 
         if(!eatenSomething && !targetFound)
-            // no food
-            currentActivity_=Activity::GoingToFoodSource;
+            // no food in seeing range
+            // maybe there is some in Anthill
+            currentActivity_=Activity::TakingFoodToAnthill;
 
         if(owner_->getEnergy()>=owner_->getMaxEnergy()-1)
             // fed
@@ -272,6 +273,9 @@ void AntQueenAI::step(int deltatime){
     if(sensor->getPheromoneStrength(PheromoneMap::Type::Anthill,owner_->getPos()) < 2){
         abd->dropAnthillPheromones();
     }
+    
+    // eats whole time
+    eatingActivity(legs,sensor,ma);
 }
 
 

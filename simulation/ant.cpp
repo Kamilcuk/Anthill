@@ -22,6 +22,8 @@ Ant::Ant(World* world, Point pos,Type type) :
 	Visitable(world),
 	Creature(world, pos)
 {
+    smell_=Smell::Ant;
+
     // Descriptions of Ant types (factory pattern implemented in constructor)
     if(type==Type::Worker){
         antLegs.emplace_back(boost::make_shared<AntLegs>(world, this));

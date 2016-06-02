@@ -15,15 +15,13 @@ bool BodyPart::isAccessible(Point p){
     if(!p.isInBounds(world_->getDimensions()))
         return false;
 
-    Point owner_pos=owner_->getPos();
-
     int seeingRange=3;
 
     bool collision_detected = false;
 
     auto in_square = world_->getEntityMap().lock()->getEntitiesInSquare(
-        Point(owner_pos.posX() - seeingRange, owner_pos.posY() - seeingRange),
-        Point(owner_pos.posX() + seeingRange, owner_pos.posY() + seeingRange));
+        Point(p.posX() - seeingRange, p.posY() - seeingRange),
+        Point(p.posX() + seeingRange, p.posY() + seeingRange));
            
     for(const auto& a : in_square) 
     {
@@ -310,7 +308,7 @@ void AntMandibles::step(int deltaTime){
         holdingObject_.lock()->setPos(owner_->getPos());
     }
     if(deltaTime>0 && !bittingTarget_.expired()){
-        float en=bittingTarget_.lock()->bite(1);
+        float en=bittingTarget_.lock()->bite(2.0);
         owner_->energy_-=0.1;
         owner_->energy_+=en;
         bittingTarget_=boost::weak_ptr<Entity>();
