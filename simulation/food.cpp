@@ -13,7 +13,7 @@ Food::Food(World* world, Point pos) :
 	Entity(world, pos),
 	used(false)
 {
-    energy_=100;
+    energy_=150;
 	smell_ = Smell::Food;
 }
 

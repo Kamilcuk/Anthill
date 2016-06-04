@@ -13,16 +13,15 @@ std::pair<bool,bool> Controller::eatingActivity(
     for(auto o : observations){
         if((o.getSmell()==Entity::Smell::Food)){
             if(ma->bite(o)==false){
+                if(foundTarget)
+                    continue;
                 Point eatingPos=o.getPos();
                 if(sensor->isAccessible(o) || o.getPos()==owner_->getPos()){
                     legs->goToPos(eatingPos);
                     foundTarget=true;
-                    break;
-                }else{
-                    continue;
                 }
             }else{
-
+                foundTarget=true;
                 eatenSomething=true;
                 break;
             }
@@ -102,6 +101,23 @@ std::pair<bool,bool> Controller::goToFood(
     return std::make_pair(takenFood,usingFromFoodPheromones);
 }
 
+
+bool Controller::biteAdjacentObstacle(
+        boost::shared_ptr<AntSensor> sensor,
+        boost::shared_ptr<AntMandibles> ma){
+    for(auto o : sensor->getObservations()){
+        if(owner_->getPos().isAdjacent(o.getPos())
+                && o.getSmell()==Entity::Smell::None){
+            if(ma->bite(o)){
+                return true;
+            }else{
+                std::cout<<"strange"<<std::endl;
+            }
+        }
+    }
+    return false;
+}
+
 AntWorkerAI::AntWorkerAI(Creature* owner):
     Controller(owner),
     panicTimeLeft_(0),
@@ -166,7 +182,7 @@ void AntWorkerAI::step(int deltatime){
             ++timeSearchingWithFromFoodPheromones_;
 
         // maybe you are marking path to food for too long, 
-        // this is probably a fake path
+        // this is probably a wrong path or cycle
         if(usingFromFoodPheromones && timeSearchingWithFromFoodPheromones_<150)
             abd->dropToFoodPheromones();
 
@@ -197,6 +213,9 @@ void AntWorkerAI::step(int deltatime){
                 currentActivity_=Activity::Eating;
             else
                 currentActivity_=Activity::GoingToFoodSource;
+        }else{
+            if(owner_->getEnergy()< 50)
+                currentActivity_=Activity::Eating;
         }
 
     }else if(currentActivity_==Activity::Eating){
@@ -218,6 +237,13 @@ void AntWorkerAI::step(int deltatime){
         std::cout<<"worker no activity"<<std::endl;
     }
 
+    //if(legs->getTimeNotMoving()>0){
+    //    if(biteAdjacentObstacle(sensor,ma))
+    //        std::cout<<"bitten"<<std::endl;
+    //}
+    if(legs->getTimeNotMoving()>0){
+        biteAdjacentObstacle(sensor,ma);
+    }
     if(legs->getTimeNotMoving()>2 && currentActivity_!=Activity::Eating){
         panicTimeLeft_=4;
         legs->goRandom();
@@ -275,7 +301,16 @@ void AntQueenAI::step(int deltatime){
     }
     
     // eats whole time
-    eatingActivity(legs,sensor,ma);
+    auto ret=eatingActivity(legs,sensor,ma);
+    if(ret.first==false){
+        // don't see any food
+        legs->goRandom();
+    }else{
+        // sensed food but cannot acces it
+        if(ret.second==false && legs->getTimeNotMoving()>0){
+            biteAdjacentObstacle(sensor,ma);
+        }
+    }
 }
 
 
@@ -382,6 +417,9 @@ void AntScoutAI::step(int deltatime){
                 currentActivity_=Activity::Eating;
             else
                 currentActivity_=Activity::ScanningArea;
+        }else{
+            if(owner_->getEnergy()< 50)
+                currentActivity_=Activity::Eating;
         }
 
     }else if(currentActivity_==Activity::Eating){
@@ -402,6 +440,9 @@ void AntScoutAI::step(int deltatime){
         std::cout<<"No activity"<<std::endl;
     }
 
+    if(legs->getTimeNotMoving()>0){
+        biteAdjacentObstacle(sensor,ma);
+    }
     if(legs->getTimeNotMoving()>2 && currentActivity_!=Activity::Eating){
         panicTimeLeft_=2;
         legs->goRandom();

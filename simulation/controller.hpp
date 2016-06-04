@@ -32,6 +32,12 @@ protected:
         boost::shared_ptr<AntSensor> sensor, 
         boost::shared_ptr<AntMandibles> ma);
 
+    // returns if bitten something
+    // bits something that does not have smell
+    bool biteAdjacentObstacle(
+        boost::shared_ptr<AntSensor> sensor,
+        boost::shared_ptr<AntMandibles>); 
+
 public:
     Controller(Creature* owner){
         owner_=owner;

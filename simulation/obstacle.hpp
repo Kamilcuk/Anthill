@@ -23,6 +23,8 @@ private:
 		ar & boost::serialization::base_object<Entity>(*this);
 	}
 
+    float bite(float strength);
+
 	// Visitable interface
 public:
 	void accept(Visitor &v) const;

@@ -308,8 +308,8 @@ void AntMandibles::step(int deltaTime){
         holdingObject_.lock()->setPos(owner_->getPos());
     }
     if(deltaTime>0 && !bittingTarget_.expired()){
-        float en=bittingTarget_.lock()->bite(2.0);
-        owner_->energy_-=0.1;
+        float en=bittingTarget_.lock()->bite(4.01);
+        owner_->energy_-=0.5;
         owner_->energy_+=en;
         bittingTarget_=boost::weak_ptr<Entity>();
     }
@@ -362,8 +362,8 @@ void AntQueenAbdomen::step(int deltaTime){
         return;
     for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
         if(pm->getType()==dropType){
-            pm->createBlob(owner_->getPos(), 6, 200);
-            owner_->energy_-=0.6;
+            pm->createBlob(owner_->getPos(), 10, 200);
+            owner_->energy_-=1;
             dropType = PheromoneMap::Type::None;
             return;
         }
