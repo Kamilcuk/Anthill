@@ -247,6 +247,7 @@ class MainWindow(QMainWindow):
         # update statistics
         stats = self.world.getStatistics();
         if self.ui.tabWidget.currentWidget().objectName() == "StatsTab":
+            self.world.setStatisticsEnabled(True)
             self.statistics.refresh(stats)
 
         self.frameSkippingCounter+=1

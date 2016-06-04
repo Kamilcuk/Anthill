@@ -159,7 +159,8 @@ public:
     { return entity_map_; }
     
 	bool getStatisticsEnabled() const;
-	void setStatisticsEnabled(bool statisticsEnabled);
+	void setStatisticsEnabled(bool statisticsEnabled)
+    { statisticsEnabled_=statisticsEnabled; }
 
 private:
 	// using friends here because we want following methods below to be called
