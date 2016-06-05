@@ -53,8 +53,8 @@ class Statistics():
         self.stepNumbers.append(stats.stepNumber())
         # plot
         self.axes.plot(self.stepNumbers, self.foods)
-        self.axes.set_xlabel("Numer kroku symulacji")
-        self.axes.set_ylabel("Ilosc jedzenia")
+        self.axes.set_xlabel("Step number")
+        self.axes.set_ylabel("Food count")
         self.canvas.draw()
 
     def reset(self):
