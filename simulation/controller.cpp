@@ -324,16 +324,16 @@ void AntQueenAI::step(int deltatime){
         }
 
         if(antCount<1 && foodCount>50){
-            if(rand()%2)
-                abd->bornScout();
-            else
+            if(rand()%3)
                 abd->bornWorker();
-        }else if(foodCount>30){
+            else
+                abd->bornScout();
+        }else if(foodCount>25){
             if(rand()%10)
                 abd->bornWorker();
             else
                 abd->bornScout();
-        }else if(foodCount<10){
+        }else if(foodCount<8){
             if(rand()%2)
                 abd->bornScout();
             else

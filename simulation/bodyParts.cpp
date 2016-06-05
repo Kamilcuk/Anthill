@@ -1,6 +1,7 @@
 #include "bodyParts.hpp"
 
 #include <set>
+#include <tuple>
 
 #include "creature.hpp"
 #include "world.hpp"
@@ -120,8 +121,8 @@ std::vector<AntSensor::Observation> AntSensor::getObservations(){
     Point owner_pos = owner_-> getPos();
     
     auto in_square = world_->getEntityMap().lock()->getEntitiesInSquare(
-        Point(owner_pos.posX() - seeingRange, owner_pos.posY() - seeingRange),
-        Point(owner_pos.posX() + seeingRange, owner_pos.posY() + seeingRange));
+        Point(owner_pos.posX() - seeingRange-1, owner_pos.posY() - seeingRange-1),
+        Point(owner_pos.posX() + seeingRange+1, owner_pos.posY() + seeingRange+1));
            
     for(const auto& a : in_square) 
     {
@@ -129,10 +130,28 @@ std::vector<AntSensor::Observation> AntSensor::getObservations(){
             ret.push_back(Observation(a));
     }
     
-    std::sort(ret.begin(),ret.end(),
-        [owner_pos] (const Observation& a,const Observation& b) -> bool 
-        { return owner_pos.getDistance(a.getPos()) 
-            < owner_pos.getDistance(b.getPos()); });
+    if(world_->isMultithreaded()){
+        // thread safe sort
+        std::vector<std::tuple<Point,unsigned,Observation> > vec;
+        vec.reserve(ret.size());
+        for(unsigned i=0;i<ret.size();++i){
+            vec.push_back(std::make_tuple(ret[i].getPos(),i,ret[i]));
+        }
+
+        std::sort(vec.begin(),vec.end(),
+            [owner_pos] (const auto& a,const auto& b) -> bool 
+            { return owner_pos.getDistance(std::get<0>(a)) 
+                < owner_pos.getDistance(std::get<0>(b)); });
+
+        for(auto v :vec){
+            ret[std::get<1>(v)]=std::get<2>(v);
+        }
+    }else{
+        std::sort(ret.begin(),ret.end(),
+            [owner_pos] (const Observation& a,const Observation& b) -> bool 
+            { return owner_pos.getDistance(a.getPos()) 
+                < owner_pos.getDistance(b.getPos()); });
+    }
     
     return ret;
 }
