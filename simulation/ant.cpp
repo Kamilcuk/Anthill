@@ -62,6 +62,8 @@ Ant::Ant(World* world, Point pos,Type type) :
         hasCollision_=false;
         energy_=10;
         // no controller
+    }else{
+        flagToRemove();
     }
 }
 

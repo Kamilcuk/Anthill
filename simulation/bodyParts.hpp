@@ -19,6 +19,7 @@
 #include "visitable.hpp"
 
 #include "entity.hpp"
+
 class Creature;
 
 class BodyPart : public Updatable{
@@ -180,12 +181,25 @@ private:
 
 class AntQueenAbdomen : public BodyPart{
 	PheromoneMap::Type dropType;
+
+    enum class BornType{
+        Worker,
+        Scout,
+        None
+    };
+    BornType bornType;
+
+    int lastBornCounter;
 public:
     AntQueenAbdomen(World* w, Creature* owner):
         BodyPart(w,owner),
-        dropType(PheromoneMap::Type::None) // don't drop
+        dropType(PheromoneMap::Type::None), // don't drop
+        bornType(BornType::None), // don't born
+        lastBornCounter(0)
     {};
     void dropAnthillPheromones();
+    void bornWorker();
+    void bornScout();
     void step(int);
     
 private:
@@ -194,6 +208,8 @@ private:
 	void serialize(Archive& ar, const unsigned int version)
 	{
 		ar & dropType;
+		ar & bornType;
+        ar & lastBornCounter;
 	}
 };
 

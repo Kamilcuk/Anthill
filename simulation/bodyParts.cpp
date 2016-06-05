@@ -9,6 +9,8 @@
 #include "obstacle.hpp"
 #include "point.hpp"
 
+#include "ant.hpp"
+
 // BodyPart
 
 bool BodyPart::isAccessible(Point p){
@@ -354,21 +356,41 @@ void AntWorkerAbdomen::step(int deltaTime){
 void AntQueenAbdomen::dropAnthillPheromones(){
     dropType=PheromoneMap::Type::Anthill;
 }
+void AntQueenAbdomen::bornWorker(){
+    bornType=BornType::Worker;
+}
+void AntQueenAbdomen::bornScout(){
+    bornType=BornType::Scout;
+}
 
 void AntQueenAbdomen::step(int deltaTime){
-    if(deltaTime<=0)
-        return;
-    if(dropType == PheromoneMap::Type::None)
-        return;
-    for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
-        if(pm->getType()==dropType){
-            pm->createBlob(owner_->getPos(), 10, 200);
-            owner_->energy_-=1;
-            dropType = PheromoneMap::Type::None;
-            return;
+    lastBornCounter-=deltaTime;
+    if(deltaTime>0 && dropType != PheromoneMap::Type::None){
+        for(auto pm : world_->getSimulationObjects<PheromoneMap>()){
+            if(pm->getType()==dropType){
+                pm->createBlob(owner_->getPos(), 10, 200);
+                owner_->energy_-=1;
+                dropType = PheromoneMap::Type::None;
+                break;
+            }
+        }
+    }
+
+    if(bornType != BornType::None){
+        if(lastBornCounter<=0){
+            boost::shared_ptr<Creature> p;
+            if(bornType==BornType::Worker)
+                p=boost::make_shared<Ant>(world_, owner_->getPos(), Ant::Type::Worker);
+            else
+                p=boost::make_shared<Ant>(world_, owner_->getPos(), Ant::Type::Scout);
+            world_->addSimulationObject<Creature>(p);
+            owner_->energy_-=p->getMaxEnergy();
+            bornType=BornType::None;
+            lastBornCounter=40;
         }
     }
 }
+
 
 
 // AntLarvaBody

@@ -30,7 +30,8 @@ public:
         Worker,
         Queen,
         Scout,
-        Larva
+        Larva,
+        None
 	};
 
 	Ant(World* world, Point pos,Type type=Type::Worker);

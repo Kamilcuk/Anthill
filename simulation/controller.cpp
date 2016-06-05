@@ -300,15 +300,44 @@ void AntQueenAI::step(int deltatime){
         abd->dropAnthillPheromones();
     }
     
-    // eats whole time
-    auto ret=eatingActivity(legs,sensor,ma);
-    if(ret.first==false){
-        // don't see any food
-        legs->goRandom();
-    }else{
-        // sensed food but cannot acces it
-        if(ret.second==false && legs->getTimeNotMoving()>0){
-            biteAdjacentObstacle(sensor,ma);
+    if(owner_->getEnergy() < owner_->getMaxEnergy()*0.95){
+        auto ret=eatingActivity(legs,sensor,ma);
+        if(ret.first==false){
+            // don't see any food
+            legs->goRandom();
+        }else{
+            // sensed food but cannot acces it
+            if(ret.second==false && legs->getTimeNotMoving()>0){
+                biteAdjacentObstacle(sensor,ma);
+            }
+        }
+    }
+
+    if(owner_->getEnergy() > owner_->getMaxEnergy()*0.6){
+        int foodCount=0;
+        int antCount=0;
+        for(auto o : sensor->getObservations()){
+            if(o.getSmell()==Entity::Smell::Food)
+                ++foodCount;
+            if(o.getSmell()==Entity::Smell::Ant)
+                ++antCount;
+        }
+
+        if(antCount<1 && foodCount>50){
+            if(rand()%2)
+                abd->bornScout();
+            else
+                abd->bornWorker();
+        }else if(foodCount>30){
+            if(rand()%10)
+                abd->bornWorker();
+            else
+                abd->bornScout();
+        }else if(foodCount<10){
+            if(rand()%2)
+                abd->bornScout();
+            else
+                abd->bornWorker();
         }
     }
 }
@@ -430,11 +459,13 @@ void AntScoutAI::step(int deltatime){
 
         if(!eatenSomething && !targetFound)
             // no food
-            currentActivity_=Activity::ScanningArea;
+            //currentActivity_=Activity::ScanningArea;
+            currentActivity_=Activity::ReturnToAnthill;
 
         if(owner_->getEnergy()>=owner_->getMaxEnergy()-1)
             // fed
-            currentActivity_=Activity::ScanningArea;
+            //currentActivity_=Activity::ScanningArea;
+            currentActivity_=Activity::ReturnToAnthill;
 
     }else{
         std::cout<<"No activity"<<std::endl;
