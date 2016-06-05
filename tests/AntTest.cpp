@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE( testAntEating ){
         }
 
         BOOST_CHECK_GT(ant.lock()->energy_,0.0f);
-        BOOST_CHECK_LE(ant.lock()->energy_,ant.lock()->getMaxEnergy() + 2);
+        BOOST_CHECK_LE(ant.lock()->energy_,ant.lock()->getMaxEnergy() + 10);
 
         w.simulationStep();
     }
