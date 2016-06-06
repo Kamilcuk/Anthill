@@ -480,6 +480,9 @@ void AntScoutAI::step(int deltatime){
     }
 }
 
+#include <fstream>
+#include <streambuf>
+
 CustomController::CustomController(Creature* owner,std::string filePath):
     Controller(owner){
 
@@ -488,13 +491,19 @@ CustomController::CustomController(Creature* owner,std::string filePath):
     // empty class for holding fun
     obj_=eval("lambda: None\n");
     
-    // TODO: get code from external file
-    // this is example
-    exec(R"(
+    std::ifstream t(filePath);
+    if(!t.fail()){
+        std::string code((std::istreambuf_iterator<char>(t)),
+                          std::istreambuf_iterator<char>());
+        exec(code.data());
+    }else{
+        std::cout<<"failed reading custom AI python file"<<std::endl;
+        exec(R"(
 def step(owner):
     legs=owner.getAntLegs()
     legs[0].goRandom()
-    )");
+        )");
+    }
 
     object fun=eval("step");
 
