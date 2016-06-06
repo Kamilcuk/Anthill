@@ -8,6 +8,7 @@ Obstacle::Obstacle(World* world, Point pos) :
 {
     smell_=Smell::None;
     energy_=20;
+    maxEnergy_=20;
 	hasCollision_ = true;
 }
 

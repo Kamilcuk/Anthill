@@ -106,10 +106,10 @@ private:
 	{
 		ar & pos_;
         ar & hasCollision_;
-        ar & hasCollision_;
         ar & energy_;
         ar & maxEnergy_;
         ar & smell_;
+        ar & to_remove_flag_;
 	}
 
 };
