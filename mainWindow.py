@@ -249,10 +249,10 @@ class MainWindow(QMainWindow):
         if self.ui.tabWidget.currentWidget().objectName() == "StatsTab":
             self.world.setStatisticsEnabled(True)
             self.statistics.refresh(stats)
-            
+
         if self.ui.disableGraphics.isChecked():
             return
-            
+
         self.frameSkippingCounter+=1
         if self.frameSkippingCounter > self.ui.frameSkipping.value():
             self.frameSkippingCounter=0
@@ -378,21 +378,22 @@ class MainWindow(QMainWindow):
         path=QFileDialog.getSaveFileName(self, "Save File",
                                     ".", "All Files (*)")
         path=path[0]
-        print("Saving state to: ",path)
         if(path and path!=''):
+            print("Saving state to: ",path)
+            self.paused = False
             self.world.saveState(path)
+        self.restartTimer()
         self.paused = False
 
     def on_loadStateButton_released(self):
         self.paused = True
-        self.world.stopSimulation()
         path=QFileDialog.getOpenFileName(self, "Open File",
                                     ".", "All Files (*)")
         path=path[0]
         if(path and path!=''):
             self.world.loadState(path)
-            self.restartTimer()
             self.world.startSimulation()
+        self.restartTimer()
         self.paused = False
 
     def on_framerateBox_valueChanged(self):
