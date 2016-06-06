@@ -2,7 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created: Mon Jun  6 12:33:53 2016
+#      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -22,7 +23,6 @@ class Ui_MainWindow(object):
         self.PreviewTab = QtWidgets.QWidget()
         self.PreviewTab.setObjectName("PreviewTab")
         self.gridLayout = QtWidgets.QGridLayout(self.PreviewTab)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.graphicsView = QtWidgets.QGraphicsView(self.PreviewTab)
         self.graphicsView.setObjectName("graphicsView")
@@ -145,6 +145,10 @@ class Ui_MainWindow(object):
         self.displayRanges.setChecked(False)
         self.displayRanges.setObjectName("displayRanges")
         self.verticalLayout.addWidget(self.displayRanges)
+        self.disableGraphics = QtWidgets.QCheckBox(self.OptionsGroupBox)
+        self.disableGraphics.setChecked(False)
+        self.disableGraphics.setObjectName("disableGraphics")
+        self.verticalLayout.addWidget(self.disableGraphics)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.gridLayout.addWidget(self.OptionsGroupBox, 0, 1, 1, 1)
@@ -152,7 +156,6 @@ class Ui_MainWindow(object):
         self.StatsTab = QtWidgets.QWidget()
         self.StatsTab.setObjectName("StatsTab")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.StatsTab)
-        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.stats_label = QtWidgets.QLabel(self.StatsTab)
         self.stats_label.setObjectName("stats_label")
@@ -161,7 +164,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 19))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 27))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -208,6 +211,7 @@ class Ui_MainWindow(object):
         self.displayPheromones2.setText(_translate("MainWindow", "2"))
         self.displayPheromones3.setText(_translate("MainWindow", "3"))
         self.displayRanges.setText(_translate("MainWindow", "Ants seeing ranges"))
+        self.disableGraphics.setText(_translate("MainWindow", "Disable graphics"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.PreviewTab), _translate("MainWindow", "Simulation Preview"))
         self.stats_label.setText(_translate("MainWindow", "There will be for example statistics, graphs etc."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.StatsTab), _translate("MainWindow", "Stats"))

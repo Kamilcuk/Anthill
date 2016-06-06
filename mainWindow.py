@@ -249,7 +249,10 @@ class MainWindow(QMainWindow):
         if self.ui.tabWidget.currentWidget().objectName() == "StatsTab":
             self.world.setStatisticsEnabled(True)
             self.statistics.refresh(stats)
-
+            
+        if self.ui.disableGraphics.isChecked():
+            return
+            
         self.frameSkippingCounter+=1
         if self.frameSkippingCounter > self.ui.frameSkipping.value():
             self.frameSkippingCounter=0
